@@ -8,7 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation/Navigation';
 import {Provider} from 'react-redux';
 import store1 from './src/Store/Store';
-
+import {requestLocationPermission} from './src/Components/Permissions';
 const windowHeight = Dimensions.get('window').height;
 function App() {
   let uniqueId =
@@ -20,7 +20,12 @@ function App() {
       name: 'simalij franklin',
       email: 'emaildeprueba@disdelsa.com',
     });
+   
   }, []);
+
+  useEffect(async () => {
+    await requestLocationPermission();
+  }, [])
 
   return (
     <Provider store={store1}>
@@ -30,6 +35,7 @@ function App() {
           style={styles.WrapperApp}>
           <View style={styles.WrapperLogin}>
             <NavigationContainer>
+            
               <Navigation></Navigation>
             </NavigationContainer>
           </View>
