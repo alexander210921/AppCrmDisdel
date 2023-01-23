@@ -16,6 +16,8 @@ const HomeRouteVendors = () => {
     navigation.navigate("FormCreateRoute");    
   };
   const User = useSelector(state => state.login.user);
+  const Company = useSelector(state=>state.company.Company);
+  console.log(Company);
   return (
     <View flex style={StylesWrapper.wraper}>
       <View right>

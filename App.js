@@ -23,10 +23,12 @@ function App() {
    
   }, []);
 
-  useEffect(async () => {
-    await requestLocationPermission();
-  }, [])
-
+  useEffect(() => {
+    async function ValidateAccesGPS() {      
+      const response = await requestLocationPermission();      
+    }
+    ValidateAccesGPS();
+  }, []); 
   return (
     <Provider store={store1}>
       <SafeAreaView style={styles.WrapperApp}>
