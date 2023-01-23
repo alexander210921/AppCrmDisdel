@@ -15,9 +15,7 @@ const HomeRouteVendors = () => {
     setSelectCard(!selectCard);
     navigation.navigate("FormCreateRoute");    
   };
-  const User = useSelector(state => state.login.user);
-  const Company = useSelector(state=>state.company.Company);
-  console.log(Company);
+  const User = useSelector(state => state.login.user);  
   return (
     <View flex style={StylesWrapper.wraper}>
       <View right>

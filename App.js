@@ -25,7 +25,7 @@ function App() {
 
   useEffect(() => {
     async function ValidateAccesGPS() {      
-      const response = await requestLocationPermission();      
+      await requestLocationPermission();      
     }
     ValidateAccesGPS();
   }, []); 

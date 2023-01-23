@@ -57,7 +57,7 @@ export const GetUserCompany =(UserId,navigation,dispatch)=>{
       .then(response => {
         if(response.data.length==1){
            dispatch(SetUserCompany(response.data));
-           GetUserRol(UserId,response.data.EntityID,navigation,dispatch);
+           GetUserRol(UserId,response.data[0].EntityID,navigation,dispatch);
            //navigation.navigate("Home");
         }else if(response.data.length>1){
           Alert.alert("seleccione la compañia");
