@@ -2,8 +2,13 @@ import React from 'react';
 import {View,Text} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {StyleSheet,TextInput} from 'react-native'
+import {Alert, StyleSheet,TextInput} from 'react-native'
+import { GetGeolocation } from '../../lib/Geolocation';
+import { LoadPostMileage,SetMileage } from '../../Api/Vendors/ApiVendors';
+import { useDispatch } from 'react-redux';
+
 const FormCreateRoute = () => {
+  const dispatch = useDispatch();
   const {
     control,
     handleSubmit,
@@ -14,8 +19,24 @@ const FormCreateRoute = () => {
       commentary: '',
     },
   });
-  function onSubmit(data) {
-    console.log(data);
+ async function   onSubmit(formData) {
+  const coords = await GetGeolocation()
+  if(coords.Status){    
+    //create a object data
+    const data = {
+      IdRelacion:1007,
+      Kilometraje:formData.milaege,
+      Comentario:formData.commentary,
+      Latitud : coords.Data.latitude,
+      Longitud:coords.Data.longitude
+    }
+
+    dispatch(LoadPostMileage(true));    
+    SetMileage(data);
+  }else{
+    Alert.alert(coords.Message);
+  }
+
   }
   return (
     <View flex >
@@ -53,6 +74,8 @@ const FormCreateRoute = () => {
             value={value}
             placeholder="Comentario"
             placeholderTextColor="#b3b2b7"
+            multiline
+            numberOfLines={3}
           />
         )}
         name="commentary"

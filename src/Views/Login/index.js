@@ -2,7 +2,7 @@ import React from 'react';
 import {TextInput, StyleSheet} from 'react-native';
 import LoginHeader from './Header';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {View, Text, Colors, Toast, LoaderScreen} from 'react-native-ui-lib';
+import {View, Text, Colors, LoaderScreen} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import {LoginUser} from '../../Api/User/ApiUser';
 import StylesWrapper from '../../Styles/Wrapers';

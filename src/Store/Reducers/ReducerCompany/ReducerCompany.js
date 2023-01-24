@@ -1,7 +1,8 @@
-import {GET_USER_COMPANY} from "../../Types/index";
+import {GET_USER_COMPANY,SET_DEFAULT_COMPANY} from "../../Types/index";
 
 const initialState = { 
-    Company:[]    
+    Company:[],
+    CompanySelected:[]    
 };
     
   export default  function  (state = initialState, action) {
@@ -10,7 +11,12 @@ const initialState = {
         return {
             ...state,
             Company: action.payload,                                                                                              
-        };                
+        };   
+      case SET_DEFAULT_COMPANY:
+        return {
+          ...state,
+          CompanySelected:action.payload
+        }               
       default:
         return state;
     }
