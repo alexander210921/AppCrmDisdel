@@ -7,8 +7,8 @@ export async function requestLocationPermission() {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: 'Example App',
-        message: 'Example App access to your location ',
+        title: 'Acceso a Geolocalización',
+        message: 'Acepe el uso del GPS en la ventana que se muentre a continuación',
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {

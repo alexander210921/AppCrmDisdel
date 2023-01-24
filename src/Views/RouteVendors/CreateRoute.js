@@ -1,15 +1,16 @@
 import React from 'react';
-import {View,Text} from 'react-native-ui-lib';
+import {View, Text, LoaderScreen} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {Alert, StyleSheet,TextInput} from 'react-native'
-import { GetGeolocation } from '../../lib/Geolocation';
-import { LoadPostMileage,SetMileage } from '../../Api/Vendors/ApiVendors';
-import { useDispatch, useSelector } from 'react-redux';
+import {Alert, StyleSheet, TextInput} from 'react-native';
+import {GetGeolocation} from '../../lib/Geolocation';
+import {LoadPostMileage, SetMileage} from '../../Api/Vendors/ApiVendors';
+import {useDispatch, useSelector} from 'react-redux';
 
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
-  const Rol = useSelector(state=>state.rol.RolSelect);
+  const Rol = useSelector(state => state.rol.RolSelect);
+  const Milaege = useSelector(state => state.Mileage);
   const {
     control,
     handleSubmit,
@@ -20,28 +21,27 @@ const FormCreateRoute = () => {
       commentary: '',
     },
   });
- async function   onSubmit(formData) {
-  const coords = await GetGeolocation()
-  if(coords.Status){    
-    //create a object data
-    const data = {
-      IdRelacion:Rol[0]?.IdRelacion,
-      Kilometraje:formData.milaege,
-      Comentario:formData.commentary,
-      Latitud : coords.Data.coords.latitude,
-      Longitud:coords.Data.coords.longitude
+  async function onSubmit(formData) {
+    console.log("Antes",Milaege.LoadPostMileage);
+    dispatch(LoadPostMileage(true));
+    const coords = await GetGeolocation();
+    if (coords.Status) {
+      //create a object data
+      const data = {
+        IdRelacion: Rol[0]?.IdRelacion,
+        Kilometraje: formData.milaege,
+        Comentario: formData.commentary,
+        Latitud: coords.Data.coords.latitude,
+        Longitud: coords.Data.coords.longitude,
+      };  
+      console.log("Despues",Milaege.LoadPostMileage);    
+      SetMileage(data, dispatch);
+    } else {
+      Alert.alert(coords.Message);
     }
-  
-    console.log(Rol[0]);    
-    dispatch(LoadPostMileage(true));    
-    SetMileage(data);
-  }else{
-    Alert.alert(coords.Message);
-  }
-
   }
   return (
-    <View flex >
+    <View flex>
       <Controller
         control={control}
         rules={{
@@ -87,12 +87,15 @@ const FormCreateRoute = () => {
         <Text style={styles.TextAlert}>Este campo es requerido</Text>
       )}
       <View style={styles.containerButton}>
-      <ButtonPrimary
-        HandleClick={handleSubmit(onSubmit)}
-        label="Crear"
-        Backcolor="black"></ButtonPrimary>
+        {Milaege.LoadPostMileage ? (
+          <LoaderScreen color="black" message="Cargando..." overlay></LoaderScreen>
+        ) : (
+          <ButtonPrimary
+            HandleClick={handleSubmit(onSubmit)}
+            label="Crear"
+            Backcolor="black"></ButtonPrimary>
+        )}
       </View>
-      
     </View>
   );
 };
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
   TextAlert: {
     color: 'red',
   },
-  containerButton:{
-    margin:'5%'
-  }
+  containerButton: {
+    margin: '5%',
+  },
 });
