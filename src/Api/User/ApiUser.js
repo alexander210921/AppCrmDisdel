@@ -1,4 +1,4 @@
-import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY} from '../../Store/Types/index';
+import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
@@ -81,6 +81,7 @@ export const GetUserRol =(UserId,CompanyId,navigation,dispatch)=>{
     Axios.get('MyWsMobil/api/Mobil/GetUserRol/'+UserId+"/"+CompanyId+"/")
       .then(response => {
         if(response.data.length==1){
+           dispatch(SetUserDefaultRol(response.data))
            dispatch(SetUserRoles(response.data));
            navigation.navigate("Home");
         }else if(response.data.length>1){
@@ -123,4 +124,8 @@ export const SetUserRoles = roles =>({
 export const SetUserDefaultCompany=company =>({
   type:SET_DEFAULT_COMPANY,
   payload:company
+})
+export const SetUserDefaultRol = rol=>({
+  type:SET_DEFAULT_ROL,
+  payload:rol
 })

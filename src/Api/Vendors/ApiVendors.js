@@ -6,16 +6,10 @@ export const SetMileage = (data,dispatch) => {
     try {
       Axios.post('MyWsMobil/api/Mobil/RegistrarKilometraje/',data)
         .then(response => {
-          if(response.data){
-            console.log(response.data)
-             //dispatch(GetUser(response.data));
-             //navigation.navigate("Home");
-          }else{
-            
-          }
+          Alert.alert(response.data.Mensaje);
         })
         .catch(err => {
-          
+          //LoadPostMileage(false);
         });
     } finally {
      // dispatch(LoadGetUser(false));

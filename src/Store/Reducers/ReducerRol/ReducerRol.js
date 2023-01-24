@@ -1,7 +1,8 @@
-import {GET_USER_ROLES} from "../../Types/index";
+import {GET_USER_ROLES,SET_DEFAULT_ROL} from "../../Types/index";
 
 const initialState = { 
-    Roles:[]    
+    Roles:[],
+    RolSelect:[]    
 };
     
   export default  function  (state = initialState, action) {
@@ -10,7 +11,12 @@ const initialState = {
         return {
             ...state,
             Roles: action.payload,                                                                                              
-        };                
+        };      
+      case SET_DEFAULT_ROL:
+        return {
+          ...state,
+          RolSelect:action.payload
+        }             
       default:
         return state;
     }

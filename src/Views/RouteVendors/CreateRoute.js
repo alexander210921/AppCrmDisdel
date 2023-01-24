@@ -5,10 +5,11 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {Alert, StyleSheet,TextInput} from 'react-native'
 import { GetGeolocation } from '../../lib/Geolocation';
 import { LoadPostMileage,SetMileage } from '../../Api/Vendors/ApiVendors';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
+  const Rol = useSelector(state=>state.rol.RolSelect);
   const {
     control,
     handleSubmit,
@@ -24,13 +25,14 @@ const FormCreateRoute = () => {
   if(coords.Status){    
     //create a object data
     const data = {
-      IdRelacion:1007,
+      IdRelacion:Rol[0]?.IdRelacion,
       Kilometraje:formData.milaege,
       Comentario:formData.commentary,
-      Latitud : coords.Data.latitude,
-      Longitud:coords.Data.longitude
+      Latitud : coords.Data.coords.latitude,
+      Longitud:coords.Data.coords.longitude
     }
-
+  
+    console.log(Rol[0]);    
     dispatch(LoadPostMileage(true));    
     SetMileage(data);
   }else{
@@ -53,6 +55,7 @@ const FormCreateRoute = () => {
             value={value}
             placeholder="Kilometraje"
             placeholderTextColor="#b3b2b7"
+            keyboardType="numeric"
           />
         )}
         name="milaege"
