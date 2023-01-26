@@ -37,7 +37,6 @@ function App() {
           style={styles.WrapperApp}>
           <View style={styles.WrapperLogin}>
             <NavigationContainer>
-            
               <Navigation></Navigation>
             </NavigationContainer>
           </View>

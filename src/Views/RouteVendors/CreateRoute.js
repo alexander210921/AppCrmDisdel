@@ -139,22 +139,26 @@ const FormCreateRoute = () => {
     },
   });
   async function onSubmit(formData) {
-    dispatch(LoadPostMileage(true));
-    const coords = await GetGeolocation();
-    if (coords.Status) {
-      //create a object data
-      const data = {
-        IdRelacion: Rol[0]?.IdRelacion,
-        Kilometraje: formData.milaege,
-        Comentario: formData.commentary,
-        Latitud: coords.Data.coords.latitude,
-        Longitud: coords.Data.coords.longitude,
-        AuxBase64Image:base64Image,
-      };      
-      SetMileage(data, dispatch);
-    } else {
-      Alert.alert(coords.Message);
+    try{
+      dispatch(LoadPostMileage(true));
+      const coords = await GetGeolocation();
+      if (coords.Status) {
+        const data = {
+          IdRelacion: Rol[0]?.IdRelacion,
+          Kilometraje: formData.milaege,
+          Comentario: formData.commentary,
+          Latitud: coords.Data.coords.latitude,
+          Longitud: coords.Data.coords.longitude,
+          AuxBase64Image:base64Image,
+        };      
+        SetMileage(data, dispatch);
+      } else {
+        Alert.alert(coords.Message);
+      }
+    }catch(ex){
+      Alert.alert(ex);
     }
+   
   }
   return (
     <ScrollView>

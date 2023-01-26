@@ -8,8 +8,8 @@ export const SetMileage = (data, dispatch) => {
       .then(response => {
         Alert.alert(response.data.Mensaje);
       })
-      .catch(err => {
-        Alert.alert(err);
+      .catch(() => {
+        Alert.alert("Error: por favor intente nuevamente tomar la fotografía");
       }).finally = () => {
       dispatch(LoadPostMileage(false));
     };
