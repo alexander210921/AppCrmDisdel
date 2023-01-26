@@ -8,7 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation/Navigation';
 import {Provider} from 'react-redux';
 import store1 from './src/Store/Store';
-import {requestLocationPermission} from './src/lib/Geolocation/index';
+import {requestLocationPermission} from './src/lib/Permissions/Geolocation/index';
 const windowHeight = Dimensions.get('window').height;
 function App() {
   let uniqueId =
