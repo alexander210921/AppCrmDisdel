@@ -1,8 +1,9 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from '../Views/Login/index'
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Login from '../Views/Login/index';
 import HomeRouteVendors from '../Views/RouteVendors';
 import FormCreateRoute from '../Views/RouteVendors/CreateRoute';
+import VisitirCustomer from '../Views/VisitCustumers';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -12,25 +13,33 @@ export default function StackNavigation() {
         component={Login}
         options={{
           title: 'Login',
-          headerShown: false,          
+          headerShown: false,
         }}
-      />   
+      />
       <Stack.Screen
         name="Home"
         component={HomeRouteVendors}
         options={{
           title: 'Home',
-          headerShown: false,          
+          headerShown: false,
         }}
-      />      
+      />
       <Stack.Screen
         name="FormCreateRoute"
         component={FormCreateRoute}
         options={{
           title: 'Kilometraje',
-          headerShown: false,          
+          headerShown: false,
         }}
-      />     
+      />
+      <Stack.Screen
+        name="VisistCustomer"
+        component={VisitirCustomer}
+        options={{
+          title: 'Visitas',
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

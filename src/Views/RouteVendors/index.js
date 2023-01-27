@@ -15,6 +15,9 @@ const HomeRouteVendors = () => {
     setSelectCard(!selectCard);
     navigation.navigate("FormCreateRoute");    
   };
+  const HandleGoToVisitCustumer=()=>{
+    navigation.navigate("VisistCustomer");    
+  }
   const User = useSelector(state => state.login.user);  
   return (
     <View flex style={StylesWrapper.wraper}>
@@ -22,13 +25,13 @@ const HomeRouteVendors = () => {
         <PhotoProfile image={User.ImagePath}></PhotoProfile>
       </View>
       <View top style={styles.wrapperButtons}>
-        <View center style={styles.HeaderSection}>
+        {/* <View center style={styles.HeaderSection}>
           <Text style={stylesTitle.TitleSmall}>Seccion de kilometraje </Text>
           <Text style={stylesTitle.SubTitleSmall}>
             {' '}
             Registra el kilometraje recorrido en tus rutas.{' '}
           </Text>
-        </View>
+        </View> */}
         <View left>
           <Text style={stylesTitle.TitleMedium}> Selecciona una opción. </Text>
         </View>
@@ -52,8 +55,8 @@ const HomeRouteVendors = () => {
         style={styles.card2}
         flex
         center
-        onPress={HandleMarkerSelectCard}>
-        <Text>Finalizar Ruta</Text>
+        onPress={HandleGoToVisitCustumer}>
+        <Text>Visitas</Text>
       </Card>
     </View>
   );
