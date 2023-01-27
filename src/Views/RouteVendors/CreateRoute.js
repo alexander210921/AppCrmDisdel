@@ -16,53 +16,15 @@ import {LoadPostMileage, SetMileage} from '../../Api/Vendors/ApiVendors';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {_base64ToArrayBuffer}from'../../lib/Converts/index'
-import { isConstructorTypeNode } from 'typescript';
+import { requestExternalWritePermission } from '../../lib/Permissions/Files';
+import { requestCameraPermission } from '../../lib/Permissions/Camera';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const Rol = useSelector(state => state.rol.RolSelect);
   const Milaege = useSelector(state => state.Mileage);
-
   //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
   const [base64Image, setBase64Image] = useState('');
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-          },
-        );
-        // If CAMERA Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else return true;
-  };
-
-  const requestExternalWritePermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'External Storage Write Permission',
-            message: 'App needs write permission',
-          },
-        );
-        // If WRITE_EXTERNAL_STORAGE Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        alert('Write permission err', err);
-      }
-      return false;
-    } else return true;
-  };
 
   const captureImage = async type => {
     let options = {
@@ -102,7 +64,6 @@ const FormCreateRoute = () => {
   const chooseFile = type => {
     let options = {
       mediaType: type,
-      
       quality: 4,
       base64: true,
       includeBase64: true,
@@ -124,9 +85,7 @@ const FormCreateRoute = () => {
       setBase64Image(response.assets[0].base64);
     });
   };
-
   // end config acces
-
   const HandleChooseFile = async () => {};
   const {
     control,
@@ -151,14 +110,15 @@ const FormCreateRoute = () => {
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
         };      
+        console.log(data);
         SetMileage(data, dispatch);
       } else {
         Alert.alert(coords.Message);
       }
     }catch(ex){
+      console.log("error de catch ",ex)
       Alert.alert(ex);
     }
-   
   }
   return (
     <ScrollView>
@@ -184,7 +144,6 @@ const FormCreateRoute = () => {
         {errors.milaege && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
-
         <Controller
           control={control}
           rules={{
@@ -209,7 +168,6 @@ const FormCreateRoute = () => {
         )}
         <View style={styles.containerButton}>
           {/* component open file image */}
-
           {Milaege.LoadPostMileage ? (
             <LoaderScreen
               color="black"
