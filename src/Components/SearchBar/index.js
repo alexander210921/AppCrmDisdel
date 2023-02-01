@@ -3,13 +3,11 @@ import {StyleSheet, TextInput, ScrollView, Alert} from 'react-native';
 import {View} from 'react-native-ui-lib';
 import {ColorBackround} from '../../Assets/Colors/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { GetCustumerVendor } from '../../Api/Customers/ApiCustumer';
 const SearchBar = ({onSubmit}) => {
   const [search, setSearch] = useState('');
   const searchFilterFunction = text => {setSearch(text)};
   const HandleSubmit=()=>{
     onSubmit(search);
-    GetCustumerVendor();
   }
   return (
     <ScrollView style={styles.container}>
@@ -46,7 +44,7 @@ const styles = StyleSheet.create({
     margin: 5,
 
     backgroundColor: 'gray',
-    maxWidth: '90%',
+    maxWidth: '100%',
     flex: 1,
     paddingTop: 10,
     paddingRight: 10,
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'gray',
-    margin: '2%',
+    margin: '1%',
   },
 });
 

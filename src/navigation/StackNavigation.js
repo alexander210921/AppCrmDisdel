@@ -4,6 +4,7 @@ import Login from '../Views/Login/index';
 import HomeRouteVendors from '../Views/RouteVendors';
 import FormCreateRoute from '../Views/RouteVendors/CreateRoute';
 import VisitirCustomer from '../Views/VisitCustumers';
+import FormCreateVisit from '../Views/VisitCustumers/FormCreateVisit';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -37,6 +38,14 @@ export default function StackNavigation() {
         component={VisitirCustomer}
         options={{
           title: 'Visitas',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="FormCreateVisit"
+        component={FormCreateVisit}
+        options={{
+          title: 'Crear Visita',
           headerShown: false,
         }}
       />

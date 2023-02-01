@@ -8,7 +8,11 @@ const StylesWrapper = StyleSheet.create({
     backgroundColor:ColorBackroundSecundary,    
     height:'auto'
   },
-
+  secondWrapper: {
+    padding:'10%',
+    backgroundColor:"withe",    
+    height:windowHeight,
+  },
 });
 
 export default StylesWrapper;
