@@ -8,6 +8,7 @@ import PhotoProfile from '../../Components/Header/HeaderAvatar';
 import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
+import { ScrollView } from 'react-native-gesture-handler';
 const HomeRouteVendors = () => {
   
   const [selectCard, setSelectCard] = useState(false);
@@ -28,6 +29,7 @@ const HomeRouteVendors = () => {
     }
   },[User])
   return (
+    <ScrollView>
     <View flex style={StylesWrapper.wraper}>
       <View right>
         {User?.ImagePath? 
@@ -63,6 +65,7 @@ const HomeRouteVendors = () => {
         <Text>Visitas</Text>
       </Card>
     </View>
+    </ScrollView>
   );
 };
 export default HomeRouteVendors;

@@ -9,6 +9,7 @@ import StylesWrapper from '../../Styles/Wrapers';
 import {useDispatch, useSelector} from 'react-redux';
 import {LoadGetUser} from '../../Api/User/ApiUser';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 const ViewLogin = () => {
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
@@ -28,6 +29,7 @@ const ViewLogin = () => {
       LoginUser(data.userName, data.userPassword, dispatch,navigation);
     };
   return (
+    <ScrollView>
     <View style={StylesWrapper.wraper} flex>
       <View style={{height: 100}} bottom>
         <LoginHeader></LoginHeader>
@@ -85,6 +87,7 @@ const ViewLogin = () => {
         )}
       </View>
     </View>
+    </ScrollView>
   );
 };
 export default React.memo(ViewLogin);
