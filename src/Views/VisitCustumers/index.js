@@ -2,9 +2,7 @@ import React from 'react';
 import {
   View,
   LoaderScreen,
-  SkeletonView,
-  ListItem,
-  Text,
+ 
 } from 'react-native-ui-lib';
 import SearchBar from '../../Components/SearchBar';
 import {GetCustumerVendor} from '../../Api/Customers/ApiCustumer';
@@ -29,22 +27,10 @@ const VisitirCustomer = () => {
     dispatch(SetDefaultCustomerSelect(customer));
   }
   return (
-    <View style={StylesWrapper.secondWrapper}>
-      <View>
+    <ScrollView style={StylesWrapper.secondWrapper}>
         <SearchBar onSubmit={SubmitSearch}></SearchBar>
         {Customer.loadCustomer ? (
-          <SkeletonView
-            template={SkeletonView.templates.LIST_ITEM}
-            showContent={true}
-            renderContent={
-              <ListItem>
-                <Text grey10 text60 marginL-10>
-                  The item
-                </Text>
-              </ListItem>
-            }
-            times={10}
-          />
+          <LoaderScreen message="Buscando..." overlay></LoaderScreen>
         ) : (
           <View>
             {Customer.ListCustomer.length > 0
@@ -54,8 +40,7 @@ const VisitirCustomer = () => {
               : null}
           </View>
         )}
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 export default VisitirCustomer;

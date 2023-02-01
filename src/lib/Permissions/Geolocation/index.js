@@ -43,8 +43,8 @@ export const GetGeolocation = async () => {
     try {
       const Data = await getCurrentPositionResult();
       return {Status: true, Data,Message:'Datos obtenidos correctamente'};
-    } catch (error) {
-      return {Status: false, Message: 'ocurrió un error: ' + error};
+    } catch (error) {      
+      return {Status: false, Message: 'Active su GPS por favor'};
     }
   } else {
     return {Status: false, Message: 'No se tiene el acceso al GPS'};

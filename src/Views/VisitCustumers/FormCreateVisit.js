@@ -39,7 +39,6 @@ const FormCreateVisit = () => {
         dispatch(LoadSetRegisterVisit(true));
         const coords = await GetGeolocation();
         if (coords.Status) {
-            console.log(HasNextDateHour);
             const data ={
                 IdRelacion:Rol[0]?.IdRelacion,
                 CardCode:CustomerSelect.customerSelect.CardCode,
@@ -56,7 +55,8 @@ const FormCreateVisit = () => {
             }
             SetVisitCustomer(data,dispatch);
           } else {
-            Alert.alert(coords.Message);        
+            Alert.alert(coords.Message);
+            dispatch(LoadSetRegisterVisit(false));
           }
     }catch{
         dispatch(LoadSetRegisterVisit(false));

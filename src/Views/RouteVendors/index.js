@@ -5,12 +5,15 @@ import {StyleSheet} from 'react-native';
 import stylesTitle from '../../Styles/Titles';
 import {Text} from 'react-native';
 import PhotoProfile from '../../Components/Header/HeaderAvatar';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-
+import { BackHanlder } from '../../lib/ExitApp';
 const HomeRouteVendors = () => {
+  
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
     setSelectCard(!selectCard);
     navigation.navigate("FormCreateRoute");    
@@ -25,13 +28,6 @@ const HomeRouteVendors = () => {
         <PhotoProfile image={User.ImagePath}></PhotoProfile>
       </View>
       <View top style={styles.wrapperButtons}>
-        {/* <View center style={styles.HeaderSection}>
-          <Text style={stylesTitle.TitleSmall}>Seccion de kilometraje </Text>
-          <Text style={stylesTitle.SubTitleSmall}>
-            {' '}
-            Registra el kilometraje recorrido en tus rutas.{' '}
-          </Text>
-        </View> */}
         <View left>
           <Text style={stylesTitle.TitleMedium}> Selecciona una opción. </Text>
         </View>
@@ -73,7 +69,6 @@ const styles = StyleSheet.create({
   },
   card: {
     height: '15%',
-    // borderWidth: 1,
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: '#ec7663',

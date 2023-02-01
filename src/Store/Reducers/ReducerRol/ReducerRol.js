@@ -1,4 +1,4 @@
-import {GET_USER_ROLES,SET_DEFAULT_ROL} from "../../Types/index";
+import {GET_USER_ROLES,SET_DEFAULT_ROL,LOGOUT_USER} from "../../Types/index";
 
 const initialState = { 
     Roles:[],
@@ -16,7 +16,13 @@ const initialState = {
         return {
           ...state,
           RolSelect:action.payload
-        }             
+        }
+      case LOGOUT_USER:
+        return {
+          ...state,
+          Roles:[],
+          RolSelect:[]
+        }               
       default:
         return state;
     }

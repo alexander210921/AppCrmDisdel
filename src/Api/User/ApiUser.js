@@ -1,4 +1,4 @@
-import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL} from '../../Store/Types/index';
+import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL,LOGOUT_USER} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
@@ -128,4 +128,7 @@ export const SetUserDefaultCompany=company =>({
 export const SetUserDefaultRol = rol=>({
   type:SET_DEFAULT_ROL,
   payload:rol
+})
+export const LogOutUser=()=>({
+  type:LOGOUT_USER
 })

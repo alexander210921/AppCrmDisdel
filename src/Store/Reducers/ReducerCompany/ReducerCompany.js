@@ -1,4 +1,4 @@
-import {GET_USER_COMPANY,SET_DEFAULT_COMPANY} from "../../Types/index";
+import {GET_USER_COMPANY,SET_DEFAULT_COMPANY,LOGOUT_USER} from "../../Types/index";
 
 const initialState = { 
     Company:[],
@@ -16,7 +16,13 @@ const initialState = {
         return {
           ...state,
           CompanySelected:action.payload
-        }               
+        }
+      case LOGOUT_USER :
+        return {
+          ...state,
+          Company:[],
+          CompanySelected:[]
+        }             
       default:
         return state;
     }

@@ -1,4 +1,4 @@
-import {GET_USER,LOAD_GET_USER} from "../../Types/index";
+import {GET_USER,LOAD_GET_USER,LOGOUT_USER} from "../../Types/index";
 
 const initialState = { 
     user:null,
@@ -16,7 +16,13 @@ const initialState = {
         return {
           ...state,
           LoadUser:action.payload
-        }              
+        }
+      case LOGOUT_USER:
+        return {
+          ...state,
+          user:null,
+          LoadUser:false
+        }                
       default:
         return state;
     }

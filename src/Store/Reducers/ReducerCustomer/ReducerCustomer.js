@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -28,7 +28,15 @@ const initialState = {
         return {
           ...state,
           loadSetVisit:action.payload
-        }                  
+        }
+      case LOGOUT_USER:
+        return {
+          ...state,
+          ListCustomer:[],
+          loadCustomer:false,
+          customerSelect:[],
+          loadSetVisit:false
+        }                    
       default:
         return state;
     }

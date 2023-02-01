@@ -39,14 +39,14 @@ const CardCustomer = ({
                 <Button
                   onPress={HandlePressButton}
                   size={Button.sizes.small}
-                  backgroundColor={'#616969'}>
+                  backgroundColor={'orange'}>
                   <Text style={{fontSize: 9}}> Seleccionar</Text>
                 </Button>
               )}
               <Text
                 style={{
                   color: 'gray',
-                  fontSize: 12,
+                  fontSize: 8,
                 }}>
                 {subtitle}
               </Text>

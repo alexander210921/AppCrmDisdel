@@ -7,8 +7,6 @@ import {
   StyleSheet,
   TextInput,
   Image,
-  TouchableOpacity,
-  PermissionsAndroid,
   ScrollView,
 } from 'react-native';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
@@ -25,7 +23,6 @@ const FormCreateRoute = () => {
   //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
   const [base64Image, setBase64Image] = useState('');
-
   const captureImage = async type => {
     let options = {
       mediaType: type,
@@ -109,14 +106,13 @@ const FormCreateRoute = () => {
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
-        };      
-        console.log(data);
+        };              
         SetMileage(data, dispatch);
       } else {
         Alert.alert(coords.Message);
+        dispatch(LoadPostMileage(false));
       }
     }catch(ex){
-      console.log("error de catch ",ex)
       Alert.alert(ex);
     }
   }
