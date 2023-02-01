@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useLayoutEffect} from 'react';
 import {View, Card} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import {StyleSheet} from 'react-native';
@@ -22,10 +22,19 @@ const HomeRouteVendors = () => {
     navigation.navigate("VisistCustomer");    
   }
   const User = useSelector(state => state.login.user);  
+  useLayoutEffect(()=>{
+    console.log(User);
+    if(!User){
+      navigation.navigate("login");
+    }
+  },[])
   return (
     <View flex style={StylesWrapper.wraper}>
       <View right>
-        <PhotoProfile image={User.ImagePath}></PhotoProfile>
+        {User?.ImagePath? 
+          <PhotoProfile image={User.ImagePath}></PhotoProfile>
+          :null
+        }
       </View>
       <View top style={styles.wrapperButtons}>
         <View left>

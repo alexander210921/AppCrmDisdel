@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import {View, Switch, Text,LoaderScreen} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
-import {TextInput, StyleSheet} from 'react-native';
+import {TextInput, StyleSheet,Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import { ScrollView } from 'react-native-gesture-handler';
 import { GetGeolocation } from '../../lib/Permissions/Geolocation';
-import { Alert } from 'react-native/Libraries/Alert/Alert';
 import { LoadSetRegisterVisit,SetVisitCustomer } from '../../Api/Customers/ApiCustumer';
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
@@ -59,6 +58,7 @@ const FormCreateVisit = () => {
             dispatch(LoadSetRegisterVisit(false));
           }
     }catch{
+        Alert.alert("Ocurrió un error, intente nuevamente");
         dispatch(LoadSetRegisterVisit(false));
     }
   };

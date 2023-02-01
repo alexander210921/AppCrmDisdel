@@ -10,7 +10,8 @@ const StylesWrapper = StyleSheet.create({
   },
   secondWrapper: {
     padding:'10%',
-    backgroundColor:"withe",        
+    backgroundColor:"withe", 
+    marginBottom:'11%'       
   },
 });
 

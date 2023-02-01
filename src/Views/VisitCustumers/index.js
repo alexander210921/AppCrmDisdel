@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {  useLayoutEffect } from 'react';
 import {
   View,
   LoaderScreen,
@@ -13,6 +13,7 @@ import StylesWrapper from '../../Styles/Wrapers';
 import CardCustomer from '../../Components/Cards/CardCustomer';
 import { useNavigation } from '@react-navigation/native';
 import { SetDefaultCustomerSelect } from '../../Api/Customers/ApiCustumer';
+import { GeCustomersVendor } from '../../Api/Customers/ApiCustumer';
 const VisitirCustomer = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const Customer = useSelector(state => state.Customer);
@@ -26,6 +27,9 @@ const VisitirCustomer = () => {
     navigation.navigate("FormCreateVisit");
     dispatch(SetDefaultCustomerSelect(customer));
   }
+  useLayoutEffect(()=>{
+    dispatch(GeCustomersVendor([]));
+  },[])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
         <SearchBar onSubmit={SubmitSearch}></SearchBar>
