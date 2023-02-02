@@ -10,6 +10,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {LoadGetUser} from '../../Api/User/ApiUser';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Dimensions } from 'react-native';
+import { ColorBackroundSecundary } from '../../Assets/Colors/Colors';
+const windowHeight = Dimensions.get('window').height;
+
 const ViewLogin = () => {
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
@@ -29,7 +33,7 @@ const ViewLogin = () => {
       LoginUser(data.userName, data.userPassword, dispatch,navigation);
     };
   return (
-    <ScrollView>
+    <ScrollView style={StylesWrapper.secondWrapper}>
     <View style={StylesWrapper.wraper} flex>
       <View style={{height: 100}} bottom>
         <LoginHeader></LoginHeader>
@@ -120,5 +124,12 @@ const styles = StyleSheet.create({
   },
   TextAlert: {
     color: 'red',
+  },
+  Wrapper: {
+    padding:'5%',
+    paddingLeft:'0%',
+    height:  windowHeight,
+    backgroundColor:ColorBackroundSecundary,      
+    marginBottom:'2%',
   },
 });

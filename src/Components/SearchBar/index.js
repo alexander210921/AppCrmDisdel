@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
-    paddingLeft: 0,
+    paddingLeft: 10,
   },
   searchIcon: {
     padding: 10,

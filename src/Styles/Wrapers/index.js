@@ -4,14 +4,15 @@ import { Dimensions } from 'react-native';
 const windowHeight = Dimensions.get('window').height;
 const StylesWrapper = StyleSheet.create({
   wraper: {
-    padding:'10%',
+    padding:'5%',
     backgroundColor:ColorBackroundSecundary,    
-    height:'auto'
+    height:windowHeight,
   },
   secondWrapper: {
-    padding:'10%',
-    backgroundColor:"withe", 
-    marginBottom:'11%'       
+    padding:'5%',
+    height:  windowHeight-10,
+    backgroundColor:ColorBackroundSecundary,      
+    marginBottom:'2%',
   },
 });
 

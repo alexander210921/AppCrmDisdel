@@ -29,8 +29,8 @@ const HomeRouteVendors = () => {
     }
   },[User])
   return (
-    <ScrollView>
-    <View flex style={StylesWrapper.wraper}>
+    <ScrollView style={StylesWrapper.secondWrapper}>
+    <View  style={StylesWrapper.wraper}>
       <View right>
         {User?.ImagePath? 
           <PhotoProfile image={User.ImagePath}></PhotoProfile>
@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f5f7',
   },
   card: {
-    height: '15%',
+    height: '17%',
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: '#ec7663',
   },
   card2: {
-    height: '15%',    
+    height: '17%', 
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: '#327388',

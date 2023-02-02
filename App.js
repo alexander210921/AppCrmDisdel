@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {Dimensions} from 'react-native';
-import {ColorBackround} from './src/Assets/Colors/Colors';
+import {ColorBackround,ColorBackroundSecundary} from './src/Assets/Colors/Colors';
 import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation/Navigation';
 import {Provider} from 'react-redux';
@@ -34,10 +34,10 @@ function App() {
 }
 const styles = StyleSheet.create({
   WrapperApp: {
-    backgroundColor: ColorBackround,
+    backgroundColor: ColorBackroundSecundary,
   },
   WrapperLogin: {
-    backgroundColor: ColorBackround,
+    backgroundColor: ColorBackroundSecundary,
     height: windowHeight,
   },
 });
