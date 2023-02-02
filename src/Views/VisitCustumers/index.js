@@ -28,7 +28,7 @@ const VisitirCustomer = () => {
     dispatch(SetDefaultCustomerSelect(customer));
   };
   useLayoutEffect(() => {
-    //dispatch(GeCustomersVendor([]));
+    dispatch(GeCustomersVendor([]));
   }, []);
   return (
     <ScrollView style={styles.secondWrapper}>
