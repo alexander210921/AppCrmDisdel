@@ -2,13 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, LoaderScreen} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {
-  Alert,
-  StyleSheet,
-  TextInput,
-  Image,
-  ScrollView,
-} from 'react-native';
+import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
 import {LoadPostMileage, SetMileage} from '../../Api/Vendors/ApiVendors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -83,7 +77,6 @@ const FormCreateRoute = () => {
     });
   };
   // end config acces
-  const HandleChooseFile = async () => {};
   const {
     control,
     handleSubmit,
@@ -173,8 +166,11 @@ const FormCreateRoute = () => {
             <>
               {filePath.uri ? (
                 <View style={styles.ContainerimageStyle}>
-                    <Image source={{uri: filePath.uri}} style={styles.imageStyle} />
-                </View>                
+                  <Image
+                    source={{uri: filePath.uri}}
+                    style={styles.imageStyle}
+                  />
+                </View>
               ) : null}
               <View style={styles.containerButton}>
                 <View style={{margin: '1%'}}>
@@ -260,8 +256,8 @@ const styles = StyleSheet.create({
     width: 250,
   },
   imageStyle: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   ContainerimageStyle: {
     width: 200,
