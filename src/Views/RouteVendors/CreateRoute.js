@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
-import {View, Text, LoaderScreen} from 'react-native-ui-lib';
+import {View, Text, LoaderScreen, Switch} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
-import {LoadPostMileage, SetMileage} from '../../Api/Vendors/ApiVendors';
+import {
+  LoadPostMileage,
+  SetMileage,  
+} from '../../Api/Vendors/ApiVendors';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {_base64ToArrayBuffer}from'../../lib/Converts/index'
-import { requestExternalWritePermission } from '../../lib/Permissions/Files';
-import { requestCameraPermission } from '../../lib/Permissions/Camera';
+import {_base64ToArrayBuffer} from '../../lib/Converts/index';
+import {requestExternalWritePermission} from '../../lib/Permissions/Files';
+import {requestCameraPermission} from '../../lib/Permissions/Camera';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const Rol = useSelector(state => state.rol.RolSelect);
@@ -100,7 +103,7 @@ const FormCreateRoute = () => {
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
         };              
-        SetMileage(data, dispatch);
+        SetMileage(data, dispatch,!Milaege.isInitMileage);
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadPostMileage(false));
@@ -156,6 +159,14 @@ const FormCreateRoute = () => {
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
         <View style={styles.containerButton}>
+          <View style={styles.containerLabelSwitch}>
+            <Text>{Milaege.isInitMileage?"Inicio de ruta":"Fin de ruta"}</Text>
+            <Switch
+              value={Milaege.isInitMileage}
+              offColor="#f4c095"
+              onColor="#1D7874"
+              ></Switch>
+          </View>
           {/* component open file image */}
           {Milaege.LoadPostMileage ? (
             <LoaderScreen
@@ -263,5 +274,9 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     margin: 5,
+  },
+  containerLabelSwitch: {
+    padding: 10,
+    paddingTop: 1,
   },
 });
