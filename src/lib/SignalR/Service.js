@@ -5,9 +5,10 @@ export class SignalRService {
     this.connectionService = new signalR.HubConnectionBuilder().withUrl(
       urlService,
     ).build();
-    this.StartService();
+   // this.StartService();
   }
   ReceiveData() {
+    //this.StartService();
     this.connectionService.on('ReceiveMessage', (param1, param2) => {
       console.log(param1, param2);
     });
@@ -19,5 +20,7 @@ export class SignalRService {
         console.log(ex);
     }    
   }
-  SendData() {}
+  SendData(coords) {
+    this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",coords.longitude,coords.latitude));
+  }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import {TextInput, StyleSheet} from 'react-native';
 import LoginHeader from './Header';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
@@ -12,9 +12,13 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { ColorBackroundSecundary } from '../../Assets/Colors/Colors';
+import { SignalRService } from '../../lib/SignalR/Service';
+import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 const windowHeight = Dimensions.get('window').height;
 
-const ViewLogin = () => {
+const ViewLogin = () => { 
+  const serviceSignalR = new SignalRService("http://alexander9-001-site1.ftempurl.com/chatHub");  
+  const ReceiveData = serviceSignalR.ReceiveData();
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
   const dispatch = useDispatch();
@@ -32,6 +36,23 @@ const ViewLogin = () => {
       dispatch(LoadGetUser(true));
       LoginUser(data.userName, data.userPassword, dispatch,navigation);
     };
+    // useEffect(() => {
+    //   async function  HandleGeo(){
+    //    return await GetGeolocation();
+    //  }
+    //  HandleGeo().then(response=>{
+    //   if(response.Status){
+    //     const data={
+    //       latitude:response.Data.coords.latitude.toString(),
+    //       longitude:response.Data.coords.longitude.toString()
+    //     }
+    //     serviceSignalR.SendData(data);
+    //   }else{
+    //     console.log("error: ",response.Message)
+    //   }
+    //  });
+    // }, [ReceiveData])
+    
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
     <View style={StylesWrapper.wraper} flex>

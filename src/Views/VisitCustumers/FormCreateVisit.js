@@ -8,12 +8,14 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import { ScrollView } from 'react-native-gesture-handler';
 import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 import { LoadSetRegisterVisit,SetVisitCustomer } from '../../Api/Customers/ApiCustumer';
+import { useNavigation } from '@react-navigation/native';
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
   const [HasNextDate, setHasNextDate] = useState(false);
   const [HasNextDateHour, setHasNextDateHour] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [hourVisitDate, setHourVisitDate] = useState(0);
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const {
     control,
@@ -71,6 +73,9 @@ const FormCreateVisit = () => {
     setHourVisitDate(ev.nativeEvent.timestamp);
   };
 
+  const openMap=()=>{
+    navigation.navigate("ViewMap");
+  }
   const HandleChangeSwitchNextDate = () => {
     if (!HasNextDate) {
       DateTimePickerAndroid.open({
@@ -234,6 +239,8 @@ const FormCreateVisit = () => {
         :<ButtonPrimary label='Registrar' HandleClick={handleSubmit(submitForm)}></ButtonPrimary>}
         
       </View>
+      {/* load map */}
+      <ButtonPrimary label='Marcar Destino' HandleClick={openMap} ></ButtonPrimary>
     </View>
     </ScrollView>
   );

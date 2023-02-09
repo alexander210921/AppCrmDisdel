@@ -5,6 +5,7 @@ import HomeRouteVendors from '../Views/RouteVendors';
 import FormCreateRoute from '../Views/RouteVendors/CreateRoute';
 import VisitirCustomer from '../Views/VisitCustumers';
 import FormCreateVisit from '../Views/VisitCustumers/FormCreateVisit';
+import { RenderMap } from '../Components/Map';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -46,6 +47,14 @@ export default function StackNavigation() {
         component={FormCreateVisit}
         options={{
           title: 'Crear Visita',
+          headerShown: false,
+        }}
+      />
+           <Stack.Screen
+        name="ViewMap"
+        component={RenderMap}
+        options={{
+          title: 'Mapa',
           headerShown: false,
         }}
       />
