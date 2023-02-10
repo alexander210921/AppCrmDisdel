@@ -1,4 +1,4 @@
-import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL,LOGOUT_USER,SET_COORDS_ACTUALITY} from '../../Store/Types/index';
+import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL,LOGOUT_USER,SET_COORDS_ACTUALITY,SET_COORDS_DESTINATION} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
@@ -135,5 +135,10 @@ export const LogOutUser=()=>({
 
 export const SetActualityCoords=(coords)=>({
   type:SET_COORDS_ACTUALITY,
+  payload:coords
+})
+
+export const SetDestinationCoords = (coords)=>({
+  type:SET_COORDS_DESTINATION,
   payload:coords
 })

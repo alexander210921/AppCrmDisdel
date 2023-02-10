@@ -21,6 +21,7 @@ const FormCreateVisit = () => {
   const [hourVisitDate, setHourVisitDate] = useState(0);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const CoordsDestination = useSelector(state=>state.login);
   const {
     control,
     handleSubmit,
@@ -57,6 +58,8 @@ const FormCreateVisit = () => {
           Comentario: FormData.Comment,
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
+          LatitudeDestino:CoordsDestination.coordsDestination.latitude,
+          LongitudeDestino:CoordsDestination.coordsDestination.longitude
         };
         SetVisitCustomer(data, dispatch);
       } else {
@@ -243,7 +246,13 @@ const FormCreateVisit = () => {
         {errors.Comment && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
+          <View style={styles.ContainerMargin}>
+            <ButtonPrimary
+            label="Marcar Destino"
+            HandleClick={openMap}></ButtonPrimary>
+          </View>  
         <View style={styles.ContainerMargin}>
+              
           {CustomerSelect.loadSetVisit ? (
             <LoaderScreen color="black" overlay></LoaderScreen>
           ) : (
@@ -252,10 +261,6 @@ const FormCreateVisit = () => {
               HandleClick={handleSubmit(submitForm)}></ButtonPrimary>
           )}
         </View>
-        {/* load map */}
-        <ButtonPrimary
-          label="Marcar Destino"
-          HandleClick={openMap}></ButtonPrimary>
       </View>
     </ScrollView>
   );
@@ -284,5 +289,6 @@ const styles = StyleSheet.create({
   },
   ContainerMargin: {
     margin: 12,
+    marginTop:5
   },
 });

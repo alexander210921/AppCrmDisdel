@@ -1,9 +1,14 @@
 import {useEffect} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {StyleSheet, View} from 'react-native';
+import { SetDestinationCoords } from '../../Api/User/ApiUser';
 export const RenderMap = () => {
   const user = useSelector(state => state.login);
+  const dispatch = useDispatch();
+  const SaveVisitDestination=(e)=>{
+    dispatch(SetDestinationCoords(e.nativeEvent.coordinate))
+  }
   return (
     <View style={styles.container}>
       <MapView
@@ -20,11 +25,9 @@ export const RenderMap = () => {
             latitude: user.coordsActuality.latitude,
             longitude: user.coordsActuality.longitude,
           }}
-          title={'test'}
-          description={'descripción'}
-          onDragEnd={(e)=>{
-            console.log(e);
-          }}
+          title={''}
+          description={'Dirige el puntero hacia tu punto de destino'}
+          onDragEnd={SaveVisitDestination}
         />
       </MapView>
     </View>
