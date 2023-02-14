@@ -83,11 +83,7 @@ const FormCreateVisit = () => {
   async function openMap() {
     const coords = await GetGeolocation();
     if (coords.Status) {
-      const coordsdata = {
-        latitude: coords.Data.coords.latitude,
-        longitude: coords.Data.coords.longitude,
-      };
-      dispatch(SetActualityCoords(coordsdata));
+      dispatch(SetActualityCoords(coords.Data.coords));
       navigation.navigate('ViewMap');
     } else {
       Alert.alert(coords.Message);
@@ -248,7 +244,7 @@ const FormCreateVisit = () => {
         )}
           <View style={styles.ContainerMargin}>
             <ButtonPrimary
-            label="Marcar Destino"
+            label=" Destino"
             HandleClick={openMap}></ButtonPrimary>
           </View>  
         <View style={styles.ContainerMargin}>

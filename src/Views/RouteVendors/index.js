@@ -20,7 +20,7 @@ const HomeRouteVendors = () => {
     navigation.navigate("FormCreateRoute");    
   };
   const HandleGoToVisitCustumer=()=>{
-    navigation.navigate("VisistCustomer");    
+    navigation.navigate("MenuVisit");    
   }
   const User = useSelector(state => state.login.user);  
   useEffect(()=>{
@@ -49,7 +49,7 @@ const HomeRouteVendors = () => {
         flexS
         style={styles.card}
         flex
-        center
+        center 
         onPress={HandleMarkerSelectCard}>
         <Text>Crear Ruta</Text>
       </Card>
