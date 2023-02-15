@@ -5,6 +5,7 @@ import {StyleSheet, View} from 'react-native';
 import {SetDestinationCoords} from '../../Api/User/ApiUser';
 import MapViewDirections from 'react-native-maps-directions';
 import Geolocation from '@react-native-community/geolocation';
+import {API_KEY_GOOGLE_MAPS} from "@env";
 export const RenderMap = () => {
   const user = useSelector(state => state.login);
   const [coordsDestination, setCoordsDestination] = useState({
@@ -42,7 +43,7 @@ export const RenderMap = () => {
           <MapViewDirections
             origin={coordsActuality}
             destination={coordsDestination}
-            apikey={'AIzaSyBGzUb5aIQyMpPPaBNZz9CJXvuQDajqavs'}
+            apikey={API_KEY_GOOGLE_MAPS}
             strokeWidth={3}
             strokeColor="red"></MapViewDirections>
         ) : null}

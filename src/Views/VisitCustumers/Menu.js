@@ -3,13 +3,19 @@ import React from 'react';
 import {ScrollView, View,StyleSheet} from 'react-native';
 import {Card,Text} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
+import { FunctionGetCurrentVisit,LoadGetVisitActuality } from '../../Api/Customers/ApiCustumer';
+import { useDispatch,useSelector } from 'react-redux';
 //this component render options create of view route
 export const MenuVisit = () => {
     const navigator = useNavigation();
-  const HandleMarkerSelectCardVisit = () => {
+    const dispatch  = useDispatch();
+    const Rol = useSelector(state => state.rol.RolSelect);
+  const HandleMarkerSelectCardVisit = () => {    
     navigator.navigate("SearchCustomer");
   };
   const GoVisitCreated=()=>{
+    dispatch(LoadGetVisitActuality(true));
+   FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch);
     navigator.navigate("VisitCreated");
   }
   return (

@@ -33,14 +33,14 @@ const CardVisit = ({
               style={{
                 marginTop: 0,
                 borderWidth: 0,
-                width: '90%',
+                width: '100%',
               }}>
               {false ? null : (
                 <Button
                   onPress={HandlePressButton}
                   size={Button.sizes.small}
-                  backgroundColor={'gray'}>
-                  <Text style={{fontSize: 9}}> Seleccionar</Text>
+                  backgroundColor={'white'}>
+                  <Text style={{fontSize: 9,color:'black'}}> Seleccionar</Text>
                 </Button>
               )}
               <Text
@@ -63,10 +63,7 @@ const CardVisit = ({
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
+
   mainCardView: {
     //height: 60,
     display:'flex',
@@ -86,7 +83,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
     marginBottom: 9,
     width: '90%',
-
+  
   },
   subCardView: {
     height: 50,

@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, StyleSheet } from "react-native";
-import { View } from "react-native-ui-lib";
+import { Text, View } from "react-native-ui-lib";
 import StylesWrapper from "../../Styles/Wrapers";
 import CardVisit from '../../Components/Cards/Card1';
 const VisitCreated=()=>{
@@ -9,7 +9,8 @@ const VisitCreated=()=>{
     }
     return(
         <ScrollView style={StylesWrapper.secondWrapper}>
-            <View style={StylesWrapper.wraper}>
+            <Text style={styles.Title}>En Proceso...</Text>
+            <View flex center >
                <CardVisit handleSelectCard={SelectViewVisitDetail} ></CardVisit>
             </View>
         </ScrollView>
@@ -17,12 +18,12 @@ const VisitCreated=()=>{
 }
 export default VisitCreated;
 const styles = StyleSheet.create({
-    CardContainer:{
-        display:'flex',
-        width:'70%',
-        height:15,        
-        backgroundColor:'#f4d384',
-        color:'#b5b7bb'
+    Title:{
+        padding:'7%',
+        paddingBottom:0,
+        color:'black',
+        fontSize:25,
+        fontWeight:600
 
     }
 });
