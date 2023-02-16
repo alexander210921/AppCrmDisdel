@@ -9,6 +9,7 @@ import {RenderMap} from '../Components/Map';
 import {MenuVisit} from '../Views/VisitCustumers/Menu';
 import VisitCreated from '../Views/VisitCustumers/VisitCreated';
 import SearchCustomer from '../Views/VisitCustumers/index';
+import DetailVisit from '../Views/VisitCustumers/DetailVisit';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -82,6 +83,14 @@ export default function StackNavigation() {
         component={SearchCustomer}
         options={{
           title: 'Buscar Cliente',
+          headerShown: false,
+        }}
+      />
+       <Stack.Screen
+        name="DetailVisit"
+        component={DetailVisit}
+        options={{
+          title: 'DetalleVisita',
           headerShown: false,
         }}
       />

@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER} from '../../Store/Types/index';
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
@@ -116,4 +116,9 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
   export const GetAdressCustomer=data=>({
     type:GET_ADRESS_CUSTOMER,
     payload:data
+  })
+
+  export const SaveSelectVisitDetail=visit=>({
+    type:SAVE_VIVIST_DETAIL_SELECT,
+    payload:visit
   })

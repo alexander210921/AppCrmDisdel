@@ -3,10 +3,17 @@ import {ScrollView, StyleSheet} from 'react-native';
 import {Text, View} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
+import { useNavigation } from '@react-navigation/native';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
-  const SelectViewVisitDetail = () => {};
+  const dispatch = useDispatch();
+  const Navigator = useNavigation();
+  const SelectViewVisitDetail = (visit) => {
+    dispatch(SaveSelectVisitDetail(visit));
+    Navigator.navigate("DetailVisit");
+  };
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       {ListRoutes.RoutesInProgress.length > 0 ? (
@@ -15,7 +22,7 @@ const VisitCreated = () => {
           <View flex center>
             {ListRoutes.RoutesInProgress.map(route => {
               return (
-                <CardVisit title2={route.IdRegistro} title={route.CardCode} subtitle={route.Comentario} key={route.CardCode} handleSelectCard={SelectViewVisitDetail}></CardVisit>
+                <CardVisit data={route} title2={route.IdRegistro} title={route.CardCode} subtitle={route.Comentario} key={route.IdRegistro} handleSelectCard={SelectViewVisitDetail}></CardVisit>
               );
             })}
           </View>

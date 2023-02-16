@@ -25,7 +25,7 @@ const FormCreateVisit = () => {
     CustomerSelect.ListAdressCustomerSelect.map((adress)=>{
       return{
         label:adress.Direccion,
-        onPress:()=>{HandleSelectAdress(adress.IdDireccion)}
+        onPress:()=>{HandleSelectAdress(adress.IdDireccion,adress.Direccion)}
       }
     })
   );
@@ -34,7 +34,10 @@ const FormCreateVisit = () => {
   const [date, setDate] = useState(new Date(Date.now()));
   const [hourVisitDate, setHourVisitDate] = useState(0);
   const [ViewPanelAdress, SetViewPannelAdress] = useState(false);
-  const [idAddressVisit,setIdAddressVisit]=useState(0);
+  const [idAddressVisit,setIdAddressVisit]=useState({
+    addressId:0,
+    AddressName:''
+  });
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const CoordsDestination = useSelector(state => state.login);
@@ -54,8 +57,12 @@ const FormCreateVisit = () => {
       Comment: '',
     },
   });
-  const HandleSelectAdress=(addressId=0)=>{
-    setIdAddressVisit(addressId);
+  const HandleSelectAdress=(addressId=0,AddressName='')=>{
+    const address={
+      addressId,
+      AddressName
+    }
+    setIdAddressVisit(address);
   }
   const Rol = useSelector(state => state.rol.RolSelect);
   const submitForm = async FormData => {
@@ -81,8 +88,9 @@ const FormCreateVisit = () => {
           Longitud: coords.Data.coords.longitude,
           LatitudeDestino: CoordsDestination.coordsDestination.latitude,
           LongitudeDestino: CoordsDestination.coordsDestination.longitude,
-          IdDireccionVisita:idAddressVisit,
-          GrupoVisita:''
+          IdDireccionVisita:idAddressVisit.addressId,
+          GrupoVisita:'',
+          DireccionDestino: idAddressVisit>0 ? idAddressVisit.AddressName:''
         };
         SetVisitCustomer(data, dispatch);
       } else {
