@@ -2,7 +2,7 @@ import MapView, {Marker} from 'react-native-maps';
 import {StyleSheet, View} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 import {API_KEY_GOOGLE_MAPS} from "@env";
-export const RenderStaticMap = ({coordsActuality,coordsDestination}) => {
+export const RenderStaticMap = ({coordsActuality,coordsDestination,hasMarker=false}) => {
   return (
     <View style={styles.container}>
       <MapView style={styles.map} initialRegion={coordsActuality}>

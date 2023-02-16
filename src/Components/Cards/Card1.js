@@ -7,7 +7,8 @@ const CardVisit = ({
   title = 'title',
   subtitle = 'subtitle',
   handleSelectCard,
-  data
+  data,
+  title2 = '',
 }) => {
   const HandlePressButton = () => {
     handleSelectCard(data);
@@ -28,6 +29,15 @@ const CardVisit = ({
                 textTransform: 'capitalize',
               }}>
               {title}
+            </Text>
+            <Text
+              style={{
+                fontSize: 11,
+                color: 'gray',
+                fontWeight: 'bold',
+                textTransform: 'capitalize',
+              }}>
+              {title2}
             </Text>
             <View
               style={{

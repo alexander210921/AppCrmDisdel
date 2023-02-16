@@ -5,7 +5,7 @@ const initialState = {
     loadCustomer:false,
     customerSelect:[],
     loadSetVisit:false,
-    RouteInProgress:[],
+    RoutesInProgress:[],
     loadGetCurrentVisit:false,
     ListAdressCustomerSelect:[],
     loadGetAdress:false   
@@ -40,7 +40,7 @@ const initialState = {
           loadCustomer:false,
           customerSelect:[],
           loadSetVisit:false,
-          RouteInProgress:[],
+          RoutesInProgress:[],
           loadGetCurrentVisit:false,
           ListAdressCustomerSelect:[],
           loadGetAdress:false
@@ -48,7 +48,7 @@ const initialState = {
       case SET_VISIT_ACTUALITY:
         return{
           ...state,
-          RouteInProgress:action.payload
+          RoutesInProgress:action.payload
         }  
       case LOAD_GET_VISIT_ACTUALITY:{
         return {

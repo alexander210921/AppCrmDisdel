@@ -29,7 +29,6 @@ const FormCreateVisit = () => {
       }
     })
   );
-  console.log('Esto es un test', AdressCustomer);
   const [HasNextDate, setHasNextDate] = useState(false);
   const [HasNextDateHour, setHasNextDateHour] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));

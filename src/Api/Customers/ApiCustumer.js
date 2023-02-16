@@ -39,11 +39,14 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     }
   };
 
-  export  const  FunctionGetCurrentVisit = (IdRelation,dispatch) => {
+  export  const  FunctionGetCurrentVisit = (IdRelation,dispatch,redirect=false,navigator) => {
     try {
        Axios.get('MyWsMobil/api/Mobil/GetVisitasOpen/'+IdRelation+"/")
         .then(response => {
-            dispatch(SetVisiActualityt(response.data));                
+            dispatch(SetVisiActualityt(response.data));  
+            if(redirect){
+              navigator.navigate("VisitCreated");
+            } 
         })
         .catch(() => {
           Alert.alert("Ocurrió un error por favor vuelva a intentarlo");

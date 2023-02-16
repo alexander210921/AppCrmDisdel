@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {ScrollView, View,StyleSheet} from 'react-native';
-import {Card,Text} from 'react-native-ui-lib';
+import {Card,LoaderScreen,Text} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import { FunctionGetCurrentVisit,LoadGetVisitActuality } from '../../Api/Customers/ApiCustumer';
 import { useDispatch,useSelector } from 'react-redux';
@@ -10,17 +10,22 @@ export const MenuVisit = () => {
     const navigator = useNavigation();
     const dispatch  = useDispatch();
     const Rol = useSelector(state => state.rol.RolSelect);
+    const Customer = useSelector(state=>state.Customer);
   const HandleMarkerSelectCardVisit = () => {    
     navigator.navigate("SearchCustomer");
   };
   const GoVisitCreated=()=>{
     dispatch(LoadGetVisitActuality(true));
-   FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch);
-    navigator.navigate("VisitCreated");
+   FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+    //navigator.navigate("VisitCreated");
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <View style={StylesWrapper.wraper}>
+        {Customer.loadGetCurrentVisit?
+        <LoaderScreen message="cargando..." overlay ></LoaderScreen>
+        :null}
+        
         <Card
           selected={true}
           selectionOptions={styles.selectOptionCard}
