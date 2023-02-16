@@ -1,32 +1,45 @@
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, Alert} from 'react-native';
 import {Text, View, Button} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
-import { FunctionUpdateVisit,LoadUpdateVisit } from '../../Api/Customers/ApiCustumer';
+import {
+  FunctionUpdateVisit,
+  LoadUpdateVisit,
+} from '../../Api/Customers/ApiCustumer';
+import {GetGeolocation} from '../../lib/Permissions/Geolocation';
+
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const Rol = useSelector(state => state.rol.RolSelect);
   const dispatch = useDispatch();
-  const HandleUpdateVisit=(typeOption)=>{
+  const HandleUpdateVisit = async typeOption => {
+    const coords = await GetGeolocation();
+    if (!coords.Status) {
+      Alert.alert(coords.Message);
+      return;
+    }
+
     dispatch(LoadUpdateVisit(true));
-    const visit={
-        IdRelacion:Rol[0].IdRelacion,
-        IdRegistro:data.IdRegistro,
-        Proceso:''
+    const visit = {
+      IdRelacion: Rol[0].IdRelacion,
+      IdRegistro: data.IdRegistro,
+      Proceso: '',
+      LatitudeDestino: coords.Data.coords.latitude,
+      LongitudeDestino: coords.Data.coords.longitude,
+    };
+    switch (typeOption) {
+      case 1: {
+        visit.Proceso = 'Finalizado';
+        FunctionUpdateVisit(visit, dispatch);
+        break;
+      }
+      case 2: {
+        visit.Proceso = 'Cerrado';
+        FunctionUpdateVisit(visit, dispatch);
+        break;
+      }
     }
-    switch(typeOption){        
-        case 1:{
-            visit.Proceso = "Finalizado";
-            FunctionUpdateVisit(visit,dispatch);
-            break;
-        }
-        case 2:{
-            visit.Proceso = "Cerrado";
-            FunctionUpdateVisit(visit,dispatch);
-            break;
-        }
-    }
-  }
+  };
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <View style={StylesWrapper.wraper}>
@@ -35,10 +48,18 @@ const DetailVisit = () => {
         <Text style={{fontSize: 12, color: 'gray'}}>
           {data.DireccionDestino ? data.DireccionDestino : ''}
         </Text>
-        <Button onPress={()=>{HandleUpdateVisit(1)}} style={styles.button1}>
+        <Button
+          onPress={() => {
+            HandleUpdateVisit(1);
+          }}
+          style={styles.button1}>
           <Text style={{fontSize: 9, color: 'white'}}> Finalizar</Text>
         </Button>
-        <Button onPress={()=>{HandleUpdateVisit(2)}} style={styles.button}>
+        <Button
+          onPress={() => {
+            HandleUpdateVisit(2);
+          }}
+          style={styles.button}>
           <Text style={{fontSize: 9, color: 'white'}}> Cancelar</Text>
         </Button>
 
