@@ -60,9 +60,9 @@ const FormCreateVisit = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const submitForm = async FormData => {
     try {
-      if(idAddressVisit==0){
-        Alert.alert("Seleccione la dirección a visitar");
-      }
+      // if(idAddressVisit==0){
+      //   Alert.alert("Seleccione la dirección a visitar");
+      // }
       dispatch(LoadSetRegisterVisit(true));
       const coords = await GetGeolocation();
       if (coords.Status) {
@@ -81,6 +81,8 @@ const FormCreateVisit = () => {
           Longitud: coords.Data.coords.longitude,
           LatitudeDestino: CoordsDestination.coordsDestination.latitude,
           LongitudeDestino: CoordsDestination.coordsDestination.longitude,
+          IdDireccionVisita:idAddressVisit,
+          GrupoVisita:''
         };
         SetVisitCustomer(data, dispatch);
       } else {
