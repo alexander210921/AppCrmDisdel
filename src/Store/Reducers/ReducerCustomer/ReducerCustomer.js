@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -6,7 +6,9 @@ const initialState = {
     customerSelect:[],
     loadSetVisit:false,
     RouteInProgress:[],
-    loadGetCurrentVisit:false   
+    loadGetCurrentVisit:false,
+    ListAdressCustomerSelect:[],
+    loadGetAdress:false   
 };
     
   export default  function  (state = initialState, action) {
@@ -39,7 +41,9 @@ const initialState = {
           customerSelect:[],
           loadSetVisit:false,
           RouteInProgress:[],
-          loadGetCurrentVisit:false
+          loadGetCurrentVisit:false,
+          ListAdressCustomerSelect:[],
+          loadGetAdress:false
         }     
       case SET_VISIT_ACTUALITY:
         return{
@@ -51,7 +55,17 @@ const initialState = {
           ...state,
           loadGetCurrentVisit:action.payload
         }
-      }                 
+      }
+      case GET_ADRESS_CUSTOMER:
+        return{
+          ...state,
+          ListAdressCustomerSelect:action.payload
+        }
+      case LOAD_GET_ADRESS_CUSTOMER:
+        return{
+          ...state,
+          loadGetAdress:action.payload
+        }  
       default:
         return state;
     }

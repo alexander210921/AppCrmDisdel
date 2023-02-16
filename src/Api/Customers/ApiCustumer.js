@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY} from '../../Store/Types/index';
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
@@ -43,8 +43,7 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     try {
        Axios.get('MyWsMobil/api/Mobil/GetVisitasOpen/'+IdRelation+"/")
         .then(response => {
-            dispatch(SetVisiActualityt(response.data));    
-            console.log("Detalles",response.data);
+            dispatch(SetVisiActualityt(response.data));                
         })
         .catch(() => {
           Alert.alert("Ocurrió un error por favor vuelva a intentarlo");
@@ -55,6 +54,26 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
         dispatch(LoadGetVisitActuality(false));
     }
   };
+
+  export  const  FunctionGetAdressCustomer = (CardCode,NombreDB,dispatch,isNavigate=false,navigation) => {
+    try {
+       Axios.get('MyWsOneControlCenter/api/Socio/GetListaDirecciones/'+NombreDB+"/"+CardCode+"/")
+        .then(response => {
+            dispatch(GetAdressCustomer(response.data)); 
+            if(isNavigate){
+              navigation.navigate("FormCreateVisit");
+            }                           
+        })
+        .catch(() => {
+          Alert.alert("Ocurrió un error por favor vuelva a intentarlo");
+        }).finally(()=>{
+          dispatch(LoadGetAdressCustomer(false));
+        });
+    } finally {      
+        dispatch(LoadGetAdressCustomer(false));
+    }
+  };
+
 
   export const LoadGeCustomer = status => ({
     type: LOAD_GET_CUSTOMERS_VENDOR,
@@ -84,4 +103,14 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
   export const LoadGetVisitActuality=status=>({
     type:LOAD_GET_VISIT_ACTUALITY,
     payload:status
+  })
+
+  export const LoadGetAdressCustomer=status=>({
+    type:LOAD_GET_ADRESS_CUSTOMER,
+    payload:status
+  })
+
+  export const GetAdressCustomer=data=>({
+    type:GET_ADRESS_CUSTOMER,
+    payload:data
   })

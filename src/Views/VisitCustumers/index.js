@@ -5,17 +5,19 @@ import {GetCustumerVendor} from '../../Api/Customers/ApiCustumer';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
 import {LoadGeCustomer} from '../../Api/Customers/ApiCustumer';
-import StylesWrapper from '../../Styles/Wrapers';
 import CardCustomer from '../../Components/Cards/CardCustomer';
 import {useNavigation} from '@react-navigation/native';
 import {SetDefaultCustomerSelect} from '../../Api/Customers/ApiCustumer';
 import {GeCustomersVendor} from '../../Api/Customers/ApiCustumer';
 import {StyleSheet, Dimensions} from 'react-native';
 import {ColorBackroundSecundary} from '../../Assets/Colors/Colors';
+import { FunctionGetAdressCustomer,LoadGetAdressCustomer } from '../../Api/Customers/ApiCustumer';
+
 const windowHeight = Dimensions.get('window').height;
 
 const VisitirCustomer = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
+  const company = useSelector(state=>state.company.CompanySelected);
   const Customer = useSelector(state => state.Customer);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -24,8 +26,10 @@ const VisitirCustomer = () => {
     GetCustumerVendor(Rol[0]?.IdRelacion, value, dispatch);
   };
   const HandleSelectCustomer = customer => {
-    navigation.navigate('FormCreateVisit');
+    //get addres customer    
+    dispatch(LoadGetAdressCustomer(true));    
     dispatch(SetDefaultCustomerSelect(customer));
+    FunctionGetAdressCustomer(customer.CardCode,company.NombreDB?company.NombreDB:"SBO_DISDELSA_2013",dispatch,true,navigation);    
   };
   useLayoutEffect(() => {
     dispatch(GeCustomersVendor([]));

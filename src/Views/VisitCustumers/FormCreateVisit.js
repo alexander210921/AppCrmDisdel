@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, Switch, Text, LoaderScreen} from 'react-native-ui-lib';
+import {
+  View,  
+  Text,
+  LoaderScreen,
+  ActionSheet,
+  Button
+} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, StyleSheet, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,13 +21,24 @@ import {useNavigation} from '@react-navigation/native';
 import {SetActualityCoords} from '../../Api/User/ApiUser';
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
+  const [AdressCustomer,setAdressCustomer]=useState(
+    CustomerSelect.ListAdressCustomerSelect.map((adress)=>{
+      return{
+        label:adress.Direccion,
+        onPress:()=>{HandleSelectAdress(adress.IdDireccion)}
+      }
+    })
+  );
+  console.log('Esto es un test', AdressCustomer);
   const [HasNextDate, setHasNextDate] = useState(false);
   const [HasNextDateHour, setHasNextDateHour] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [hourVisitDate, setHourVisitDate] = useState(0);
+  const [ViewPanelAdress, SetViewPannelAdress] = useState(false);
+  const [idAddressVisit,setIdAddressVisit]=useState(0);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const CoordsDestination = useSelector(state=>state.login);
+  const CoordsDestination = useSelector(state => state.login);
   const {
     control,
     handleSubmit,
@@ -38,10 +55,15 @@ const FormCreateVisit = () => {
       Comment: '',
     },
   });
-
+  const HandleSelectAdress=(addressId=0)=>{
+    setIdAddressVisit(addressId);
+  }
   const Rol = useSelector(state => state.rol.RolSelect);
   const submitForm = async FormData => {
     try {
+      if(idAddressVisit==0){
+        Alert.alert("Seleccione la dirección a visitar");
+      }
       dispatch(LoadSetRegisterVisit(true));
       const coords = await GetGeolocation();
       if (coords.Status) {
@@ -58,8 +80,8 @@ const FormCreateVisit = () => {
           Comentario: FormData.Comment,
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
-          LatitudeDestino:CoordsDestination.coordsDestination.latitude,
-          LongitudeDestino:CoordsDestination.coordsDestination.longitude
+          LatitudeDestino: CoordsDestination.coordsDestination.latitude,
+          LongitudeDestino: CoordsDestination.coordsDestination.longitude,
         };
         SetVisitCustomer(data, dispatch);
       } else {
@@ -75,7 +97,9 @@ const FormCreateVisit = () => {
   const onChangeDate = (event, selectedDate) => {
     setDate(selectedDate);
   };
-
+  const HandleViewPanelAdress=()=>{
+    SetViewPannelAdress(true);
+  }
   const onChangeTime = ev => {
     setHourVisitDate(ev.nativeEvent.timestamp);
   };
@@ -187,7 +211,7 @@ const FormCreateVisit = () => {
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
 
-        <View style={styles.ContainerMargin}>
+        {/* <View style={styles.ContainerMargin}>
           <Switch
             value={HasNextDate}
             onValueChange={HandleChangeSwitchNextDate}
@@ -200,7 +224,7 @@ const FormCreateVisit = () => {
             onValueChange={HandleChangeSwitchNextHour}
           />
           <Text>Próxima Hora de visita </Text>
-        </View>
+        </View> */}
 
         <Controller
           control={control}
@@ -242,13 +266,25 @@ const FormCreateVisit = () => {
         {errors.Comment && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
-          <View style={styles.ContainerMargin}>
-            <ButtonPrimary
-            label=" Destino"
-            HandleClick={openMap}></ButtonPrimary>
-          </View>  
         <View style={styles.ContainerMargin}>
-              
+          {/* <ButtonPrimary label=" Destino" HandleClick={openMap}></ButtonPrimary> */}
+          <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/>
+        </View>
+        
+
+        <View style={styles.ContainerMargin}>
+          <ActionSheet
+            visible={ViewPanelAdress}
+            title={'Direcciones'}
+            message={'Message goes here'}
+            cancelButtonIndex={3}
+            destructiveButtonIndex={0}
+            options={AdressCustomer}
+            onDismiss={() => {
+              SetViewPannelAdress(false);
+            }}
+          />
+
           {CustomerSelect.loadSetVisit ? (
             <LoaderScreen color="black" overlay></LoaderScreen>
           ) : (
@@ -265,6 +301,9 @@ export default FormCreateVisit;
 const styles = StyleSheet.create({
   TextAlert: {
     color: 'red',
+  },
+  buttonAdress:{
+    color:'black'
   },
   input: {
     height: 50,
@@ -285,6 +324,6 @@ const styles = StyleSheet.create({
   },
   ContainerMargin: {
     margin: 12,
-    marginTop:5
+    marginTop: 5,
   },
 });
