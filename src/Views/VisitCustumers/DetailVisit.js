@@ -1,18 +1,44 @@
 import {ScrollView, StyleSheet} from 'react-native';
 import {Text, View, Button} from 'react-native-ui-lib';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
+import { FunctionUpdateVisit,LoadUpdateVisit } from '../../Api/Customers/ApiCustumer';
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
+  const Rol = useSelector(state => state.rol.RolSelect);
+  const dispatch = useDispatch();
+  const HandleUpdateVisit=(typeOption)=>{
+    dispatch(LoadUpdateVisit(true));
+    const visit={
+        IdRelacion:Rol[0].IdRelacion,
+        IdRegistro:data.IdRegistro,
+        Proceso:''
+    }
+    switch(typeOption){        
+        case 1:{
+            visit.Proceso = "Finalizado";
+            FunctionUpdateVisit(visit,dispatch);
+            break;
+        }
+        case 2:{
+            visit.Proceso = "Cerrado";
+            FunctionUpdateVisit(visit,dispatch);
+            break;
+        }
+    }
+  }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <View style={StylesWrapper.wraper}>
         <Text>{data.CardCode}</Text>
         <Text>{data.CardName}</Text>
-        <Button style={styles.button1}>
+        <Text style={{fontSize: 12, color: 'gray'}}>
+          {data.DireccionDestino ? data.DireccionDestino : ''}
+        </Text>
+        <Button onPress={()=>{HandleUpdateVisit(1)}} style={styles.button1}>
           <Text style={{fontSize: 9, color: 'white'}}> Finalizar</Text>
         </Button>
-        <Button style={styles.button}>
+        <Button onPress={()=>{HandleUpdateVisit(2)}} style={styles.button}>
           <Text style={{fontSize: 9, color: 'white'}}> Cancelar</Text>
         </Button>
 

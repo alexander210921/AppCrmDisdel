@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT} from '../../Store/Types/index';
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
@@ -77,6 +77,21 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     }
   };
 
+  export  const  FunctionUpdateVisit = (data,dispatch) => {
+    try {
+       Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/',data)
+        .then(response => {
+          Alert.alert(response.data.Mensaje);                            
+        })
+        .catch(() => {
+          Alert.alert("Ocurrió un error por favor vuelva a intentarlo");
+        }).finally(()=>{
+          dispatch(LoadUpdateVisit(false));
+        });
+    } finally {      
+        dispatch(LoadUpdateVisit(false));
+    }
+  };
 
   export const LoadGeCustomer = status => ({
     type: LOAD_GET_CUSTOMERS_VENDOR,
@@ -120,5 +135,10 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
 
   export const SaveSelectVisitDetail=visit=>({
     type:SAVE_VIVIST_DETAIL_SELECT,
+    payload:visit
+  })
+
+  export const LoadUpdateVisit=visit=>({
+    type:LOAD_UPDATE_VISIT,
     payload:visit
   })

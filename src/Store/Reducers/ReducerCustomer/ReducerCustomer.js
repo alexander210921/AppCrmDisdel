@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -9,7 +9,8 @@ const initialState = {
     loadGetCurrentVisit:false,
     ListAdressCustomerSelect:[],
     loadGetAdress:false,
-    VisitDetailSelected:null   
+    VisitDetailSelected:null,
+    loadUpdateVisit:false   
 };
     
   export default  function  (state = initialState, action) {
@@ -45,7 +46,8 @@ const initialState = {
           loadGetCurrentVisit:false,
           ListAdressCustomerSelect:[],
           loadGetAdress:false,
-          VisitDetailSelected:null
+          VisitDetailSelected:null,
+          loadUpdateVisit:false
         }     
       case SET_VISIT_ACTUALITY:
         return{
@@ -72,6 +74,11 @@ const initialState = {
         return {
           ...state,
           VisitDetailSelected:action.payload
+        }  
+      case LOAD_UPDATE_VISIT:
+        return {
+          ...state,
+          loadUpdateVisit:action.payload
         }  
       default:
         return state;
