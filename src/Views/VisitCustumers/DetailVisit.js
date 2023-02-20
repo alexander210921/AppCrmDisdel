@@ -31,6 +31,7 @@ const DetailVisit = () => {
       case 1: {
         visit.Proceso = 'Finalizado';
         FunctionUpdateVisit(visit, dispatch);
+        //FunctionUpdateAddressCoords();
         break;
       }
       case 2: {
