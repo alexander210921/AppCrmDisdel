@@ -57,7 +57,7 @@ const FormCreateVisit = () => {
       Comment: '',
     },
   });
-  const HandleSelectAdress=(addressId=0,AddressName='')=>{
+  const HandleSelectAdress=(addressId=null,AddressName='')=>{
     const address={
       addressId,
       AddressName
@@ -90,7 +90,7 @@ const FormCreateVisit = () => {
           LongitudeDestino: CoordsDestination.coordsDestination.longitude,
           IdDireccionVisita:idAddressVisit.addressId,
           GrupoVisita:'',
-          DireccionDestino: idAddressVisit>0 ? idAddressVisit.AddressName:''
+          DireccionDestino: idAddressVisit!=null? idAddressVisit.AddressName:''
         };
         SetVisitCustomer(data, dispatch);
       } else {

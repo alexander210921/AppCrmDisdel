@@ -56,6 +56,15 @@ const DetailVisit = () => {
           style={styles.button1}>
           <Text style={{fontSize: 9, color: 'white'}}> Finalizar</Text>
         </Button>
+
+        <Button
+          onPress={() => {
+            HandleUpdateVisit(1);
+          }}
+          style={styles.button3}>
+          <Text style={{fontSize: 9, color: 'white'}}> Llegando  </Text>
+        </Button>
+
         <Button
           onPress={() => {
             HandleUpdateVisit(2);
@@ -103,4 +112,10 @@ const styles = StyleSheet.create({
     color: '#fefefe',
     margin: '1%',
   },
+  button3:{
+    width: 40,
+    backgroundColor: '#dc9fa6',
+    color: '#fefefe',
+    margin: '1%',
+  }
 });

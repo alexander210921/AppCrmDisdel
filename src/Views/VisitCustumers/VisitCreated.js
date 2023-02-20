@@ -22,7 +22,7 @@ const VisitCreated = () => {
           <View flex center>
             {ListRoutes.RoutesInProgress.map(route => {
               return (
-                <CardVisit data={route} title2={route.IdRegistro} title={route.CardCode} subtitle={route.Comentario} key={route.IdRegistro} handleSelectCard={SelectViewVisitDetail}></CardVisit>
+                <CardVisit data={route} title2={route.CardName+" / "+ route.IdRegistro} title={route.CardCode} subtitle={route.Comentario} key={route.IdRegistro} handleSelectCard={SelectViewVisitDetail}></CardVisit>
               );
             })}
           </View>
