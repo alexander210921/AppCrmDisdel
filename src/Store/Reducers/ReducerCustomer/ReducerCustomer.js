@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -79,7 +79,16 @@ const initialState = {
         return {
           ...state,
           loadUpdateVisit:action.payload
-        }  
+        }
+      case DELETE_VISIT:
+        let OmitVisit = [...state.RoutesInProgress]
+        if(OmitVisit && OmitVisit.length>0){
+          OmitVisit = OmitVisit.filter(x=>x.IdRegistro!=action.payload);
+        }
+        return {
+          ...state,
+          RoutesInProgress:OmitVisit
+        }    
       default:
         return state;
     }

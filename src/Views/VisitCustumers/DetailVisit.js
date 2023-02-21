@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Alert} from 'react-native';
-import {Text, View, Button} from 'react-native-ui-lib';
+import {Text, View, Button,LoaderScreen} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
@@ -10,16 +10,16 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
+  const isLoadUpadateVisit = useSelector(state=>state.Customer);
   const Rol = useSelector(state => state.rol.RolSelect);
   const dispatch = useDispatch();
   const HandleUpdateVisit = async typeOption => {
+    dispatch(LoadUpdateVisit(true));
     const coords = await GetGeolocation();
     if (!coords.Status) {
       Alert.alert(coords.Message);
       return;
-    }
-
-    dispatch(LoadUpdateVisit(true));
+    }    
     const visit = {
       IdRelacion: Rol[0].IdRelacion,
       IdRegistro: data.IdRegistro,
@@ -29,15 +29,19 @@ const DetailVisit = () => {
     };
     switch (typeOption) {
       case 1: {
-        visit.Proceso = 'Finalizado';
+        visit.Proceso = 'Realizado';
         FunctionUpdateVisit(visit, dispatch);
         //FunctionUpdateAddressCoords();
         break;
       }
       case 2: {
-        visit.Proceso = 'Cerrado';
+        visit.Proceso = 'Cancelado';
         FunctionUpdateVisit(visit, dispatch);
         break;
+      }
+      case 3:{
+        visit.Proceso = 'EnProceso';
+        FunctionUpdateVisit(visit, dispatch);
       }
     }
   };
@@ -49,6 +53,7 @@ const DetailVisit = () => {
         <Text style={{fontSize: 12, color: 'gray'}}>
           {data.DireccionDestino ? data.DireccionDestino : ''}
         </Text>
+        {isLoadUpadateVisit.loadUpdateVisit?<LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>:null}
         <Button
           onPress={() => {
             HandleUpdateVisit(1);
@@ -59,7 +64,7 @@ const DetailVisit = () => {
 
         <Button
           onPress={() => {
-            HandleUpdateVisit(1);
+            HandleUpdateVisit(3);
           }}
           style={styles.button3}>
           <Text style={{fontSize: 9, color: 'white'}}> Llegando  </Text>

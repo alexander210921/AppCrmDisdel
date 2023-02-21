@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,LOAD_UPDATE_COORDS_CUSTOMER} from '../../Store/Types/index';
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,LOAD_UPDATE_COORDS_CUSTOMER,DELETE_VISIT} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
@@ -81,6 +81,9 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     try {
        Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/',data)
         .then(response => {
+          if(response.data.Resultado&&data.Proceso!="EnProceso"){
+            dispatch(DeleteVisit(data.IdRegistro));
+          }
           Alert.alert(response.data.Mensaje);                            
         })
         .catch(() => {
@@ -161,6 +164,11 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
   export const LoadAddressCoordsCustomer=(status)=>({
     type:LOAD_UPDATE_COORDS_CUSTOMER,
     payload:status
+  })
+
+  export const DeleteVisit=(idVisit)=>({
+    type:DELETE_VISIT,
+    payload:idVisit
   })
 
   
