@@ -90,7 +90,8 @@ const FormCreateVisit = () => {
           LongitudeDestino: CoordsDestination.coordsDestination.longitude,
           IdDireccionVisita:idAddressVisit.addressId,
           GrupoVisita:'',
-          DireccionDestino: idAddressVisit!=null? idAddressVisit.AddressName:''
+          DireccionDestino: '',
+          ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
         };
         SetVisitCustomer(data, dispatch);
       } else {

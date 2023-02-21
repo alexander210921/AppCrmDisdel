@@ -35,7 +35,7 @@ const DetailVisit = () => {
     };
     switch (typeOption) {
       case 1: {
-        visit.Proceso = 'Realizado';
+        visit.Proceso = 'Finalizado';
         FunctionUpdateVisit(visit, dispatch);
         //FunctionUpdateAddressCoords();
         break;
@@ -57,7 +57,7 @@ const DetailVisit = () => {
         <Text>{data.CardCode}</Text>
         <Text>{data.CardName}</Text>
         <Text style={{fontSize: 12, color: 'gray'}}>
-          {data.DireccionDestino ? data.DireccionDestino : ''}
+          {data.ShipToCode ? data.ShipToCode : ''}
         </Text>
         {isLoadUpadateVisit.loadUpdateVisit?<LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>:null}
         <Button
