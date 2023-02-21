@@ -100,7 +100,7 @@ export default DetailVisit;
 
 const styles = StyleSheet.create({
   cardinfo1: {
-    backgroundColor: '#fef7db',
+    backgroundColor: '#f3c1c5',
     width: '80%',
     height: '10%',
     marginTop: '1%',
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   button3:{
     width: 40,
-    backgroundColor: '#dc9fa6',
+    backgroundColor: '#6f6971',
     color: '#fefefe',
     margin: '1%',
   }
