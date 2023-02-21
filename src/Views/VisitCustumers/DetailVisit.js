@@ -1,5 +1,6 @@
-import {ScrollView, StyleSheet, Alert} from 'react-native';
-import {Text, View, Button,LoaderScreen} from 'react-native-ui-lib';
+import {useState}from'react'
+import {ScrollView, StyleSheet, Alert,TextInput} from 'react-native';
+import {Text, View, Button,LoaderScreen, TextArea} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
@@ -12,7 +13,11 @@ const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state=>state.Customer);
   const Rol = useSelector(state => state.rol.RolSelect);
+  const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
   const dispatch = useDispatch();
+  const HandleSetComentary=(e)=>{
+    setComentary(e.value);
+  }
   const HandleUpdateVisit = async typeOption => {
     dispatch(LoadUpdateVisit(true));
     const coords = await GetGeolocation();
@@ -26,6 +31,7 @@ const DetailVisit = () => {
       Proceso: '',
       LatitudeDestino: coords.Data.coords.latitude,
       LongitudeDestino: coords.Data.coords.longitude,
+      Comentario : comentary
     };
     switch (typeOption) {
       case 1: {
@@ -80,7 +86,7 @@ const DetailVisit = () => {
 
         <View flex centerH>
           <View style={styles.cardinfo1}>
-            <Text>{data.Comentario}</Text>
+            <TextInput onChangeText={HandleSetComentary} placeholder='Comentario' multiline={true} numberOfLines={4} value={comentary}  ></TextInput>
           </View>
           <View style={styles.cardinfo2}>
             <Text>{data.Titulo}</Text>
@@ -94,7 +100,7 @@ export default DetailVisit;
 
 const styles = StyleSheet.create({
   cardinfo1: {
-    backgroundColor: '#f3c1c5',
+    backgroundColor: '#fef7db',
     width: '80%',
     height: '10%',
     marginTop: '1%',
