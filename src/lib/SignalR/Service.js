@@ -11,20 +11,23 @@ export class SignalRService {
   }
   ReceiveData() {
     //this.StartService();
-    this.connectionService.on('ReceiveMessage', (param1, param2) => {
-      console.log(param1, param2);
+    this.connectionService.on('ReceiveMessage', (response) => {
+      
     });
   }
   StartService() {
     try{
         this.connectionService.start();
     }catch(ex){
-        console.log(ex);
+        Alert.alert("No fué posible iniciar el servicio");
     }    
   }
-  SendData(latitude,longitude) {
+  SendData(data) {
+    //data save the latitude , longitude , IdVisit
     try{
-      this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",latitude,longitude));
+      if(data.IDactividadVisita>0){
+        this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",data));
+      }      
     }catch(ex){
       Alert.alert(ex);
     }
