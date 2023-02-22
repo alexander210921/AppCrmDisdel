@@ -12,13 +12,9 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { ColorBackroundSecundary } from '../../Assets/Colors/Colors';
-import { SignalRService } from '../../lib/SignalR/Service';
-import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 const windowHeight = Dimensions.get('window').height;
 
 const ViewLogin = () => { 
-  const serviceSignalR = new SignalRService("http://alexander9-001-site1.ftempurl.com/chatHub");  
-  const ReceiveData = serviceSignalR.ReceiveData();
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
   const dispatch = useDispatch();

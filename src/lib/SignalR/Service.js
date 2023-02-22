@@ -1,3 +1,5 @@
+import { Alert } from 'react-native/Libraries/Alert/Alert';
+
 const signalR = require('@microsoft/signalr');
 export class SignalRService {
   constructor(urlService) {
@@ -20,7 +22,12 @@ export class SignalRService {
         console.log(ex);
     }    
   }
-  SendData(coords) {
-    this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",coords.longitude,coords.latitude));
+  SendData(latitude,longitude) {
+    try{
+      this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",latitude,longitude));
+    }catch(ex){
+      Alert.alert(ex);
+    }
+    
   }
 }

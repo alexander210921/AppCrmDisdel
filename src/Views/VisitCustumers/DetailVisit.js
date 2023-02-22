@@ -8,6 +8,7 @@ import {
   LoadUpdateVisit,
 } from '../../Api/Customers/ApiCustumer';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
+import { useNavigation } from '@react-navigation/native';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
@@ -15,6 +16,7 @@ const DetailVisit = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const HandleSetComentary=(e)=>{
     setComentary(e.value);
   }
@@ -36,18 +38,20 @@ const DetailVisit = () => {
     switch (typeOption) {
       case 1: {
         visit.Proceso = 'Finalizado';
-        FunctionUpdateVisit(visit, dispatch);
+        visit.LatitudeDestino = 0;
+        visit.longitude = 0;
+        FunctionUpdateVisit(visit, dispatch,navigation);
         //FunctionUpdateAddressCoords();
         break;
       }
       case 2: {
         visit.Proceso = 'Cancelado';
-        FunctionUpdateVisit(visit, dispatch);
+        FunctionUpdateVisit(visit, dispatch,navigation);
         break;
       }
       case 3:{
         visit.Proceso = 'EnProceso';
-        FunctionUpdateVisit(visit, dispatch);
+        FunctionUpdateVisit(visit, dispatch,navigation);
       }
     }
   };

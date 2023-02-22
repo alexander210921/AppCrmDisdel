@@ -77,11 +77,12 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     }
   };
 
-  export  const  FunctionUpdateVisit = (data,dispatch) => {
+  export  const  FunctionUpdateVisit = (data,dispatch,navigation) => {
     try {
        Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/',data)
         .then(response => {
           if(response.data.Resultado&&data.Proceso!="EnProceso"){
+            navigation.navigate("VisitCreated");
             dispatch(DeleteVisit(data.IdRegistro));
           }
           Alert.alert(response.data.Mensaje);                            
@@ -100,7 +101,7 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
        Axios.post('MyWsOneVenta/api/Tracking/ActualizarCamposContacto/',data)
         .then(response => {
           Alert.alert(response.data.Mensaje);                            
-        })
+        })  
         .catch(() => {
           Alert.alert("Ocurrió un error por favor vuelva a intentarlo");
         }).finally(()=>{
