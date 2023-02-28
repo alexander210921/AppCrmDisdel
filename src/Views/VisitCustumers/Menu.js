@@ -15,15 +15,9 @@ export const MenuVisit = () => {
   const HandleMarkerSelectCardVisit = () => {    
     navigator.navigate("SearchCustomer");
   };
-  const GoVisitCreated=async()=>{
-    const coords = await GetGeolocation();
-    if (!coords.Status) {
-        Alert.alert(coords.Message);        
-    }else{
-      dispatch(LoadGetVisitActuality(true));
-      FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
-    }
-    //navigator.navigate("VisitCreated");
+  const GoVisitCreated=async()=>{   
+    dispatch(LoadGetVisitActuality(true));
+    FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
