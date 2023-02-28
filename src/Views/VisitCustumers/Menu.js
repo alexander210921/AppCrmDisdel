@@ -1,11 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {ScrollView, View,StyleSheet} from 'react-native';
+import {ScrollView, View,StyleSheet,Alert} from 'react-native';
 import {Card,LoaderScreen,Text} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import { FunctionGetCurrentVisit,LoadGetVisitActuality } from '../../Api/Customers/ApiCustumer';
 import { useDispatch,useSelector } from 'react-redux';
-import { Alert } from 'react-native/Libraries/Alert/Alert';
 import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 //this component render options create of view route
 export const MenuVisit = () => {
@@ -19,11 +18,11 @@ export const MenuVisit = () => {
   const GoVisitCreated=async()=>{
     const coords = await GetGeolocation();
     if (!coords.Status) {
-        Alert.alert(coords.Message);
-        return;
+        Alert.alert(coords.Message);        
+    }else{
+      dispatch(LoadGetVisitActuality(true));
+      FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
     }
-   dispatch(LoadGetVisitActuality(true));
-   FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
     //navigator.navigate("VisitCreated");
   }
   return (

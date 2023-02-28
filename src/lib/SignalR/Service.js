@@ -1,36 +1,45 @@
-import { Alert } from 'react-native/Libraries/Alert/Alert';
+import {Alert} from 'react-native';
 
 const signalR = require('@microsoft/signalr');
 export class SignalRService {
   constructor(urlService) {
     this.urlService = urlService;
-    this.connectionService = new signalR.HubConnectionBuilder().withUrl(
-      urlService,
-    ).build();
-   // this.StartService();
+    this.NumberConnection = 0;
+    this.connectionService = new signalR.HubConnectionBuilder()
+      .withUrl(urlService)
+      .build();
   }
   ReceiveData() {
     //this.StartService();
-    this.connectionService.on('ReceiveMessage', (response) => {
-      
+    this.connectionService.on('ReceiveMessage', response => {
+      console.log('ServerResponse', response);
     });
   }
-  StartService() {
-    try{
-        this.connectionService.start();
-    }catch(ex){
-        Alert.alert("No fué posible iniciar el servicio");
-    }    
+
+  async StartService() {
+    try {
+      await this.connectionService.start();
+      return true;
+    } catch (ex) {
+      console.log(ex);
+      Alert.alert('' + ex);
+      return false;
+    }
   }
   SendData(data) {
-    //data save the latitude , longitude , IdVisit
-    try{
-      if(data.IDactividadVisita>0){
-        this.connectionService.start().then(()=>this.connectionService.invoke("SendMessage",data));
-      }      
-    }catch(ex){
-      Alert.alert(ex);
+    try {
+      console.log('SERVICIO DE CONEXION', this.connectionService.state);
+      //const startService = await this.StartService();
+      if (this.connectionService.state == 'Connected') {
+        this.connectionService.invoke('SendCoords', data);
+      } else if (this.connectionService.state == 'Disconnected') {
+        this.connectionService.start().then(() => {
+          this.connectionService.invoke('SendCoords', data);
+        });
+      }
+      //Alert.alert(this.connectionService.state)
+    } catch (ex) {
+      Alert.alert('error' + ex);
     }
-    
   }
 }

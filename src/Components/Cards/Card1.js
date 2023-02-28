@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableWithoutFeedback, Text} from 'react-native';
+import {View, StyleSheet, TouchableWithoutFeedback, Text,TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from 'react-native-ui-lib';
 const CardVisit = ({
@@ -9,16 +9,22 @@ const CardVisit = ({
   handleSelectCard,
   data,
   title2 = '',
+  FunctionInit
 }) => {
   const HandlePressButton = () => {
     handleSelectCard(data);
+  };
+  const HandlePressButtonIcon = () => {
+    FunctionInit(data);
   };
   return (
     <TouchableWithoutFeedback>
       <View style={styles.mainCardView}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={styles.subCardView}>
-            <Icon name="map-marker" size={30} color="black" />
+            <TouchableHighlight onPress={HandlePressButtonIcon}>
+                <Icon  name="map-marker" size={30} color="black" />
+            </TouchableHighlight>            
           </View>
           <View style={{marginLeft: 12}}>
             <Text

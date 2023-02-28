@@ -39,13 +39,13 @@ const FormCreateRoute = () => {
         if (response.didCancel) {
           return;
         } else if (response.errorCode == 'camera_unavailable') {
-          alert('Camera not available on device');
+          Alert.alert('Camera not available on device');
           return;
         } else if (response.errorCode == 'permission') {
-          alert('Permission not satisfied');
+          Alert.alert('Permission not satisfied');
           return;
         } else if (response.errorCode == 'others') {
-          alert(response.errorMessage);
+          Alert.alert(response.errorMessage);
           return;
         }
 
@@ -66,13 +66,13 @@ const FormCreateRoute = () => {
       if (response.didCancel) {
         return;
       } else if (response.errorCode == 'camera_unavailable') {
-        alert('Camera not available on device');
+        Alert.alert('Camera not available on device');
         return;
       } else if (response.errorCode == 'permission') {
-        alert('Permission not satisfied');
+        Alert.alert('Permission not satisfied');
         return;
       } else if (response.errorCode == 'others') {
-        alert(response.errorMessage);
+        Alert.alert(response.errorMessage);
         return;
       }
       setFilePath(response.assets[0]);

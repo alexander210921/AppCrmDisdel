@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,LOAD_UPDATE_COORDS_CUSTOMER,DELETE_VISIT} from '../../Store/Types/index';
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,LOAD_UPDATE_COORDS_CUSTOMER,DELETE_VISIT,SET_DETAIL_COORDS} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
@@ -76,7 +76,22 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
         dispatch(LoadGetAdressCustomer(false));
     }
   };
-
+  export  const  FunctionSetCoordsDetail = (data,dispatch,isNavigate=false,navigation) => {
+    try {
+       Axios.post('MyWsOneVenta/api/OCRDExternoActividadVisitaDetalle/CrearRegistro/',data)
+        .then(response => {  
+            console.log(response);   
+           // dispatch(SetCoordsDetailRealTime(true));                     
+        })
+        .catch(() => {
+       //  dispatch(SetCoordsDetailRealTime(false));
+        }).finally(()=>{
+         // dispatch(SetCoordsDetailRealTime(false));
+        });
+    } finally {      
+        //dispatch(SetCoordsDetailRealTime(false));
+    }
+  };
   export  const  FunctionUpdateVisit = (data,dispatch,navigation) => {
     try {
        Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/',data)
@@ -172,4 +187,8 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     payload:idVisit
   })
 
+  export const SetCoordsDetailRealTime=(infoCoords)=>({
+    type:SET_DETAIL_COORDS,
+    payload:infoCoords
+  })
   
