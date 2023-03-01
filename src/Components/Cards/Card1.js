@@ -21,11 +21,11 @@ const CardVisit = ({
     <TouchableWithoutFeedback>
       <View style={styles.mainCardView}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={styles.subCardView}>
+          {/* <View style={styles.subCardView}>
             <TouchableHighlight onPress={HandlePressButtonIcon}>
                 <Icon  name="map-marker" size={30} color="black" />
             </TouchableHighlight>            
-          </View>
+          </View> */}
           <View style={{marginLeft: 12}}>
             <Text
               style={{

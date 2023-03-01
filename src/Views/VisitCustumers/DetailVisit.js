@@ -64,20 +64,20 @@ const DetailVisit = () => {
           {data.ShipToCode ? data.ShipToCode : ''}
         </Text>
         {isLoadUpadateVisit.loadUpdateVisit?<LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>:null}
-        <Button
+        {/* <Button
           onPress={() => {
             HandleUpdateVisit(1);
           }}
           style={styles.button1}>
           <Text style={{fontSize: 9, color: 'white'}}> Finalizar</Text>
-        </Button>
+        </Button> */}
 
         <Button
           onPress={() => {
             HandleUpdateVisit(3);
           }}
-          style={styles.button3}>
-          <Text style={{fontSize: 9, color: 'white'}}> Llegando  </Text>
+          style={styles.button1}>
+          <Text style={{fontSize: 9, color: 'white'}}> Finalizar  </Text>
         </Button>
 
         <Button
