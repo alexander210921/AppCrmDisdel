@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import {Text, View, LoaderScreen, Button} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
@@ -15,6 +15,8 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {generateUUID} from '../../lib/UUID';
+import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
+import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -33,64 +35,37 @@ const VisitCreated = () => {
     dispatch(SetIsInitDrivingVisit(false));
   };
   const SelectViewVisitDetail = visit => {
-    if (!DrivingVisitDetail.isRouteInCourse) {
-      Alert.alert('Inicie primero el viaje antes de acceder');
-      return;
-    }
     dispatch(SaveSelectVisitDetail(visit));
     Navigator.navigate('DetailVisit');
   };
   async function InitVisit(visit = null) {
-    if (!visit) {
-      //Alert.alert("La visita seleccionada es inválida");
-      //return;
-    }
-
-    if (DrivingVisitDetail.isRouteInCourse) {
-      Alert.alert('La ruta se encuentra en curso');
+    if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation != null) {
+      Alert.alert('La ruta ya ha sido iniciada');
       return;
     }
-
     try {
       const coords = await GetGeolocation();
       if (!coords.Status) {
         Alert.alert('' + coords.Message);
         return;
       }
-      // if(DrivingVisitDetail.IdWatchLocation!=null){
-      //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-      // }
       let uuid;
       if (DrivingVisitDetail.UUIDRoute == '') {
         uuid = generateUUID();
       } else {
         uuid = DrivingVisitDetail.UUIDRoute;
       }
-
       dispatch(SaveUUIDRoute(uuid));
-      const IdWatchClock = Geolocation.watchPosition(
-        position => {
-          const {latitude, longitude} = position.coords;
-          const data = {
-            Latitud: latitude,
-            Longitud: longitude,
-            UUIRecorrido: uuid,
-          };
-          //console.log(data);
-          FunctionSetCoordsDetail(data, dispatch, false, Navigator);
-        },
-        error => {
-          Alert.alert('' + error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 20000,
-          maximumAge: 0,
-          distanceFilter: 5,
-        },
-      );
-      dispatch(SaveIdWatch(IdWatchClock));
+      const IdWatch = StartRealTimeCoords(dispatch,uuid,5);
       dispatch(SetIsInitDrivingVisit(true));
+      const infoRoute={
+        DatevalidId : new Date().toLocaleDateString(),
+        UUidInProgress:uuid,
+        IdVisitInProgress:0,  
+        isRouteInCourse:true,     
+        IdWatch         
+      };
+      await AsyncStorageSaveDataJson("@dataRoute",infoRoute)
       Alert.alert('Su viaje está en curso');
     } catch (ex1) {
       Alert.alert('Error: ' + ex1);
@@ -105,8 +80,6 @@ const VisitCreated = () => {
             <Button
               onPress={() => {
                 InitVisit();
-
-                // HandleUpdateVisit(3);
               }}
               style={styles.button3}>
               <Text style={{fontSize: 10, color: 'white'}}> Iniciar Ruta </Text>
@@ -114,7 +87,6 @@ const VisitCreated = () => {
             <Button
               onPress={() => {
                 CancelVisit();
-                //HandleUpdateVisit(3);
               }}
               style={styles.button4}>
               <Text style={{fontSize: 10, color: 'white'}}>

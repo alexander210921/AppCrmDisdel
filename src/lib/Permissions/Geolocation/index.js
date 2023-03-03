@@ -1,5 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {PermissionsAndroid, Alert} from 'react-native';
+import { SaveIdWatch,FunctionSetCoordsDetail } from '../../../Api/Customers/ApiCustumer';
 
 export async function requestLocationPermission() {
   let PermissionIsOk = false;
@@ -50,3 +51,37 @@ export const GetGeolocation = async () => {
     return {Status: false, Message: 'No se tiene el acceso al GPS'};
   }
 };
+
+export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5)=>{
+ 
+  
+  try{
+    const IdWatchClock = Geolocation.watchPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        const data = {
+          Latitud: latitude,
+          Longitud: longitude,
+          UUIRecorrido: uuid,
+          isRouteInCourse:true,
+        };
+        FunctionSetCoordsDetail(data);
+      },
+      error => {
+        Alert.alert('' + error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0,
+        distanceFilter: 5,
+      },
+    );    
+    dispatch(SaveIdWatch(IdWatchClock));
+    return IdWatchClock;
+  }catch(error){
+    Alert.alert(""+error);
+    return null;
+  }
+   
+}

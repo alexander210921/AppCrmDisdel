@@ -76,7 +76,7 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
         dispatch(LoadGetAdressCustomer(false));
     }
   };
-  export  const  FunctionSetCoordsDetail = (data,dispatch,isNavigate=false,navigation) => {
+  export  const  FunctionSetCoordsDetail = (data) => {
     try {
        Axios.post('MyWsOneVenta/api/OCRDExternoActividadVisitaDetalle/CrearRegistro/',data)
         .then(response => {  

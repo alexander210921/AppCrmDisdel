@@ -49,12 +49,12 @@ const FormCreateVisit = () => {
     defaultValues: {
       CustomerCode: '',
       CustomerName: '',
-      Contact: '',
-      Title: '',
-      NextDate: '',
-      NextHourDate: '',
-      Bill: '',
-      Comment: '',
+      // Contact: '',
+      // Title: '',
+      // NextDate: '',
+      // NextHourDate: '',
+      // Bill: '',
+      // Comment: '',
     },
   });
   const HandleSelectAdress=(addressId=null,AddressName='')=>{
@@ -76,14 +76,14 @@ const FormCreateVisit = () => {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
           CardCode: CustomerSelect.customerSelect.CardCode,
-          Contacto: FormData.Contact,
-          Titulo: FormData.Title,
+          // Contacto: FormData.Contact,
+          // Titulo: FormData.Title,
           HasFechaProximaVisita: HasNextDate,
           HasHora: HasNextDateHour,
           FechaProximaVisita: date.toLocaleDateString('en-US'),
           Hora: date.getHours(),
-          Minuta: FormData.Bill,
-          Comentario: FormData.Comment,
+          // Minuta: FormData.Bill,
+          // Comentario: FormData.Comment,
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           LatitudeDestino: CoordsDestination.coordsDestination.latitude,
@@ -179,7 +179,7 @@ const FormCreateVisit = () => {
           name="CustomerName"
         />
 
-        <Controller
+        {/* <Controller
           control={control}
           rules={{
             required: true,
@@ -235,7 +235,7 @@ const FormCreateVisit = () => {
           />
           <Text>Próxima Hora de visita </Text>
         </View> */}
-
+{/* 
         <Controller
           control={control}
           rules={{
@@ -275,7 +275,7 @@ const FormCreateVisit = () => {
         />
         {errors.Comment && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )}
+        )} */} 
         <View style={styles.ContainerMargin}>
           {/* <ButtonPrimary label=" Destino" HandleClick={openMap}></ButtonPrimary> */}
           <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/>

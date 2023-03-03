@@ -9,10 +9,12 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import { useNavigation } from '@react-navigation/native';
+import Geolocation from '@react-native-community/geolocation';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state=>state.Customer);
+  const DrivingVisitDetail = useSelector(state => state.Mileage);
   const Rol = useSelector(state => state.rol.RolSelect);
   const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
   const dispatch = useDispatch();
@@ -21,39 +23,54 @@ const DetailVisit = () => {
     setComentary(e.value);
   }
   const HandleUpdateVisit = async typeOption => {
-    dispatch(LoadUpdateVisit(true));
-    const coords = await GetGeolocation();
-    if (!coords.Status) {
-      Alert.alert(coords.Message);
-      return;
+    try{
+      if (!DrivingVisitDetail.isRouteInCourse &&typeOption==3 ) {
+        Alert.alert('Inicie primero el viaje antes de finalizar');
+        return;
+      }
+      dispatch(LoadUpdateVisit(true));
+      const coords = await GetGeolocation();
+      if (!coords.Status) {
+        Alert.alert(coords.Message);
+        return;
+      }  
+      const visit = {
+        IdRelacion: Rol[0].IdRelacion,
+        IdRegistro: data.IdRegistro,
+        Proceso: '',
+        LatitudeDestino: coords.Data.coords.latitude,
+        LongitudeDestino: coords.Data.coords.longitude,
+        Comentario : comentary,
+        UUIDGroup:''
+      };
+      switch (typeOption) {
+        case 1: {
+          visit.Proceso = 'Finalizado';
+          visit.LatitudeDestino = 0;
+          visit.longitude = 0;
+          FunctionUpdateVisit(visit, dispatch,navigation);
+          //FunctionUpdateAddressCoords();
+          break;
+        }
+        case 2: {
+          visit.Proceso = 'Cancelado';
+          FunctionUpdateVisit(visit, dispatch,navigation);
+          break;
+        }
+        case 3:{        
+          visit.Proceso = 'Finalizado';    
+          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute; 
+       
+          FunctionUpdateVisit(visit, dispatch,navigation);
+          if (DrivingVisitDetail.IdWatchLocation != null) {
+            Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
+          }
+          break;
+        }
+      }
+    }catch(ex){
+      Alert.alert("Error: "+ex)
     }    
-    const visit = {
-      IdRelacion: Rol[0].IdRelacion,
-      IdRegistro: data.IdRegistro,
-      Proceso: '',
-      LatitudeDestino: coords.Data.coords.latitude,
-      LongitudeDestino: coords.Data.coords.longitude,
-      Comentario : comentary
-    };
-    switch (typeOption) {
-      case 1: {
-        visit.Proceso = 'Finalizado';
-        visit.LatitudeDestino = 0;
-        visit.longitude = 0;
-        FunctionUpdateVisit(visit, dispatch,navigation);
-        //FunctionUpdateAddressCoords();
-        break;
-      }
-      case 2: {
-        visit.Proceso = 'Cancelado';
-        FunctionUpdateVisit(visit, dispatch,navigation);
-        break;
-      }
-      case 3:{
-        visit.Proceso = 'EnProceso';
-        FunctionUpdateVisit(visit, dispatch,navigation);
-      }
-    }
   };
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
