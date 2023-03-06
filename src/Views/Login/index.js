@@ -52,10 +52,10 @@ const ViewLogin = () => {
             dispatch(SaveIdWatch(null));
           }          
         }catch{
-          AsyncStorageDeleteData("@dataRoute").then(response=>{
-            dispatch(SetIsInitDrivingVisit(false))
-            dispatch(SaveUUIDRoute(''));
-          });          
+          AsyncStorageDeleteData("@dataRoute").then(response=>{            
+          });   
+          dispatch(SetIsInitDrivingVisit(false))
+          dispatch(SaveUUIDRoute(''));       
         }          
      })    
     }, [])

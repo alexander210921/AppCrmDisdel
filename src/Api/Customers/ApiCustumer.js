@@ -1,6 +1,8 @@
 import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,GET_ADRESS_CUSTOMER,LOAD_GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,LOAD_UPDATE_COORDS_CUSTOMER,DELETE_VISIT,SET_DETAIL_COORDS,SAVE_IDWATCH_GEOLOCATION,SET_INIT_VISITDRIVER,SAVE_UUID_ROUTE_CUSTOMER} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
+import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
+import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
     try {
       Axios.get('MyWsMobil/api/Mobil/GetBuscarSocio/'+IdRelatoin+"/"+SearchTerm+"/")
@@ -99,6 +101,16 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
           if(response.data.Resultado&&data.Proceso!="EnProceso"){
             navigation.navigate("VisitCreated");
             dispatch(DeleteVisit(data.IdRegistro));
+            try{
+              AsyncStorageDeleteData("@dataRoute").then(()=>{            
+              }); 
+              dispatch(SetIsInitDrivingVisit(false))
+              dispatch(SaveUUIDRoute(''));  
+            }catch{
+              
+            }
+            
+            //ELIMINAR CACH´W
           }
           Alert.alert(response.data.Mensaje);                            
         })

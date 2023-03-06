@@ -59,8 +59,7 @@ const DetailVisit = () => {
         }
         case 3:{        
           visit.Proceso = 'Finalizado';    
-          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute; 
-       
+          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;           
           FunctionUpdateVisit(visit, dispatch,navigation);
           if (DrivingVisitDetail.IdWatchLocation != null) {
             Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);

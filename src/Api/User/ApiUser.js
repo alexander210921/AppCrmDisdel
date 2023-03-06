@@ -63,7 +63,9 @@ export const GetUserCompany =(UserId,navigation,dispatch)=>{
            AsyncStorageSaveDataJson("@Company",response.data);  
            //navigation.navigate("Home");
         }else if(response.data.length>1){
-          Alert.alert("seleccione la compañia");
+          dispatch(SetUserCompany(response.data));
+          navigation.navigate("SelectCompany");
+          //Alert.alert("seleccione la compañia");
         }else{
           Alert.alert("Este usuario no posee ninguna compañia");
           dispatch(LoadGetUser(false));
@@ -88,7 +90,9 @@ export const GetUserRol =(UserId,CompanyId,navigation,dispatch)=>{
            AsyncStorageSaveDataJson("@Rol",response.data);  
            navigation.navigate("Home");
         }else if(response.data.length>1){
-          Alert.alert("seleccione el rol");
+          //Alert.alert("seleccione el rol");
+          dispatch(SetUserRoles(response.data));
+          navigation.navigate("SelectRol");
         }else{
           Alert.alert("Este usuario no posee ningun rol asignado");
           dispatch(LoadGetUser(false));

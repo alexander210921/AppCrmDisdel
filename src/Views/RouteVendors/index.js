@@ -9,10 +9,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
+import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 const HomeRouteVendors = () => {
   
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
+  const DrivingVisitDetail = useSelector(state => state.Mileage);
   const dispatch = useDispatch();
   BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
@@ -26,7 +28,12 @@ const HomeRouteVendors = () => {
   useEffect(()=>{
     if(!User){
       navigation.navigate("Login");
+      return;
     }
+    if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {
+      StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute);
+    }
+
   },[User])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>

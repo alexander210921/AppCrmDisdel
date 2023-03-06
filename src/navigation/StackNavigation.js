@@ -10,6 +10,8 @@ import {MenuVisit} from '../Views/VisitCustumers/Menu';
 import VisitCreated from '../Views/VisitCustumers/VisitCreated';
 import SearchCustomer from '../Views/VisitCustumers/index';
 import DetailVisit from '../Views/VisitCustumers/DetailVisit';
+import SelectCompany from '../Views/Company/SelectCompany';
+import SelectRol from '../Views/Rol/SelectRol';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -91,6 +93,22 @@ export default function StackNavigation() {
         component={DetailVisit}
         options={{
           title: 'DetalleVisita',
+          headerShown: false,
+        }}
+      />
+             <Stack.Screen
+        name="SelectCompany"
+        component={SelectCompany}
+        options={{
+          title: 'SelectCompany',
+          headerShown: false,
+        }}
+      />
+                   <Stack.Screen
+        name="SelectRol"
+        component={SelectRol}
+        options={{
+          title: 'SelectRol',
           headerShown: false,
         }}
       />

@@ -54,7 +54,11 @@ export const GetGeolocation = async () => {
 
 export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5)=>{
  
-  
+  const isValidateGPS = await GetGeolocation();
+  if(!isValidateGPS.Status){
+    Alert.alert(isValidateGPS.Message);
+    return;
+  }
   try{
     const IdWatchClock = Geolocation.watchPosition(
       position => {

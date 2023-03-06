@@ -5,7 +5,7 @@ import {Button} from 'react-native-ui-lib';
 const CardVisit = ({
   principalColor = 'orange',
   title = 'title',
-  subtitle = 'subtitle',
+  subtitle = '',
   handleSelectCard,
   data,
   title2 = '',

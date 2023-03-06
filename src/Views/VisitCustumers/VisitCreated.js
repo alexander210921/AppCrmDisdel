@@ -15,7 +15,7 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {generateUUID} from '../../lib/UUID';
-import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
+import { AsyncStorageDeleteData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
@@ -23,7 +23,7 @@ const VisitCreated = () => {
   const dispatch = useDispatch();
   const Navigator = useNavigation();
   const [ErrorConnection, setErrorConnection] = useState(' ');
-  const CancelVisit = () => {
+  const CancelVisit = async() => {
     if (DrivingVisitDetail.IdWatchLocation != null) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
     }
@@ -33,6 +33,7 @@ const VisitCreated = () => {
     }
     dispatch(SaveIdWatch(null));
     dispatch(SetIsInitDrivingVisit(false));
+    await AsyncStorageDeleteData("@dataRoute");
   };
   const SelectViewVisitDetail = visit => {
     dispatch(SaveSelectVisitDetail(visit));
