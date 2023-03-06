@@ -2,8 +2,8 @@ import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
-import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
-export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
+//import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
+export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {  
     try {
       Axios.get('MyWsMobil/api/Mobil/GetBuscarSocio/'+IdRelatoin+"/"+SearchTerm+"/")
         .then(response => {
@@ -25,11 +25,14 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
   };
 
 
-  export const SetVisitCustomer = (data,dispatch) => {
+  export const SetVisitCustomer = (data,dispatch,navigation,isNavigation=false) => {
     try {
       Axios.post('MyWsMobil/api/Mobil/CrearVisita/',data)
         .then(response => {
           Alert.alert(response.data.Mensaje);
+          if(isNavigation){
+            navigation.navigate("SearchCustomer");
+          }
         })
         .catch(() => {
           Alert.alert("Ocurrió un error por favor vuelva a intentarlo");
@@ -107,7 +110,7 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
               dispatch(SetIsInitDrivingVisit(false))
               dispatch(SaveUUIDRoute(''));  
             }catch{
-              
+
             }
             
             //ELIMINAR CACH´W

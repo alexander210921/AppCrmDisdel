@@ -10,11 +10,13 @@ import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
+import Geolocation from '@react-native-community/geolocation';
 const HomeRouteVendors = () => {
   
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
   const DrivingVisitDetail = useSelector(state => state.Mileage);
+  const listVisit = useSelector(state=>state.Customer);
   const dispatch = useDispatch();
   BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
@@ -30,7 +32,11 @@ const HomeRouteVendors = () => {
       navigation.navigate("Login");
       return;
     }
-    if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {
+    // if(listVisit.RoutesInProgress.length==0&&DrivingVisitDetail.IdWatchLocation!=null){
+    //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation)
+    // }
+    // else
+     if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {
       StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute);
     }
 

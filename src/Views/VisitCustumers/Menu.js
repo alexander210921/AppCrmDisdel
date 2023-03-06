@@ -5,7 +5,6 @@ import {Card,LoaderScreen,Text} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import { FunctionGetCurrentVisit,LoadGetVisitActuality } from '../../Api/Customers/ApiCustumer';
 import { useDispatch,useSelector } from 'react-redux';
-import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 //this component render options create of view route
 export const MenuVisit = () => {
     const navigator = useNavigation();
@@ -15,9 +14,13 @@ export const MenuVisit = () => {
   const HandleMarkerSelectCardVisit = () => {    
     navigator.navigate("SearchCustomer");
   };
-  const GoVisitCreated=async()=>{   
-    dispatch(LoadGetVisitActuality(true));
-    FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+  const GoVisitCreated=async()=>{
+    try{
+      dispatch(LoadGetVisitActuality(true));
+      FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+    }catch(ex){
+      Alert.alert(""+ex);
+    }
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>

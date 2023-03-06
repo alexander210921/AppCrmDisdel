@@ -14,7 +14,9 @@ const SelectRol=()=>{
     const selectRolDefault=(rol)=>{
         //navigation.navigate("");
         //console.log(user);
-        dispatch(SetUserDefaultRol(rol));
+        let rolAdd = [];
+        rolAdd.push(rol);        
+        dispatch(SetUserDefaultRol(rolAdd));
         navigation.navigate("Home");
        // GetUserRol(user.EntityID,company.EntityID,navigation,dispatch);
     }   
@@ -27,14 +29,14 @@ const SelectRol=()=>{
     fontSize: 25,
     fontWeight: 600,}}>Seleccione su Rol</Text>
                 {rol.Roles?
-                rol.Roles.map(rol=>(
-                    <CardVisit handleSelectCard={()=>{
+                rol.Roles.map((rol,index)=>(
+                    <CardVisit key={index} handleSelectCard={()=>{
                         selectRolDefault(rol);
                     }} title={rol.Nombre} principalColor="red" >
 
                     </CardVisit>  
                 ))
-                :<Text style={{color:'black'}}>No se encontró ninguna compañia</Text>}
+                :<Text style={{color:'black'}}>No se encontró ningún Rol</Text>}
                             
             </ScrollView>
     )

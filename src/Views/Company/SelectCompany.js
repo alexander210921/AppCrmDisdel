@@ -26,8 +26,8 @@ const SelectCompany=()=>{
     fontSize: 25,
     fontWeight: 600,}}>Seleccione la compañia</Text>
                 {company.Company?
-                company.Company.map(comp=>(
-                    <CardVisit handleSelectCard={()=>{
+                company.Company.map((comp,index)=>(
+                    <CardVisit key={index} handleSelectCard={()=>{
                         selectCompanyDefault(comp);
                     }} title={comp.NombreCompania} principalColor="red" >
 

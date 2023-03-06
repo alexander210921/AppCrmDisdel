@@ -24,8 +24,8 @@ const FormCreateVisit = () => {
   const [AdressCustomer,setAdressCustomer]=useState(
     CustomerSelect.ListAdressCustomerSelect.map((adress)=>{
       return{
-        label:adress.Direccion,
-        onPress:()=>{HandleSelectAdress(adress.IdDireccion,adress.Direccion)}
+        label:adress.Nombre+" / "+adress.Direccion,
+        onPress:()=>{HandleSelectAdress(adress)}
       }
     })
   );
@@ -36,7 +36,8 @@ const FormCreateVisit = () => {
   const [ViewPanelAdress, SetViewPannelAdress] = useState(false);
   const [idAddressVisit,setIdAddressVisit]=useState({
     addressId:0,
-    AddressName:''
+    AddressName:'',
+    ShiptoCodeAddress:''
   });
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -57,10 +58,11 @@ const FormCreateVisit = () => {
       // Comment: '',
     },
   });
-  const HandleSelectAdress=(addressId=null,AddressName='')=>{
+  const HandleSelectAdress=(adress)=>{
     const address={
-      addressId,
-      AddressName
+      addressId:adress.IdDireccion,
+      AddressName:adress.Direccion,
+      ShiptoCodeAddress:adress.Nombre
     }
     setIdAddressVisit(address);
   }
@@ -93,7 +95,7 @@ const FormCreateVisit = () => {
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
         };
-        SetVisitCustomer(data, dispatch);
+        SetVisitCustomer(data, dispatch,navigation,true);
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadSetRegisterVisit(false));
@@ -276,7 +278,9 @@ const FormCreateVisit = () => {
         {errors.Comment && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )} */} 
+        
         <View style={styles.ContainerMargin}>
+        <Text style={styles.TextInformation} >{idAddressVisit.ShiptoCodeAddress+" / "+idAddressVisit.AddressName}</Text>
           {/* <ButtonPrimary label=" Destino" HandleClick={openMap}></ButtonPrimary> */}
           <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/>
         </View>
@@ -311,6 +315,9 @@ export default FormCreateVisit;
 const styles = StyleSheet.create({
   TextAlert: {
     color: 'red',
+  },
+  TextInformation: {
+    color: '#88807B',
   },
   buttonAdress:{
     color:'black'
