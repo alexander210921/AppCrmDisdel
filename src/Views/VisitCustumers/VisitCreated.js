@@ -17,13 +17,26 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {generateUUID} from '../../lib/UUID';
 import { AsyncStorageDeleteData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
+import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const dispatch = useDispatch();
   const Navigator = useNavigation();
   const [ErrorConnection, setErrorConnection] = useState(' ');
-  const CancelVisit = async() => {
+  const GotoBaseVendor=()=>{
+    // const uuid = generateUUID();
+    // StartRealTimeCoords(dispatch,uuid,5);
+    //Alert.alert("Llendo a la base ");
+  }
+
+  const CancelGotoBase=()=>{
+    //cancel visit in progress;
+   // Alert.alert("Camcelando base");
+  }
+
+  const CancelVisit=()=>{
+        
     if (DrivingVisitDetail.IdWatchLocation != null) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
     }
@@ -33,8 +46,16 @@ const VisitCreated = () => {
     }
     dispatch(SaveIdWatch(null));
     dispatch(SetIsInitDrivingVisit(false));
-    await AsyncStorageDeleteData("@dataRoute");
+    AsyncStorageDeleteData("@dataRoute");
+    //go to sabase   
+    //AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
   };
+  const HandleCancelAlert=()=>{
+    //Alert.alert("Cancelar");
+  }
+  handleCancelVisit=()=>{
+    AlertConditional(CancelVisit,HandleCancelAlert,"¿Desea dar por finalizado sus rutas?","");
+  }
   const SelectViewVisitDetail = visit => {
     dispatch(SaveSelectVisitDetail(visit));
     Navigator.navigate('DetailVisit');
@@ -87,7 +108,7 @@ const VisitCreated = () => {
             </Button>
             <Button
               onPress={() => {
-                CancelVisit();
+                handleCancelVisit();
               }}
               style={styles.button4}>
               <Text style={{fontSize: 10, color: 'white'}}>

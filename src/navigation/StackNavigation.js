@@ -12,6 +12,7 @@ import SearchCustomer from '../Views/VisitCustumers/index';
 import DetailVisit from '../Views/VisitCustumers/DetailVisit';
 import SelectCompany from '../Views/Company/SelectCompany';
 import SelectRol from '../Views/Rol/SelectRol';
+import FormFinaliceVisit from '../Views/VisitCustumers/VisitFinaliceForm';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -80,7 +81,7 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-          <Stack.Screen
+      <Stack.Screen
         name="SearchCustomer"
         component={SearchCustomer}
         options={{
@@ -88,7 +89,7 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="DetailVisit"
         component={DetailVisit}
         options={{
@@ -96,7 +97,7 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-             <Stack.Screen
+      <Stack.Screen
         name="SelectCompany"
         component={SelectCompany}
         options={{
@@ -104,11 +105,19 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-                   <Stack.Screen
+      <Stack.Screen
         name="SelectRol"
         component={SelectRol}
         options={{
           title: 'SelectRol',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="FormFinaliceVisit"
+        component={FormFinaliceVisit}
+        options={{
+          title: 'FormFinaliceVisit',
           headerShown: false,
         }}
       />

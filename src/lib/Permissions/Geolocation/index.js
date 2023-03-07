@@ -78,7 +78,7 @@ export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5)=>{
         enableHighAccuracy: true,
         timeout: 20000,
         maximumAge: 0,
-        distanceFilter: 5,
+        distanceFilter: 300,
       },
     );    
     dispatch(SaveIdWatch(IdWatchClock));
