@@ -4,10 +4,9 @@ import {Text, View, LoaderScreen, Button} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
-import {SaveSelectVisitDetail} from '../../Api/Customers/ApiCustumer';
+import {SaveSelectVisitDetail, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
-import {FunctionSetCoordsDetail} from '../../Api/Customers/ApiCustumer';
 import {
   SaveIdWatch,
   SetIsInitDrivingVisit,
@@ -18,21 +17,34 @@ import {generateUUID} from '../../lib/UUID';
 import { AsyncStorageDeleteData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import { SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const dispatch = useDispatch();
   const Navigator = useNavigation();
   const [ErrorConnection, setErrorConnection] = useState(' ');
+  const Rol = useSelector(state => state.rol.RolSelect);
+  const navigation = useNavigation();
+  const [dataVisitReturn,setDataVisitReturn] = useState({
+        CardCode:'C46306293',
+        CardName:'DISDEL, S.A.',
+        Comentario:'De Regreso a la base',
+        IdRegistro:0,
+        Contacto:'',
+        Longitud:0,
+        Latitud:0,
+        ShipToCode:'',
+        Kilometraje:0,
+        IdRelacion: Rol[0]?.IdRelacion,
+  });
   const GotoBaseVendor=()=>{
-    // const uuid = generateUUID();
-    // StartRealTimeCoords(dispatch,uuid,5);
-    //Alert.alert("Llendo a la base ");
+    SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true);
+  
   }
 
   const CancelGotoBase=()=>{
-    //cancel visit in progress;
-   // Alert.alert("Camcelando base");
+    dispatch(SetVisiActualityt([])); 
   }
 
   const CancelVisit=()=>{
@@ -43,10 +55,13 @@ const VisitCreated = () => {
     if (!DrivingVisitDetail.isRouteInCourse) {
       Alert.alert('No se ha iniciado el viaje');
       return;
-    }
+    }    
     dispatch(SaveIdWatch(null));
-    dispatch(SetIsInitDrivingVisit(false));
-    AsyncStorageDeleteData("@dataRoute");
+    dispatch(SetIsInitDrivingVisit(false));    
+    AsyncStorageDeleteData("@dataRoute").finally(()=>{
+      //Eliminar reporte de visitas en proceso
+      AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
+    });
     //go to sabase   
     //AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
   };

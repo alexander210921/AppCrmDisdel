@@ -95,7 +95,7 @@ const FormCreateVisit = () => {
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
         };
-        SetVisitCustomer(data, dispatch,navigation,true);
+        SetVisitCustomer(data, dispatch,navigation,true,false);
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadSetRegisterVisit(false));

@@ -5,11 +5,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
   FunctionUpdateVisit,
-  LoadUpdateVisit,
 } from '../../Api/Customers/ApiCustumer';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import { useNavigation } from '@react-navigation/native';
-import Geolocation from '@react-native-community/geolocation';
+import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
@@ -17,10 +15,20 @@ const DetailVisit = () => {
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const Rol = useSelector(state => state.rol.RolSelect);
   const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
+  const [visit,setVisit] = useState({    
+      IdRelacion: Rol[0].IdRelacion,
+      IdRegistro: data.IdRegistro,
+      Proceso: '',
+      Comentario : comentary,
+      UUIDGroup:''
+  });
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const HandleSetComentary=(e)=>{
     setComentary(e.value);
+  }
+  const ConfirmCancelVisit=()=>{
+    FunctionUpdateVisit(visit,dispatch,navigation);
   }
   const HandleUpdateVisit = async typeOption => {
     try{
@@ -28,21 +36,8 @@ const DetailVisit = () => {
         Alert.alert('Inicie primero el viaje antes de finalizar');
         return;
       }
-     // dispatch(LoadUpdateVisit(true));
-      // const coords = await GetGeolocation();
-      // if (!coords.Status) {
-      //   Alert.alert(coords.Message);
-      //   return;
-      // }  
-      const visit = {
-        IdRelacion: Rol[0].IdRelacion,
-        IdRegistro: data.IdRegistro,
-        Proceso: '',
-        // LatitudeDestino: coords.Data.coords.latitude,
-        // LongitudeDestino: coords.Data.coords.longitude,
-        Comentario : comentary,
-        UUIDGroup:''
-      };
+
+     
       switch (typeOption) {
         case 1: {
           visit.Proceso = 'Finalizado';
@@ -52,9 +47,9 @@ const DetailVisit = () => {
           //FunctionUpdateAddressCoords();
           break;
         }
-        case 2: {
-          visit.Proceso = 'Cancelado';
-          FunctionUpdateVisit(visit, dispatch,navigation);
+        case 2: {          
+          setVisit({...visit,Proceso:'Cancelado'})
+          AlertConditional(ConfirmCancelVisit,function(){},"¿Está seguro de cancelar esta visita?","");
           break;
         }
         case 3:{                            
