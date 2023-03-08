@@ -28,18 +28,18 @@ const DetailVisit = () => {
         Alert.alert('Inicie primero el viaje antes de finalizar');
         return;
       }
-      dispatch(LoadUpdateVisit(true));
-      const coords = await GetGeolocation();
-      if (!coords.Status) {
-        Alert.alert(coords.Message);
-        return;
-      }  
+     // dispatch(LoadUpdateVisit(true));
+      // const coords = await GetGeolocation();
+      // if (!coords.Status) {
+      //   Alert.alert(coords.Message);
+      //   return;
+      // }  
       const visit = {
         IdRelacion: Rol[0].IdRelacion,
         IdRegistro: data.IdRegistro,
         Proceso: '',
-        LatitudeDestino: coords.Data.coords.latitude,
-        LongitudeDestino: coords.Data.coords.longitude,
+        // LatitudeDestino: coords.Data.coords.latitude,
+        // LongitudeDestino: coords.Data.coords.longitude,
         Comentario : comentary,
         UUIDGroup:''
       };
@@ -57,16 +57,10 @@ const DetailVisit = () => {
           FunctionUpdateVisit(visit, dispatch,navigation);
           break;
         }
-        case 3:{        
-          visit.Proceso = 'Finalizado';    
-          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;           
-          FunctionUpdateVisit(visit, dispatch,navigation);
-          if (DrivingVisitDetail.IdWatchLocation != null) {
-            Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-          }
-          break;
-        }
-      }
+        case 3:{                            
+           navigation.navigate("FormFinaliceVisit");                  
+        }       
+      };      
     }catch(ex){
       Alert.alert("Error: "+ex)
     }    
@@ -79,15 +73,7 @@ const DetailVisit = () => {
         <Text style={{fontSize: 12, color: 'gray'}}>
           {data.ShipToCode ? data.ShipToCode : ''}
         </Text>
-        {isLoadUpadateVisit.loadUpdateVisit?<LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>:null}
-        {/* <Button
-          onPress={() => {
-            HandleUpdateVisit(1);
-          }}
-          style={styles.button1}>
-          <Text style={{fontSize: 9, color: 'white'}}> Finalizar</Text>
-        </Button> */}
-
+        {isLoadUpadateVisit.loadUpdateVisit?<LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>:null}      
         <Button
           onPress={() => {
             HandleUpdateVisit(3);

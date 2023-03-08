@@ -102,13 +102,13 @@ export const GetCustumerVendor = (IdRelatoin,SearchTerm,dispatch) => {
        Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/',data)
         .then(response => {
           if(response.data.Resultado&&data.Proceso!="EnProceso"){
-            navigation.navigate("VisitCreated");
             dispatch(DeleteVisit(data.IdRegistro));
             try{
-              AsyncStorageDeleteData("@dataRoute").then(()=>{            
-              }); 
-              dispatch(SetIsInitDrivingVisit(false))
+              AsyncStorageDeleteData("@dataRoute").finally(()=>{ 
+                dispatch(SetIsInitDrivingVisit(false))
               dispatch(SaveUUIDRoute(''));  
+                navigation.navigate("VisitCreated");           
+              });               
             }catch{
 
             }
