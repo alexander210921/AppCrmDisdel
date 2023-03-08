@@ -58,7 +58,9 @@ export const SetVisitCustomer = (
   try {
     Axios.post('MyWsMobil/api/Mobil/CrearVisita/', data)
       .then(response => {
-        Alert.alert(response.data.Mensaje);
+        if(!IsReturn){
+          Alert.alert(response.data.Mensaje);
+        }        
         if (response.data.Resultado && IsReturn) {        
           dispatch(
             SetVisiActualityt([

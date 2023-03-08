@@ -39,8 +39,15 @@ const VisitCreated = () => {
         IdRelacion: Rol[0]?.IdRelacion,
   });
   const GotoBaseVendor=()=>{
-    SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true);
-  
+    try{
+      SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true);
+      const uuid = generateUUID();
+      StartRealTimeCoords(dispatch,uuid,5);
+      dispatch(SaveUUIDRoute(uuid));
+    }catch(ex){
+      Alert.alert("Error: "+ex);
+    }
+    
   }
 
   const CancelGotoBase=()=>{
