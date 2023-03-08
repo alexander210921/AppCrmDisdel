@@ -53,7 +53,8 @@ export const SetVisitCustomer = (
   dispatch,
   navigation,
   isNavigation = false,
-  IsReturn = false
+  IsReturn = false,
+  ViewNameNavigate
 ) => {
   try {
     Axios.post('MyWsMobil/api/Mobil/CrearVisita/', data)
@@ -72,7 +73,7 @@ export const SetVisitCustomer = (
           );
         }
         if (isNavigation) {
-          navigation.navigate('SearchCustomer');
+          navigation.navigate(ViewNameNavigate);
         }
       })
       .catch(() => {

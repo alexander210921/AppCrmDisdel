@@ -13,10 +13,12 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {_base64ToArrayBuffer} from '../../lib/Converts/index';
 import {requestExternalWritePermission} from '../../lib/Permissions/Files';
 import {requestCameraPermission} from '../../lib/Permissions/Camera';
+import { useNavigation } from '@react-navigation/native';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const Rol = useSelector(state => state.rol.RolSelect);
   const Milaege = useSelector(state => state.Mileage);
+  const navigation = useNavigation();
   //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
   const [base64Image, setBase64Image] = useState('');
@@ -98,7 +100,7 @@ const FormCreateRoute = () => {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
           Kilometraje: formData.milaege,
-          Comentario: formData.commentary,
+          Comentario: formData.commentary?formData.commentary:'',
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
@@ -136,37 +138,9 @@ const FormCreateRoute = () => {
         {errors.milaege && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Comentario"
-              placeholderTextColor="#b3b2b7"
-              multiline
-              numberOfLines={3}
-            />
-          )}
-          name="commentary"
-        />
-        {errors.commentary && (
-          <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )}
+       
         <View style={styles.containerButton}>
-          <View style={styles.containerLabelSwitch}>
-            <Text>{Milaege.isInitMileage?"Inicio de ruta":"Fin de ruta"}</Text>
-            <Switch
-              value={Milaege.isInitMileage}
-              offColor="#f4c095"
-              onColor="#1D7874"
-              ></Switch>
-          </View>
+
           {/* component open file image */}
           {Milaege.LoadPostMileage ? (
             <LoaderScreen
@@ -204,6 +178,12 @@ const FormCreateRoute = () => {
                 <ButtonPrimary
                   HandleClick={handleSubmit(onSubmit)}
                   label="Crear"
+                  Backcolor="black"></ButtonPrimary>
+              </View>
+              <View style={styles.containerButton}>
+                <ButtonPrimary
+                  HandleClick={()=>{navigation.navigate("SearchCustomer")}}
+                  label="Omitir"
                   Backcolor="black"></ButtonPrimary>
               </View>
             </>

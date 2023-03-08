@@ -40,7 +40,7 @@ const VisitCreated = () => {
   });
   const GotoBaseVendor=()=>{
     try{
-      SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true);
+      SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true,"SearchCustomer");
       const uuid = generateUUID();
       StartRealTimeCoords(dispatch,uuid,5);
       dispatch(SaveUUIDRoute(uuid));
