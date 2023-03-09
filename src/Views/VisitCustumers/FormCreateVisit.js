@@ -157,7 +157,7 @@ const FormCreateVisit = () => {
             <LoaderScreen color="black" overlay></LoaderScreen>
           ) : (
             <ButtonPrimary
-              label="Registrar"
+              label="Registrar Visita"
               HandleClick={handleSubmit(submitForm)}></ButtonPrimary>
           )}
         </View>

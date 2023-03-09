@@ -15,7 +15,8 @@ import {
   SAVE_IDWATCH_GEOLOCATION,
   SET_INIT_VISITDRIVER,
   SAVE_UUID_ROUTE_CUSTOMER,
-  LOAD_CANCEL_VISITS_IN_COURSE
+  LOAD_CANCEL_VISITS_IN_COURSE,
+  SAVE_VISIT_CREATED
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -63,6 +64,10 @@ export const SetVisitCustomer = (
         if(!IsReturn){
           Alert.alert(response.data.Mensaje);
         }        
+        dispatch(SaveVisitCreated({
+          IdVisit:response.data.DocNum,
+          isEndVisit:IsReturn
+        }));
         if (response.data.Resultado && IsReturn) {        
           dispatch(
             SetVisiActualityt([
@@ -311,3 +316,7 @@ export const SaveUUIDRoute = uuid => ({
   type: SAVE_UUID_ROUTE_CUSTOMER,
   payload: uuid,
 });
+export const SaveVisitCreated=(data)=>({
+  type:SAVE_VISIT_CREATED,
+  payload:data
+})

@@ -153,7 +153,7 @@ const VisitCreated = () => {
         // );
       });
     }
-  }, []);
+  }, [ListRoutes.RoutesInProgress]);
   async function InitVisit(visit = null) {
     if (ListRoutes.RoutesInProgress.length == 0) {
       Alert.alert('No existen visitas en curso');

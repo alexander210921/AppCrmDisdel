@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, LoaderScreen, Switch} from 'react-native-ui-lib';
+import {View, Text, LoaderScreen, Button} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
@@ -104,6 +104,8 @@ const FormCreateRoute = () => {
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
+          IdVisista:Milaege.idVisitCreated.IdVisit,
+          TipoKilometraje:Milaege.idVisitCreated.isEndVisit
         };              
         SetMileage(data, dispatch,!Milaege.isInitMileage);
       } else {
@@ -159,20 +161,21 @@ const FormCreateRoute = () => {
               ) : null}
               <View style={styles.containerButton}>
                 <View style={{margin: '1%'}}>
-                  <ButtonPrimary
+                  {/* <ButtonPrimary
                     HandleClick={() => {
                       captureImage('photo');
                     }}
                     label="Tomar Fotografía"
-                    Backcolor="#001835"></ButtonPrimary>
+                    Backcolor="#001835"></ButtonPrimary> */}
                 </View>
-
-                <ButtonPrimary
+                <Button color="white" style={styles.buttonAdress} label={'Elegir imagen de galería'} size={Button.sizes.small} backgroundColor={"#c6e2e9"} onPress={()=>{chooseFile('photo');}}/>
+                {/* <Button
+                                    
                   HandleClick={() => {
                     chooseFile('photo');
                   }}
                   label="Elegir desde galeria"
-                  Backcolor="#001835"></ButtonPrimary>
+                  Backcolor="#001835"></Button> */}
               </View>
               <View style={styles.containerButton}>
                 <ButtonPrimary

@@ -1,11 +1,15 @@
-import {LOAD_POST_MILEAGE,LOGOUT_USER,SET_INIT_OR_END_MILEAGE,SAVE_IDWATCH_GEOLOCATION,SET_INIT_VISITDRIVER,SAVE_UUID_ROUTE_CUSTOMER} from "../../Types/index";
+import {LOAD_POST_MILEAGE,LOGOUT_USER,SET_INIT_OR_END_MILEAGE,SAVE_IDWATCH_GEOLOCATION,SET_INIT_VISITDRIVER,SAVE_UUID_ROUTE_CUSTOMER,SAVE_VISIT_CREATED} from "../../Types/index";
 
 const initialState = { 
     LoadPostMileage:false,
     isInitMileage:true, // is true because is first login then is init mileage
     IdWatchLocation:null,
     isRouteInCourse:false,
-    UUIDRoute:''
+    UUIDRoute:'',
+    idVisitCreated:{
+      IdVisit:0,
+      isEndVisit:false
+    }
 };
     
   export default  function  (state = initialState, action) {
@@ -20,7 +24,11 @@ const initialState = {
           ...state,
           LoadPostMileage:false,
           isInitMileage:true,
-          IdWatchLocation:null
+          IdWatchLocation:null,
+          idVisitCreated:{
+            IdVisit:0,
+            isEndVisit:false
+          }
         }
       case SET_INIT_OR_END_MILEAGE:
         return {
@@ -41,7 +49,12 @@ const initialState = {
         return {
           ...state,
           UUIDRoute:action.payload
-        }                      
+        }    
+      case SAVE_VISIT_CREATED:
+        return {
+          ...state,
+          idVisitCreated:action.payload
+        }                    
       default:
         return state;
     }
