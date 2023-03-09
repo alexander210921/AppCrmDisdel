@@ -3,28 +3,37 @@ import {View, Card} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import {StyleSheet} from 'react-native';
 import stylesTitle from '../../Styles/Titles';
-import {Text} from 'react-native';
+import {Text,Alert} from 'react-native';
 import PhotoProfile from '../../Components/Header/HeaderAvatar';
 import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
-import Geolocation from '@react-native-community/geolocation';
+import { LoadGetVisitActuality,FunctionGetCurrentVisit } from '../../Api/Customers/ApiCustumer';
+//import Geolocation from '@react-native-community/geolocation';
+
 const HomeRouteVendors = () => {
   
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const listVisit = useSelector(state=>state.Customer);
+  const Rol = useSelector(state => state.rol.RolSelect);
+  const navigator = useNavigation();
   const dispatch = useDispatch();
   BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
     setSelectCard(!selectCard);
-    navigation.navigate("FormCreateRoute");    
+    navigation.navigate("SearchCustomer");    
   };
   const HandleGoToVisitCustumer=()=>{
-    navigation.navigate("MenuVisit");    
+    try{
+      dispatch(LoadGetVisitActuality(true));
+      FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+    }catch(ex){
+      Alert.alert(""+ex);
+    }
   }
   const User = useSelector(state => state.login.user);  
   useEffect(()=>{
@@ -64,7 +73,7 @@ const HomeRouteVendors = () => {
         flex
         center 
         onPress={HandleMarkerSelectCard}>
-        <Text>Crear Ruta</Text>
+        <Text>Crear una nueva visita</Text>
       </Card>
       <Card
         selected={selectCard}
@@ -75,7 +84,7 @@ const HomeRouteVendors = () => {
         flex
         center
         onPress={HandleGoToVisitCustumer}>
-        <Text>Visitas</Text>
+        <Text>Ver Visitas en curso</Text>
       </Card>
     </View>
     </ScrollView>
