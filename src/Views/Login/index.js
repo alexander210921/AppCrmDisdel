@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 import {TextInput, StyleSheet} from 'react-native';
 import LoginHeader from './Header';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
@@ -20,33 +20,29 @@ const ViewLogin = () => {
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
   const dispatch = useDispatch();
+  const [userData,setUserData] = useState({
+    UserN:'',
+    UserPass:''
+  });
   const {
     control,
     handleSubmit,
     formState: {errors},
   } = useForm({
     defaultValues: {
-      userName: '',
-      userPassword: '',
+      userName: userData.UserN,
+      userPassword: userData.UserPass,
     },
-  });
+  });  
     function onSubmit  (data) {     
       dispatch(LoadGetUser(true));
-      LoginUser(data.userName, data.userPassword, dispatch,navigation);
+      LoginUser(userData.UserN, userData.UserPass, dispatch,navigation);
     };
     useEffect(() => {
       AsyncStorageGetData("@dataRoute").then(res=>{
         try{
           if(res!=null){
-           
-                      
             let data = JSON.parse(res);
-           // Alert.alert(data.DatevalidId); 
-           
-            if(Date.parse(data.DatevalidId)==Date.parse(new Date().toLocaleDateString())){
-              //Alert.alert("Fechas iguales");
-              //AsyncStorageDeleteData("@dataRoute");
-            }
             dispatch(SaveUUIDRoute(data.UUidInProgress));
             dispatch(SetIsInitDrivingVisit(data.isRouteInCourse));
             dispatch(SaveIdWatch(null));
@@ -57,7 +53,24 @@ const ViewLogin = () => {
           dispatch(SetIsInitDrivingVisit(false))
           dispatch(SaveUUIDRoute(''));       
         }          
-     })    
+     });
+     //GetUser
+     try{
+      AsyncStorageGetData("@User").then(res=>{
+        if(res!=null){
+          let userInfo = JSON.parse(res);          
+          setUserData({
+            ...userData,
+            UserN :userInfo.NameUser,
+            UserPass:userInfo.PasswordUser
+          }); 
+          control._defaultValues.userName = userInfo.NameUser;
+          control._defaultValues.userPassword = userInfo.PasswordUser;
+        }        
+      });
+     }catch{
+      AsyncStorageDeleteData("@User");
+     }                 
     }, [])
     
   return (
@@ -70,14 +83,14 @@ const ViewLogin = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required:false,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+              onChangeText={(e)=>{setUserData({...userData,UserN:e});}}
+              value={userData.UserN}
               placeholder="Usuario"
               placeholderTextColor="#b3b2b7"
             />
@@ -90,14 +103,14 @@ const ViewLogin = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required:false ,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+              onChangeText={(e)=>{setUserData({...userData,UserPass:e})}}
+              value={userData.UserPass}
               placeholder="Contraseña"
               placeholderTextColor="#b3b2b7"
               secureTextEntry={true}

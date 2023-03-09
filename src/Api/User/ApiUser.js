@@ -13,7 +13,7 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
         if (response.data.Resultado) {                    
           GetLoginUser(response.data.DocEntry,navigation,dispatch);
           GetUserCompany(response.data.DocEntry,navigation,dispatch);
-          
+          AsyncStorageSaveDataJson("@User",{ NameUser,PasswordUser});  
         } else {
           Alert.alert('Usuario incorrecto');
           dispatch(LoadGetUser(false));
@@ -34,8 +34,7 @@ export const GetLoginUser = (UserId,navigation,dispatch) => {
     Axios.get('MyWsMobil/api/Mobil/GetUsuarioLog/'+UserId+"/")
       .then(response => {
         if(response.data.EntityID>0){
-           dispatch(GetUser(response.data));
-           AsyncStorageSaveDataJson("@User",response.data);            
+           dispatch(GetUser(response.data));                  
         }else{
           Alert.alert("Ocurrió un error intente nuevamente");
           dispatch(LoadGetUser(false));

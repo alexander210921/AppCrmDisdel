@@ -15,6 +15,7 @@ import {
   SAVE_IDWATCH_GEOLOCATION,
   SET_INIT_VISITDRIVER,
   SAVE_UUID_ROUTE_CUSTOMER,
+  LOAD_CANCEL_VISITS_IN_COURSE
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -207,6 +208,29 @@ export const FunctionUpdateAddressCoords = (data, dispatch) => {
     dispatch(LoadAddressCoordsCustomer(false));
   }
 };
+
+export const CancelListVisitsInCourse = (listVisit, dispatch) => {
+  try {
+    Axios.post('MyWsOneVenta/Api/OCRDExternoActividadVisita/CancelListVisit/', listVisit)
+      .then(response => {               
+       return true;
+      })
+      .catch(() => {
+        Alert.alert('Ocurrió un error por favor vuelva a intentarlo',"Intente cancelar las visitas pendientes manualmente");
+        return false;
+      })
+      .finally(() => {
+        dispatch(CancelVisits(false));
+      });
+  } finally {
+    dispatch(CancelVisits(false));
+  }
+};
+
+export const CancelVisits=(status)=>({
+  type:LOAD_CANCEL_VISITS_IN_COURSE,
+  payload:status
+})
 
 export const LoadGeCustomer = status => ({
   type: LOAD_GET_CUSTOMERS_VENDOR,

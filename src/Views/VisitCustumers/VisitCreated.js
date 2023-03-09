@@ -4,7 +4,7 @@ import {Text, View, LoaderScreen, Button} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
-import {SaveSelectVisitDetail, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
+import {CancelListVisitsInCourse, SaveSelectVisitDetail, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
 import {
@@ -40,6 +40,12 @@ const VisitCreated = () => {
   });
   const GotoBaseVendor=()=>{
     try{
+      let isDeleted = false;
+      if(ListRoutes.RoutesInProgress.length>0){
+        ListRoutes.RoutesInProgress.map(visit=>visit.EntityID = visit.IdRegistro)
+        //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
+        isDeleted = CancelListVisitsInCourse(ListRoutes.RoutesInProgress,dispatch);
+      }     
       SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true,"SearchCustomer");
       const uuid = generateUUID();
       StartRealTimeCoords(dispatch,uuid,5);
@@ -59,10 +65,10 @@ const VisitCreated = () => {
     if (DrivingVisitDetail.IdWatchLocation != null) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
     }
-    if (!DrivingVisitDetail.isRouteInCourse) {
-      Alert.alert('No se ha iniciado el viaje');
-      return;
-    }    
+    // if (!DrivingVisitDetail.isRouteInCourse) {
+    //   Alert.alert('No se ha iniciado el viaje');
+    //   return;
+    // }    
     dispatch(SaveIdWatch(null));
     dispatch(SetIsInitDrivingVisit(false));    
     AsyncStorageDeleteData("@dataRoute").finally(()=>{
