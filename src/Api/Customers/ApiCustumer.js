@@ -170,6 +170,7 @@ export const FunctionUpdateVisit = (data, dispatch, navigation) => {
       .then(response => {
         if (response.data.Resultado && data.Proceso != 'EnProceso') {
           dispatch(DeleteVisit(data.IdRegistro));
+          navigation.navigate('VisitCreated');
           // try {
           //   AsyncStorageDeleteData('@dataRoute').finally(() => {
           //     dispatch(SetIsInitDrivingVisit(false));
