@@ -28,6 +28,7 @@ const DetailVisit = () => {
     setComentary(e.value);
   }
   const ConfirmCancelVisit=()=>{
+    visit.Proceso="Cerrado";
     FunctionUpdateVisit(visit,dispatch,navigation);
   }
   const HandleUpdateVisit = async typeOption => {
