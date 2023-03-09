@@ -170,13 +170,13 @@ export const FunctionUpdateVisit = (data, dispatch, navigation) => {
       .then(response => {
         if (response.data.Resultado && data.Proceso != 'EnProceso') {
           dispatch(DeleteVisit(data.IdRegistro));
-          try {
-            AsyncStorageDeleteData('@dataRoute').finally(() => {
-              dispatch(SetIsInitDrivingVisit(false));
-              dispatch(SaveUUIDRoute(''));
-              navigation.navigate('VisitCreated');
-            });
-          } catch {}
+          // try {
+          //   AsyncStorageDeleteData('@dataRoute').finally(() => {
+          //     dispatch(SetIsInitDrivingVisit(false));
+          //     dispatch(SaveUUIDRoute(''));
+          //     navigation.navigate('VisitCreated');
+          //   });
+          // } catch {}
 
           //ELIMINAR CACH´W
         }

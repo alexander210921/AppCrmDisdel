@@ -1,10 +1,14 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import {Text, View, LoaderScreen, Button} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
-import {CancelListVisitsInCourse, SaveSelectVisitDetail, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
+import {
+  CancelListVisitsInCourse,
+  SaveSelectVisitDetail,
+  SetVisitCustomer,
+} from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
 import {
@@ -14,10 +18,13 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {generateUUID} from '../../lib/UUID';
-import { AsyncStorageDeleteData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
-import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
-import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
-import { SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
+import {
+  AsyncStorageDeleteData,
+  AsyncStorageSaveDataJson,
+} from '../../lib/AsyncStorage';
+import {StartRealTimeCoords} from '../../lib/Permissions/Geolocation';
+import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
+import {SetVisiActualityt} from '../../Api/Customers/ApiCustumer';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -26,70 +33,136 @@ const VisitCreated = () => {
   const [ErrorConnection, setErrorConnection] = useState(' ');
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
-  const [dataVisitReturn,setDataVisitReturn] = useState({
-        CardCode:'C46306293',
-        CardName:'DISDEL, S.A.',
-        Comentario:'De Regreso a la base',
-        IdRegistro:0,
-        Contacto:'',
-        Longitud:0,
-        Latitud:0,
-        ShipToCode:'',
-        Kilometraje:0,
-        IdRelacion: Rol[0]?.IdRelacion,
+  const [dataVisitReturn, setDataVisitReturn] = useState({
+    CardCode: 'C46306293',
+    CardName: 'DISDEL, S.A.',
+    Comentario: 'De Regreso a la base',
+    IdRegistro: 0,
+    Contacto: '',
+    Longitud: 0,
+    Latitud: 0,
+    ShipToCode: '',
+    Kilometraje: 0,
+    IdRelacion: Rol[0]?.IdRelacion,
   });
-  const GotoBaseVendor=()=>{
-    try{
+  const GotoBaseVendor = () => {
+    try {
       let isDeleted = false;
-      if(ListRoutes.RoutesInProgress.length>0){
-        ListRoutes.RoutesInProgress.map(visit=>visit.EntityID = visit.IdRegistro)
+      if (ListRoutes.RoutesInProgress.length > 0) {
+        ListRoutes.RoutesInProgress.map(
+          visit => (visit.EntityID = visit.IdRegistro),
+        );
         //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
-        isDeleted = CancelListVisitsInCourse(ListRoutes.RoutesInProgress,dispatch);
-      }     
-      SetVisitCustomer(dataVisitReturn,dispatch,navigation,false,true,"SearchCustomer");
+        isDeleted = CancelListVisitsInCourse(
+          ListRoutes.RoutesInProgress,
+          dispatch,
+        );
+      }
+      SetVisitCustomer(
+        dataVisitReturn,
+        dispatch,
+        navigation,
+        false,
+        true,
+        'SearchCustomer',
+      );
       const uuid = generateUUID();
-      StartRealTimeCoords(dispatch,uuid,5);
+      StartRealTimeCoords(dispatch, uuid, 5);
       dispatch(SaveUUIDRoute(uuid));
-    }catch(ex){
-      Alert.alert("Error: "+ex);
+    } catch (ex) {
+      Alert.alert('Error: ' + ex);
     }
-    
-  }
+  };
 
-  const CancelGotoBase=()=>{
-    dispatch(SetVisiActualityt([])); 
-  }
+  const CancelGotoBase = () => {
+    dispatch(SetVisiActualityt([]));
+  };
 
-  const CancelVisit=()=>{
-        
+  const CancelVisit = () => {
     if (DrivingVisitDetail.IdWatchLocation != null) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
     }
     // if (!DrivingVisitDetail.isRouteInCourse) {
     //   Alert.alert('No se ha iniciado el viaje');
     //   return;
-    // }    
+    // }
     dispatch(SaveIdWatch(null));
-    dispatch(SetIsInitDrivingVisit(false));    
-    AsyncStorageDeleteData("@dataRoute").finally(()=>{
+    dispatch(SetIsInitDrivingVisit(false));
+    AsyncStorageDeleteData('@dataRoute').finally(() => {
       //Eliminar reporte de visitas en proceso
-      AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
+      AlertConditional(
+        GotoBaseVendor,
+        CancelGotoBase,
+        '¿Desea volver a su base?',
+        'Esto significa volver a su punto de salida',
+      );
     });
-    //go to sabase   
+    //go to sabase
     //AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
   };
-  const HandleCancelAlert=()=>{
+  const HandleCancelAlert = () => {
     //Alert.alert("Cancelar");
-  }
-  handleCancelVisit=()=>{
-    AlertConditional(CancelVisit,HandleCancelAlert,"¿Desea dar por finalizado sus rutas?","");
-  }
+  };
+  const ViewButtonsOption = () => {
+    return (
+      <View flex style={styles.containerButton}>
+        <Button
+          onPress={() => {
+            InitVisit();
+          }}
+          style={styles.button3}>
+          <Text style={{fontSize: 10, color: 'white'}}> Iniciar Ruta </Text>
+        </Button>
+        <Button
+          onPress={() => {
+            handleCancelVisit();
+          }}
+          style={styles.button4}>
+          <Text style={{fontSize: 10, color: 'white'}}> Finalizar Ruta </Text>
+        </Button>
+      </View>
+    );
+  };
+  handleCancelVisit = () => {
+    AlertConditional(
+      CancelVisit,
+      HandleCancelAlert,
+      '¿Desea dar por finalizado sus rutas?',
+      '',
+    );
+  };
   const SelectViewVisitDetail = visit => {
     dispatch(SaveSelectVisitDetail(visit));
     Navigator.navigate('DetailVisit');
   };
+  useEffect(() => {
+    if (
+      ListRoutes.RoutesInProgress.length == 0 &&
+      DrivingVisitDetail.IdWatchLocation != null
+    ) {
+      Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
+
+      dispatch(SaveIdWatch(null));
+      dispatch(SetIsInitDrivingVisit(false));
+      AsyncStorageDeleteData('@dataRoute').finally(() => {
+        // AlertConditional(
+        //   GotoBaseVendor,
+        //   CancelGotoBase,
+        //   '¿Desea volver a su base?',
+        //   'Esto significa volver a su punto de salida',
+        // );
+      });
+    }
+  }, []);
   async function InitVisit(visit = null) {
-    if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation != null) {
+    if (ListRoutes.RoutesInProgress.length == 0) {
+      Alert.alert('No existen visitas en curso');
+      return;
+    }
+    if (
+      DrivingVisitDetail.isRouteInCourse &&
+      DrivingVisitDetail.IdWatchLocation != null
+    ) {
       Alert.alert('La ruta ya ha sido iniciada');
       return;
     }
@@ -106,16 +179,16 @@ const VisitCreated = () => {
         uuid = DrivingVisitDetail.UUIDRoute;
       }
       dispatch(SaveUUIDRoute(uuid));
-      const IdWatch = StartRealTimeCoords(dispatch,uuid,5);
+      const IdWatch = StartRealTimeCoords(dispatch, uuid, 5);
       dispatch(SetIsInitDrivingVisit(true));
-      const infoRoute={
-        DatevalidId : new Date().toLocaleDateString(),
-        UUidInProgress:uuid,
-        IdVisitInProgress:0,  
-        isRouteInCourse:true,     
-        IdWatch         
+      const infoRoute = {
+        DatevalidId: new Date().toLocaleDateString(),
+        UUidInProgress: uuid,
+        IdVisitInProgress: 0,
+        isRouteInCourse: true,
+        IdWatch,
       };
-      await AsyncStorageSaveDataJson("@dataRoute",infoRoute)
+      await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
       Alert.alert('Su viaje está en curso');
     } catch (ex1) {
       Alert.alert('Error: ' + ex1);
@@ -126,25 +199,7 @@ const VisitCreated = () => {
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
           <Text style={styles.Title}>En Proceso...</Text>
-          <View flex style={styles.containerButton}>
-            <Button
-              onPress={() => {
-                InitVisit();
-              }}
-              style={styles.button3}>
-              <Text style={{fontSize: 10, color: 'white'}}> Iniciar Ruta </Text>
-            </Button>
-            <Button
-              onPress={() => {
-                handleCancelVisit();
-              }}
-              style={styles.button4}>
-              <Text style={{fontSize: 10, color: 'white'}}>
-                {' '}
-                Finalizar Ruta{' '}
-              </Text>
-            </Button>
-          </View>
+          <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
             <LoaderScreen
               color="black"
@@ -168,7 +223,10 @@ const VisitCreated = () => {
           </View>
         </View>
       ) : (
-        <Text style={styles.Title}>No hay rutas en curso</Text>
+        <View>
+          <Text style={styles.Title}>No hay rutas en curso</Text>
+          <ViewButtonsOption></ViewButtonsOption>
+        </View>
       )}
     </ScrollView>
   );
