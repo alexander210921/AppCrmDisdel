@@ -79,7 +79,7 @@ const FormFinaliceVisit = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: false,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
@@ -100,7 +100,7 @@ const FormFinaliceVisit = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: false,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
@@ -121,7 +121,7 @@ const FormFinaliceVisit = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: false,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
@@ -141,7 +141,7 @@ const FormFinaliceVisit = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: false,
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
