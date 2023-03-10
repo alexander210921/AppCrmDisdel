@@ -69,6 +69,15 @@ const VisitCreated = () => {
       const uuid = generateUUID();
       StartRealTimeCoords(dispatch, uuid, 5);
       dispatch(SaveUUIDRoute(uuid));
+      dispatch(SetIsInitDrivingVisit(true));
+      const infoRoute = {
+        DatevalidId: new Date().toLocaleDateString(),
+        UUidInProgress: uuid,
+        IdVisitInProgress: 0,
+        isRouteInCourse: true,
+        IdWatch:DrivingVisitDetail.IdWatchLocation,
+      };
+       AsyncStorageSaveDataJson('@dataRoute', infoRoute);
     } catch (ex) {
       Alert.alert('Error: ' + ex);
     }

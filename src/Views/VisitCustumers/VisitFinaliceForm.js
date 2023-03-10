@@ -11,10 +11,14 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {
   LoadSetRegisterVisit,
   FunctionUpdateVisit,
-  SaveVisitCreated
+  SaveVisitCreated,
+  SaveIdWatch,
+  SetIsInitDrivingVisit,
+  SaveUUIDRoute
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
+import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
 const FormFinaliceVisit = () => { 
   //ADD PHOTO END
   const navigation = useNavigation();
@@ -40,33 +44,31 @@ const FormFinaliceVisit = () => {
   const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const submitForm =  FormData => {
-    try {
-      dispatch(LoadSetRegisterVisit(true));
-      if (true) {
+    try {   
         const visit = {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
-          Contacto: FormData.Contact,
-          Titulo: FormData.Title,                    
+          Contacto: FormData.Contact?FormData.Contact:'',
+          Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
-          Minuta: FormData.Bill,
-          Comentario: FormData.Comment,  
-          // LatitudeDestino: coords.latitude,
-          // LongitudeDestino: coords.coordsDestination.longitude,
+          Minuta: FormData.Bill?FormData.Bill:'',
+          Comentario: FormData.Comment?FormData.Comment:'',  
         };
         FunctionUpdateVisit(visit,dispatch,navigation,"FormCreateRoute");
         dispatch(SaveVisitCreated({
           IdVisit:dataVisist.IdRegistro,
           isEndVisit:true
-        }));
+        }));        
+        AsyncStorageDeleteData("@dataRoute").then(()=>{       
+          //Alert.alert("Se eliminó  "+DrivingVisitDetail.UUIDRoute);
+        });
+        dispatch(SetIsInitDrivingVisit(false));             
         if (DrivingVisitDetail.IdWatchLocation != null) {
           Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-        }
-      } else {
-        Alert.alert(coords.Message);
-        dispatch(LoadSetRegisterVisit(false));
-      }
+          dispatch(SaveIdWatch(null));
+        }        
+        dispatch(SaveUUIDRoute(''));      
     } catch(ex) {
       Alert.alert(""+ex);
       dispatch(LoadSetRegisterVisit(false));
