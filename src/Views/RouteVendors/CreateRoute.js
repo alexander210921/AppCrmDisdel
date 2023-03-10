@@ -107,7 +107,7 @@ const FormCreateRoute = () => {
           idVisita:Milaege.idVisitCreated?.IdVisit,
           TipoKilometraje:Milaege.idVisitCreated?.isEndVisit
         };              
-        SetMileage(data, dispatch,!Milaege.isInitMileage);
+        SetMileage(data, dispatch,!Milaege.isInitMileage,navigation,Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer");
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadPostMileage(false));
@@ -185,7 +185,7 @@ const FormCreateRoute = () => {
               </View>
               <View style={styles.containerButton}>
                 <ButtonPrimary
-                  HandleClick={()=>{navigation.navigate("SearchCustomer")}}
+                  HandleClick={()=>{navigation.navigate(Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer")}}
                   label="Omitir"
                   Backcolor="black"></ButtonPrimary>
               </View>
