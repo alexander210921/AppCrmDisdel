@@ -169,13 +169,13 @@ export const FunctionSetCoordsDetail = data => {
     //dispatch(SetCoordsDetailRealTime(false));
   }
 };
-export const FunctionUpdateVisit = (data, dispatch, navigation) => {
+export const FunctionUpdateVisit = (data, dispatch, navigation,nameViewRedirect="VisitCreated") => {
   try {
     Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', data)
       .then(response => {
         if (response.data.Resultado && data.Proceso != 'EnProceso') {
           dispatch(DeleteVisit(data.IdRegistro));
-          navigation.navigate('VisitCreated');
+          navigation.navigate(nameViewRedirect);
           // try {
           //   AsyncStorageDeleteData('@dataRoute').finally(() => {
           //     dispatch(SetIsInitDrivingVisit(false));
@@ -222,7 +222,7 @@ export const CancelListVisitsInCourse = (listVisit, dispatch) => {
        return true;
       })
       .catch(() => {
-        Alert.alert('Ocurrió un error por favor vuelva a intentarlo',"Intente cancelar las visitas pendientes manualmente");
+       // Alert.alert('Ocurrió un error por favor vuelva a intentarlo',"Intente cancelar las visitas pendientes manualmente");
         return false;
       })
       .finally(() => {

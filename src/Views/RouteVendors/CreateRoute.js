@@ -104,8 +104,8 @@ const FormCreateRoute = () => {
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
-          IdVisista:Milaege.idVisitCreated.IdVisit,
-          TipoKilometraje:Milaege.idVisitCreated.isEndVisit
+          idVisita:Milaege.idVisitCreated?.IdVisit,
+          TipoKilometraje:Milaege.idVisitCreated?.isEndVisit
         };              
         SetMileage(data, dispatch,!Milaege.isInitMileage);
       } else {

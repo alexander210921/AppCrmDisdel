@@ -10,11 +10,13 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {
   LoadSetRegisterVisit,
-  FunctionUpdateVisit
+  FunctionUpdateVisit,
+  SaveVisitCreated
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
 const FormFinaliceVisit = () => { 
+  //ADD PHOTO END
   const navigation = useNavigation();
   const dispatch = useDispatch();
   //const CoordsDestination = useSelector(state => state.login);
@@ -53,7 +55,11 @@ const FormFinaliceVisit = () => {
           // LatitudeDestino: coords.latitude,
           // LongitudeDestino: coords.coordsDestination.longitude,
         };
-        FunctionUpdateVisit(visit,dispatch,navigation);
+        FunctionUpdateVisit(visit,dispatch,navigation,"FormCreateRoute");
+        dispatch(SaveVisitCreated({
+          IdVisit:dataVisist.IdRegistro,
+          isEndVisit:true
+        }));
         if (DrivingVisitDetail.IdWatchLocation != null) {
           Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
         }
