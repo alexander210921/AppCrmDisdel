@@ -19,8 +19,7 @@ const SelectRol=()=>{
         dispatch(SetUserDefaultRol(rolAdd));
         navigation.navigate("Home");
        // GetUserRol(user.EntityID,company.EntityID,navigation,dispatch);
-    }   
-    console.log(rol.Roles);
+    }       
     return (
             <ScrollView style={StylesWrapper.secondWrapper}>
                 <Text style={{  padding: '7%',
