@@ -51,9 +51,8 @@ const VisitCreated = () => {
       if (ListRoutes.RoutesInProgress.length > 0) {
         //eliminando
        const dataList =  ListRoutes.RoutesInProgress.map(
-          visit => ({
-            "EntityID" : visit.IdRegistro
-          }),
+          visit => ( visit.IdRegistro
+          ),
         );
         //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
         isDeleted = CancelListVisitsInCourse(
@@ -96,9 +95,8 @@ const VisitCreated = () => {
     dispatch(SetIsInitDrivingVisit(false));
     dispatch(SaveUUIDRoute(''));
     const dataList =  ListRoutes.RoutesInProgress.map(
-      visit => ({
-        "EntityID" : visit.IdRegistro
-      }),
+      visit => ( visit.IdRegistro        
+      ),
     );
     CancelListVisitsInCourse(
       dataList,
@@ -132,7 +130,9 @@ const VisitCreated = () => {
     //AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
   };
   const HandleCancelAlert = () => {
+    //Alert.alert("Cancelando operacion ");
     //Alert.alert("Cancelar");
+    //CancelGotoBase();
   };
   const ViewButtonsOption = () => {
     return (
