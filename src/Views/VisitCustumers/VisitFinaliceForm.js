@@ -14,7 +14,8 @@ import {
   SaveVisitCreated,
   SaveIdWatch,
   SetIsInitDrivingVisit,
-  SaveUUIDRoute
+  SaveUUIDRoute,
+  FunctionSetCoordsDetail
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
@@ -43,8 +44,10 @@ const FormFinaliceVisit = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
-  const submitForm =  FormData => {
+  const submitForm =async FormData => {
+    
     try {   
+       const coordsActuality = await  GetGeolocation();
         const visit = {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
@@ -67,8 +70,20 @@ const FormFinaliceVisit = () => {
         if (DrivingVisitDetail.IdWatchLocation != null) {
           Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
           dispatch(SaveIdWatch(null));
-        }        
-        dispatch(SaveUUIDRoute(''));      
+        }  
+        try{
+          const coords = {
+            Latitud:coordsActuality.Data.coords.latitude,
+            Longitud:coordsActuality.Data.coords.longitude,
+            UUIRecorrido:DrivingVisitDetail.UUIDRoute
+          } 
+          if(coords.Latitud && coords.Latitud>0){
+            FunctionSetCoordsDetail(coords);
+          }
+        }catch{
+          //dispatch(SaveUUIDRoute(''));           
+        }     
+        dispatch(SaveUUIDRoute(''));           
     } catch(ex) {
       Alert.alert(""+ex);
       dispatch(LoadSetRegisterVisit(false));

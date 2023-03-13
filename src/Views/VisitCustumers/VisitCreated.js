@@ -49,12 +49,15 @@ const VisitCreated = () => {
     try {
       let isDeleted = false;
       if (ListRoutes.RoutesInProgress.length > 0) {
-        ListRoutes.RoutesInProgress.map(
-          visit => (visit.EntityID = visit.IdRegistro),
+        //eliminando
+       const dataList =  ListRoutes.RoutesInProgress.map(
+          visit => ({
+            "EntityID" : visit.IdRegistro
+          }),
         );
         //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
         isDeleted = CancelListVisitsInCourse(
-          ListRoutes.RoutesInProgress,
+          dataList,
           dispatch,
         );
       }
@@ -127,7 +130,7 @@ const VisitCreated = () => {
             handleCancelVisit();
           }}
           style={styles.button4}>
-          <Text style={{fontSize: 10, color: 'white'}}> Finalizar Ruta </Text>
+          <Text style={{fontSize: 10, color: 'white'}}> Regresar a su base </Text>
         </Button>
       </View>
     );
