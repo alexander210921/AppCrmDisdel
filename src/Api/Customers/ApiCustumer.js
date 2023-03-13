@@ -217,22 +217,8 @@ export const FunctionUpdateAddressCoords = (data, dispatch) => {
 
 export const CancelListVisitsInCourse = (listVisit, dispatch) => {    
   try {
-    Axios.post('MyWsOneVenta/Api/OCRDExternoActividadVisita/CancelListVisit/', listVisit)
-      .then(response => {          
-        dispatch(SetVisiActualityt([]));   
-        if(response.data.length>0){
-          Alert.alert("",""+response.data.length+" Registros no se pudieron actualizar");
-        }                  
-       return true;
-      })
-      .catch((ex) => {
-        Alert.alert("Error al cerrar visitas"+ex);
-       // Alert.alert('Ocurrió un error por favor vuelva a intentarlo',"Intente cancelar las visitas pendientes manualmente");
-        return false;
-      })
-      .finally(() => {
-        dispatch(CancelVisits(false));
-      });
+   return Axios.post('MyWsOneVenta/Api/OCRDExternoActividadVisita/CancelListVisit/', listVisit)
+      
   } finally {
     dispatch(CancelVisits(false));
   }

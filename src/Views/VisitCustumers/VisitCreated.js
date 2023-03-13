@@ -33,6 +33,7 @@ const VisitCreated = () => {
   const [ErrorConnection, setErrorConnection] = useState(' ');
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
+  const [returnBase,setReturnBase] = useState(false);
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
     CardName: 'DISDEL, S.A.',
@@ -45,7 +46,7 @@ const VisitCreated = () => {
     Kilometraje: 0,
     IdRelacion: Rol[0]?.IdRelacion,
   });
-  const GotoBaseVendor = () => {
+  const GotoBaseVendor =async () => {
     try {
       let isDeleted = false;
       if (ListRoutes.RoutesInProgress.length > 0) {
@@ -55,10 +56,15 @@ const VisitCreated = () => {
           ),
         );
         //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
-        isDeleted = CancelListVisitsInCourse(
+         isDeleted =await CancelListVisitsInCourse(
           dataList,
           dispatch,
-        );
+        ).then(response =>{
+          if(response.data.length>0){
+            Alert.alert("",""+response.data.length+" Registros no se pudieron actualizar");
+          }    
+          dispatch(SetVisiActualityt([]));
+        });
       }
       SetVisitCustomer(
         dataVisitReturn,
@@ -87,6 +93,7 @@ const VisitCreated = () => {
 
   const CancelGotoBase = () => {
     try{
+      setReturnBase(true);
      // dispatch(SetVisiActualityt([]));
     if (DrivingVisitDetail.IdWatchLocation != null) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
@@ -102,6 +109,7 @@ const VisitCreated = () => {
       dataList,
       dispatch,
     );  
+   
     }catch(Exception){
       Alert.alert(""+Exception)
     }    
@@ -166,15 +174,15 @@ const VisitCreated = () => {
     dispatch(SaveSelectVisitDetail(visit));
     Navigator.navigate('DetailVisit');
   };
-  useEffect(() => {
+  const StopGeolocation=()=>{
     if (
-      ListRoutes.RoutesInProgress.length == 0 &&
-      DrivingVisitDetail.IdWatchLocation != null
+      ListRoutes.RoutesInProgress.length == 0 && !returnBase
     ) {
       Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
 
       dispatch(SaveIdWatch(null));
       dispatch(SetIsInitDrivingVisit(false));
+      dispatch(SaveUUIDRoute(''));
       AsyncStorageDeleteData('@dataRoute').finally(() => {
         // AlertConditional(
         //   GotoBaseVendor,
@@ -184,6 +192,9 @@ const VisitCreated = () => {
         // );
       });
     }
+  }
+  useEffect(() => {
+    StopGeolocation();
   }, [ListRoutes.RoutesInProgress]);
   async function InitVisit(visit = null) {
     if (ListRoutes.RoutesInProgress.length == 0) {
