@@ -87,7 +87,26 @@ const VisitCreated = () => {
   };
 
   const CancelGotoBase = () => {
-    dispatch(SetVisiActualityt([]));
+    try{
+     // dispatch(SetVisiActualityt([]));
+    if (DrivingVisitDetail.IdWatchLocation != null) {
+      Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
+    }
+    dispatch(SaveIdWatch(null));
+    dispatch(SetIsInitDrivingVisit(false));
+    dispatch(SaveUUIDRoute(''));
+    const dataList =  ListRoutes.RoutesInProgress.map(
+      visit => ({
+        "EntityID" : visit.IdRegistro
+      }),
+    );
+    CancelListVisitsInCourse(
+      dataList,
+      dispatch,
+    );  
+    }catch(Exception){
+      Alert.alert(""+Exception)
+    }    
   };
 
   const CancelVisit = () => {

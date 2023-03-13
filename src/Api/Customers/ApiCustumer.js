@@ -68,7 +68,7 @@ export const SetVisitCustomer = (
           IdVisit:response.data.DocNum,
           isEndVisit:IsReturn
         }));
-        if (response.data.Resultado && IsReturn) {   
+        if (response.data.Resultado && IsReturn) {             
           dispatch(
             SetVisiActualityt([
               {
@@ -218,7 +218,8 @@ export const FunctionUpdateAddressCoords = (data, dispatch) => {
 export const CancelListVisitsInCourse = (listVisit, dispatch) => {  
   try {
     Axios.post('MyWsOneVenta/Api/OCRDExternoActividadVisita/CancelListVisit/', listVisit)
-      .then(response => {               
+      .then(response => {  
+        dispatch(SetVisiActualityt([]));             
        return true;
       })
       .catch(() => {
