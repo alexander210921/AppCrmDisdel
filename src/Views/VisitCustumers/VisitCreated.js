@@ -25,6 +25,8 @@ import {
 import {StartRealTimeCoords} from '../../lib/Permissions/Geolocation';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {SetVisiActualityt} from '../../Api/Customers/ApiCustumer';
+//import { StartInitVisit } from '../../lib/Visits/index/';
+import { StartInitVisit } from '../../lib/Visits/index';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -196,45 +198,8 @@ const VisitCreated = () => {
   useEffect(() => {
     StopGeolocation();
   }, [ListRoutes.RoutesInProgress]);
-  async function InitVisit(visit = null) {
-    if (ListRoutes.RoutesInProgress.length == 0) {
-      Alert.alert('No existen visitas en curso');
-      return;
-    }
-    if (
-      DrivingVisitDetail.isRouteInCourse &&
-      DrivingVisitDetail.IdWatchLocation != null
-    ) {
-      Alert.alert('La ruta ya ha sido iniciada');
-      return;
-    }
-    try {
-      const coords = await GetGeolocation();
-      if (!coords.Status) {
-        Alert.alert('' + coords.Message);
-        return;
-      }
-      let uuid;
-      if (DrivingVisitDetail.UUIDRoute == '') {
-        uuid = generateUUID();
-      } else {
-        uuid = DrivingVisitDetail.UUIDRoute;
-      }
-      dispatch(SaveUUIDRoute(uuid));
-      const IdWatch = StartRealTimeCoords(dispatch, uuid, 5);
-      dispatch(SetIsInitDrivingVisit(true));
-      const infoRoute = {
-        DatevalidId: new Date().toLocaleDateString(),
-        UUidInProgress: uuid,
-        IdVisitInProgress: 0,
-        isRouteInCourse: true,
-        IdWatch,
-      };
-      await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
-      Alert.alert('Su viaje está en curso');
-    } catch (ex1) {
-      Alert.alert('Error: ' + ex1);
-    }
+  async function InitVisit() {
+    await StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch);  
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>

@@ -11,6 +11,7 @@ import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 import { LoadGetVisitActuality,FunctionGetCurrentVisit } from '../../Api/Customers/ApiCustumer';
+import { StartInitVisit } from '../../lib/Visits';
 //import Geolocation from '@react-native-community/geolocation';
 
 const HomeRouteVendors = () => {
@@ -34,6 +35,9 @@ const HomeRouteVendors = () => {
     }catch(ex){
       Alert.alert(""+ex);
     }
+  }
+  const HandleInitRoute=async()=>{
+   await StartInitVisit(listVisit,DrivingVisitDetail,dispatch);
   }
   const User = useSelector(state => state.login.user);  
   useEffect(()=>{
@@ -86,6 +90,17 @@ const HomeRouteVendors = () => {
         onPress={HandleGoToVisitCustumer}>
         <Text>Ver Visitas en curso</Text>
       </Card>
+      <Card
+        selected={selectCard}
+        selectionOptions={styles.selectOptionCard}
+        elevation={20}
+        flexS
+        style={styles.card3}
+        flex
+        center
+        onPress={HandleInitRoute}>
+        <Text>Iniciar Ruta</Text>
+      </Card>
     </View>
     </ScrollView>
   );
@@ -114,5 +129,11 @@ const styles = StyleSheet.create({
   },
   selectOptionCard: {
     color: 'green',
+  },
+  card3: {
+    height: '17%', 
+    borderColor: 'black',
+    marginTop: '4%',
+    backgroundColor: '#7ea310',
   },
 });
