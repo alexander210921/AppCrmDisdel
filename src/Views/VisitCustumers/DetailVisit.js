@@ -5,11 +5,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
   DeleteVisit,
+  FunctionSetCoordsDetail,
   FunctionUpdateVisit, LoadUpdateVisit,
 } from '../../Api/Customers/ApiCustumer';
 import { useNavigation } from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { StopInitVisit } from '../../lib/Visits';
+import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
@@ -45,7 +47,7 @@ const DetailVisit = () => {
   const HandleUpdateVisit = async typeOption => {
     try{
       if (!DrivingVisitDetail.isRouteInCourse &&typeOption==1 ) {
-        Alert.alert('Inicie primero el viaje antes de marcar su fin ');
+        Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
         return;
       }
     dispatch(LoadUpdateVisit(true));     
@@ -57,8 +59,20 @@ const DetailVisit = () => {
           visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
           visit.isInitVisit=true;
           const resultUpdate = await FunctionUpdateVisit(visit, dispatch,navigation);
-          if(resultUpdate!=null && resultUpdate.Resultado){
-            await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+          if(resultUpdate!=null && resultUpdate.Resultado){            
+            try{
+              const getCoords = await GetGeolocation();
+              const coords = {
+                Latitud:getCoords.Data.coords.latitude,
+                Longitud:getCoords.Data.coords.longitude,
+                UUIRecorrido:DrivingVisitDetail.UUIDRoute
+              } 
+              if(coords.Latitud && coords.Latitud>0){
+                FunctionSetCoordsDetail(coords);                
+              }
+            }finally{              
+              await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+            }  
             Alert.alert("Registro exitoso");
           }else if(resultUpdate!=null && !resultUpdate.Resultado){
             Alert.alert(resultUpdate.Mensaje);
@@ -73,7 +87,7 @@ const DetailVisit = () => {
           break;
         }
         case 3:{                            
-                             
+          navigation.navigate("FormFinaliceVisit");                   
         }       
       };      
     }catch(ex){

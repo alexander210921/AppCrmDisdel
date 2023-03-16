@@ -55,35 +55,19 @@ const FormFinaliceVisit = () => {
           Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
-          Minuta: FormData.Bill?FormData.Bill:'',
+          // Minuta: FormData.Bill?FormData.Bill:'',
           Comentario: FormData.Comment?FormData.Comment:'',  
         };
-        FunctionUpdateVisit(visit,dispatch,navigation,"FormCreateRoute");
+       const StatusUpdateVisit = await  FunctionUpdateVisit(visit,dispatch,navigation,"FormCreateRoute");
+       if(StatusUpdateVisit!=null && StatusUpdateVisit.Resultado){
         dispatch(SaveVisitCreated({
           IdVisit:dataVisist.IdRegistro,
           isEndVisit:true
         }));        
-        AsyncStorageDeleteData("@dataRoute").then(()=>{       
-          //Alert.alert("Se eliminó  "+DrivingVisitDetail.UUIDRoute);
-        });
-        dispatch(SetIsInitDrivingVisit(false));             
-        if (DrivingVisitDetail.IdWatchLocation != null) {
-          Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-          dispatch(SaveIdWatch(null));
-        }  
-        try{
-          const coords = {
-            Latitud:coordsActuality.Data.coords.latitude,
-            Longitud:coordsActuality.Data.coords.longitude,
-            UUIRecorrido:DrivingVisitDetail.UUIDRoute
-          } 
-          if(coords.Latitud && coords.Latitud>0){
-            FunctionSetCoordsDetail(coords);
-          }
-        }catch{
-          //dispatch(SaveUUIDRoute(''));           
-        }     
-        dispatch(SaveUUIDRoute(''));           
+       }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
+        Alert.alert(StatusUpdateVisit.Mensaje);
+       }
+                            
     } catch(ex) {
       Alert.alert(""+ex);
       dispatch(LoadSetRegisterVisit(false));
@@ -135,26 +119,7 @@ const FormFinaliceVisit = () => {
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
 
-        <Controller
-          control={control}
-          rules={{
-            required: false,
-          }}
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Minuta"
-              placeholderTextColor="#b3b2b7"
-            />
-          )}
-          name="Bill"
-        />
-        {errors.Bill && (
-          <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )}
+       
         <Controller
           control={control}
           rules={{
