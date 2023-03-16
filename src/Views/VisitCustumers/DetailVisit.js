@@ -34,7 +34,7 @@ const DetailVisit = () => {
   const HandleUpdateVisit = async typeOption => {
     try{
       if (!DrivingVisitDetail.isRouteInCourse &&typeOption==3 ) {
-        Alert.alert('Inicie primero el viaje antes de finalizar');
+        Alert.alert('Inicie primero el viaje antes de marcar su llegada');
         return;
       }
 
@@ -45,6 +45,7 @@ const DetailVisit = () => {
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
           FunctionUpdateVisit(visit, dispatch,navigation);
+          navigation.navigate("FormFinaliceVisit");
           //FunctionUpdateAddressCoords();
           break;
         }
@@ -54,7 +55,7 @@ const DetailVisit = () => {
           break;
         }
         case 3:{                            
-           navigation.navigate("FormFinaliceVisit");                  
+                             
         }       
       };      
     }catch(ex){
@@ -77,7 +78,13 @@ const DetailVisit = () => {
           style={styles.button1}>
           <Text style={{fontSize: 9, color: 'white'}}> Finalizar  </Text>
         </Button>
-
+        <Button
+          onPress={() => {
+            HandleUpdateVisit(3);
+          }}
+          style={styles.button3}>
+          <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
+        </Button>
         <Button
           onPress={() => {
             HandleUpdateVisit(2);
@@ -85,7 +92,7 @@ const DetailVisit = () => {
           style={styles.button}>
           <Text style={{fontSize: 9, color: 'white'}}> Cancelar</Text>
         </Button>
-
+ 
         <View flex centerH>
           <View style={styles.cardinfo1}>
             <TextInput onChangeText={HandleSetComentary} placeholder='Comentario' multiline={true} numberOfLines={4} value={comentary}  ></TextInput>

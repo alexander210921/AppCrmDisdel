@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
-import {Text, View, LoaderScreen, Button} from 'react-native-ui-lib';
+import {Text, View, LoaderScreen, Button,Card} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,9 +24,9 @@ import {
 } from '../../lib/AsyncStorage';
 import {StartRealTimeCoords} from '../../lib/Permissions/Geolocation';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
-import {SetVisiActualityt} from '../../Api/Customers/ApiCustumer';
+import {SetVisiActualityt,LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
 //import { StartInitVisit } from '../../lib/Visits/index/';
-import { StartInitVisit } from '../../lib/Visits/index';
+import { StartInitVisit, StopInitVisit } from '../../lib/Visits/index';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -92,6 +92,45 @@ const VisitCreated = () => {
       Alert.alert('Error: ' + ex);
     }
   };
+  const HandleInitRoute=async()=>{
+    try{
+      if (
+        DrivingVisitDetail.isRouteInCourse &&
+        DrivingVisitDetail.IdWatchLocation != null
+      ) {
+        Alert.alert('La ruta ya ha sido iniciada');
+        return;
+      }
+    dispatch(LoadGetVisitActuality(true));          
+     //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);        
+     if(ListRoutes.RoutesInProgress!=null && ListRoutes.RoutesInProgress.length > 0){
+      //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
+      await StartInitVisit(ListRoutes.RoutesInProgress,DrivingVisitDetail,dispatch);    
+      navigation.navigate("FormCreateRoute");
+     }else{
+      Alert.alert("No hay visitas pendientes","Cree primero sus visitas antes de poder iniciar su captura de localización ");
+     }
+    }finally{
+      dispatch(LoadGetVisitActuality(false));      
+    }       
+  }
+
+  const HandleStopVisit=async()=>{
+    try{
+      if(!DrivingVisitDetail.isRouteInCourse){
+          Alert.alert("Cancelacion de ruta","La ruta no ha sido iniciada para poder cancelar");
+          return;
+      }
+      dispatch(LoadGetVisitActuality(true));      
+      const cancelStatus = await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch);
+      if(cancelStatus){
+        Alert.alert("Cancelado correctamente");
+        return;
+      }
+    }finally{
+      dispatch(LoadGetVisitActuality(false));      
+    }    
+  }
 
   const CancelGotoBase = () => {
     try{
@@ -118,26 +157,15 @@ const VisitCreated = () => {
   };
 
   const CancelVisit = () => {
-    if (DrivingVisitDetail.IdWatchLocation != null) {
-      Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-    }
-    // if (!DrivingVisitDetail.isRouteInCourse) {
-    //   Alert.alert('No se ha iniciado el viaje');
-    //   return;
-    // }
-    dispatch(SaveIdWatch(null));
-    dispatch(SetIsInitDrivingVisit(false));
-    AsyncStorageDeleteData('@dataRoute').finally(() => {
-      //Eliminar reporte de visitas en proceso
-      AlertConditional(
-        GotoBaseVendor,
-        CancelGotoBase,
-        '¿Desea volver a su base?',
-        'Esto significa volver a su punto de salida',
-      );
-    });
-    //go to sabase
-    //AlertConditional(GotoBaseVendor,CancelGotoBase,"¿Desea volver a su base?","Esto significa volver a su punto de salida");
+    if(StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch)){
+      Alert.alert("Cancelado correctamente");
+      //    AlertConditional(
+      //   GotoBaseVendor,
+      //   CancelGotoBase,
+      //   '¿Desea volver a su base?',
+      //   'Esto significa volver a su punto de salida',
+      // );
+    }    
   };
   const HandleCancelAlert = () => {
     //Alert.alert("Cancelando operacion ");
@@ -147,7 +175,7 @@ const VisitCreated = () => {
   const ViewButtonsOption = () => {
     return (
       <View flex style={styles.containerButton}>
-        <Button
+        {/* <Button
           onPress={() => {
             InitVisit();
           }}
@@ -160,7 +188,7 @@ const VisitCreated = () => {
           }}
           style={styles.button4}>
           <Text style={{fontSize: 10, color: 'white'}}> Regresar a su base </Text>
-        </Button>
+        </Button> */}
       </View>
     );
   };
@@ -203,18 +231,47 @@ const VisitCreated = () => {
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
+          
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
+          
           <Text style={styles.Title}>En Proceso...</Text>
           <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
-            <LoaderScreen
-              color="black"
-              message="Procesando Ubicación"></LoaderScreen>
+            // <LoaderScreen
+            //   color="black"
+            //   message="Procesando Ubicación"></LoaderScreen>
+            <Text>Se está capturando su ubicación actual</Text>
           ) : null}
 
           <Text>{ErrorConnection}</Text>
           <View flex center>
+          {ListRoutes.loadGetCurrentVisit?
+      <LoaderScreen color="black" message="Cargando proceso..." ></LoaderScreen>:null
+      }
+      <Card
+        selected={false}
+        selectionOptions={styles.selectOptionCard}
+        elevation={20}
+        flexS
+        style={styles.mainCardView}
+        flex
+        center
+        onPress={HandleInitRoute}>
+        <Text>Iniciar Ruta</Text>
+      </Card>
+      <Card
+        selected={false}
+        selectionOptions={styles.selectOptionCard}
+        elevation={20}
+        flexS
+        style={styles.mainCardView2}
+        flex
+        center      
+        onPress={HandleStopVisit}>
+        <Text>Cancelar mi recorrido</Text>
+      </Card>
+
             {ListRoutes.RoutesInProgress.map(route => {
               return (
                 <CardVisit
@@ -262,5 +319,58 @@ const styles = StyleSheet.create({
   containerButton: {
     display: 'flex',
     justifyContent: 'space-around',
+  },
+  card3: {
+    height: '60%', 
+    borderColor: 'black',
+    marginTop: '4%',
+    backgroundColor: 'black',
+  },
+  card4: {
+    height: '60%', 
+    borderColor: 'red',
+    marginTop: '4%',
+    color:'red',
+    backgroundColor: '#957DAD',
+  },
+  mainCardView: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D7ECD9',
+    borderRadius: 15,
+    shadowColor: 'shadow',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 14,
+    paddingRight: 14,
+    marginTop: 9,
+    marginBottom: 9,
+    width: '90%',
+    height: 50,
+  },
+  mainCardView2: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f6ecf5',
+    borderRadius: 15,
+    shadowColor: 'shadow',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 14,
+    paddingRight: 14,
+    marginTop: 9,
+    marginBottom: 9,
+    width: '90%',
+    height: 50,    
   },
 });

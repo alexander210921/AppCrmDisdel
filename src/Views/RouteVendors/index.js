@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Card} from 'react-native-ui-lib';
+import {View, Card,LoaderScreen} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import {StyleSheet} from 'react-native';
 import stylesTitle from '../../Styles/Titles';
@@ -10,8 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
-import { LoadGetVisitActuality,FunctionGetCurrentVisit } from '../../Api/Customers/ApiCustumer';
-import { StartInitVisit } from '../../lib/Visits';
+import { LoadGetVisitActuality,FunctionGetCurrentVisit, SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
 //import Geolocation from '@react-native-community/geolocation';
 
 const HomeRouteVendors = () => {
@@ -28,31 +27,35 @@ const HomeRouteVendors = () => {
     setSelectCard(!selectCard);
     navigation.navigate("SearchCustomer");    
   };
-  const HandleGoToVisitCustumer=()=>{
+  const HandleGoToVisitCustumer=async()=>{
     try{
-      dispatch(LoadGetVisitActuality(true));
-      FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+      dispatch(LoadGetVisitActuality(true));      
+     const visits = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
+     if(visits!=null && visits.length > 0){
+      dispatch(SetVisiActualityt(visits));                      
+     }
     }catch(ex){
       Alert.alert(""+ex);
+    } finally{
+      dispatch(LoadGetVisitActuality(false)); 
+      navigation.navigate("VisitCreated");
     }
   }
-  const HandleInitRoute=async()=>{
-   await StartInitVisit(listVisit,DrivingVisitDetail,dispatch);
-  }
+  
+ 
   const User = useSelector(state => state.login.user);  
   useEffect(()=>{
     if(!User){
       navigation.navigate("Login");
       return;
-    }
+     dispatch(LoadGetVisitActuality(false));            }
     // if(listVisit.RoutesInProgress.length==0&&DrivingVisitDetail.IdWatchLocation!=null){
     //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation)
     // }
     // else
-     if (DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {
+    if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {      
       StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute);
     }
-
   },[User])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
@@ -63,6 +66,10 @@ const HomeRouteVendors = () => {
           :null
         }
       </View>
+      {listVisit.loadGetCurrentVisit?
+      <LoaderScreen color="black" message="Cargando proceso..." ></LoaderScreen>:null
+      }
+      
       <View top style={styles.wrapperButtons}>
         <View left>
           <Text style={stylesTitle.TitleMedium}> Selecciona una opción. </Text>
@@ -80,7 +87,7 @@ const HomeRouteVendors = () => {
         <Text>Crear una nueva visita</Text>
       </Card>
       <Card
-        selected={selectCard}
+        selected={false}
         selectionOptions={styles.selectOptionCard}
         elevation={20}
         flexS
@@ -90,17 +97,7 @@ const HomeRouteVendors = () => {
         onPress={HandleGoToVisitCustumer}>
         <Text>Ver Visitas en curso</Text>
       </Card>
-      <Card
-        selected={selectCard}
-        selectionOptions={styles.selectOptionCard}
-        elevation={20}
-        flexS
-        style={styles.card3}
-        flex
-        center
-        onPress={HandleInitRoute}>
-        <Text>Iniciar Ruta</Text>
-      </Card>
+
     </View>
     </ScrollView>
   );
@@ -131,9 +128,16 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   card3: {
-    height: '17%', 
+    height: '8%', 
     borderColor: 'black',
     marginTop: '4%',
-    backgroundColor: '#7ea310',
+    backgroundColor: 'black',
+  },
+  card4: {
+    height: '8%', 
+    borderColor: 'red',
+    marginTop: '4%',
+    color:'red',
+    backgroundColor: '#957DAD',
   },
 });

@@ -3,10 +3,12 @@ import {Alert} from'react-native'
 import { GetGeolocation } from '../Permissions/Geolocation/index';
 import { generateUUID } from '../UUID/index';
 import { SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
-import { AsyncStorageSaveDataJson } from '../AsyncStorage/index';
+import { AsyncStorageSaveDataJson,AsyncStorageDeleteData } from '../AsyncStorage/index';
 import { StartRealTimeCoords } from '../Permissions/Geolocation/index';
+import { SaveIdWatch } from '../../Api/Customers/ApiCustumer';
+import Geolocation from '@react-native-community/geolocation';
 export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch) {
-    if (ListRoutes.RoutesInProgress.length == 0) {
+    if (ListRoutes.length == 0) {
       Alert.alert('No existen visitas en curso');
       
       return;
@@ -41,8 +43,23 @@ export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch) {
         IdWatch,
       };
       await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
-      Alert.alert('Su viaje está en curso');
+      //Alert.alert('Su viaje está en curso');
     } catch (ex1) {
       Alert.alert('Error: ' + ex1);
     }
   }
+export async function StopInitVisit(IdLocation,dispatch){
+  try{
+    if (IdLocation!= null) {
+      Geolocation.clearWatch(IdLocation);
+    }
+    dispatch(SaveIdWatch(null));
+    dispatch(SetIsInitDrivingVisit(false));
+    dispatch(SaveUUIDRoute(''));
+    await AsyncStorageDeleteData('@dataRoute');
+    return true;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return false;
+  }
+}

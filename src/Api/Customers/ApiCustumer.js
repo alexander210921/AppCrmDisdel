@@ -93,27 +93,21 @@ export const SetVisitCustomer = (
   }
 };
 
-export const FunctionGetCurrentVisit = (
+export  const FunctionGetCurrentVisit =async (
   IdRelation,
   dispatch,
   redirect = false,
   navigator,
 ) => {
   try {
-    Axios.get('MyWsMobil/api/Mobil/GetVisitasOpen/' + IdRelation + '/')
-      .then(response => {
-        dispatch(SetVisiActualityt(response.data));
-        if (redirect) {
-          navigator.navigate('VisitCreated');
-        }
-      })
-      .catch(() => {
-        Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
-      })
-      .finally(() => {
-        dispatch(LoadGetVisitActuality(false));
-      });
-  } finally {
+   const {data }=await Axios.get('MyWsMobil/api/Mobil/GetVisitasOpen/' + IdRelation + '/')
+   return data;
+    
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+   finally {
     dispatch(LoadGetVisitActuality(false));
   }
 };
@@ -175,7 +169,10 @@ export const FunctionUpdateVisit = (data, dispatch, navigation,nameViewRedirect=
       .then(response => {
         if (response.data.Resultado && data.Proceso != 'EnProceso') {
           dispatch(DeleteVisit(data.IdRegistro));
-          navigation.navigate(nameViewRedirect);
+          if(nameViewRedirect!=""){
+            navigation.navigate(nameViewRedirect);
+          }
+          
           // try {
           //   AsyncStorageDeleteData('@dataRoute').finally(() => {
           //     dispatch(SetIsInitDrivingVisit(false));

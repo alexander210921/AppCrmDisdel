@@ -17,6 +17,7 @@ import {
   SetVisitCustomer,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
+import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
   const [AdressCustomer,setAdressCustomer]=useState(
@@ -56,6 +57,8 @@ const FormCreateVisit = () => {
     setIdAddressVisit(address);
   }
   const Rol = useSelector(state => state.rol.RolSelect);
+  const goVisitCreated=()=>{navigation.navigate("VisitCreated")}
+  const goFormSearchCustomer=()=>{navigation.navigate("SearchCustomer")}
   const submitForm = async FormData => {
     try {
       dispatch(LoadSetRegisterVisit(true));
@@ -72,8 +75,9 @@ const FormCreateVisit = () => {
           GrupoVisita:'',
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
-        };
-        SetVisitCustomer(data, dispatch,navigation,true,false,"SearchCustomer");
+        };        
+        SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
+        AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadSetRegisterVisit(false));
