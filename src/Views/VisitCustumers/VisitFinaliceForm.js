@@ -55,6 +55,7 @@ const FormFinaliceVisit = () => {
           Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
+          isEndVisit:true,
           // Minuta: FormData.Bill?FormData.Bill:'',
           Comentario: FormData.Comment?FormData.Comment:'',  
         };
