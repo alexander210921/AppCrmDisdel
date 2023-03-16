@@ -13,6 +13,7 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {ScrollView} from 'react-native-gesture-handler';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {
+  AddVisit,
   LoadSetRegisterVisit,
   SetVisitCustomer,
 } from '../../Api/Customers/ApiCustumer';
@@ -76,8 +77,17 @@ const FormCreateVisit = () => {
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
         };        
-        SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
-        AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
+        const VisitCreated = await SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
+        if(VisitCreated!=null && VisitCreated.Resultado){
+          dispatch(AddVisit({
+            CardCode:CustomerSelect.customerSelect.CardCode,
+            CardName:CustomerSelect.customerSelect.CardName,
+            IdRegistro:VisitCreated.DocNum
+          }));
+          AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
+        }else if(VisitCreated!=null && !VisitCreated.Resultado){
+          Alert.alert(VisitCreated.Mensaje);
+        }        
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadSetRegisterVisit(false));

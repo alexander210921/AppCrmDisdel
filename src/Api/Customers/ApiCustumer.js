@@ -16,7 +16,8 @@ import {
   SET_INIT_VISITDRIVER,
   SAVE_UUID_ROUTE_CUSTOMER,
   LOAD_CANCEL_VISITS_IN_COURSE,
-  SAVE_VISIT_CREATED
+  SAVE_VISIT_CREATED,
+  ADD_VISIT_CREATED
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -50,45 +51,50 @@ export const GetCustumerVendor = (IdRelatoin, SearchTerm, dispatch) => {
   }
 };
 
-export const SetVisitCustomer = (
-  data,
+export const SetVisitCustomer =async (
+  object,
   dispatch,
   navigation,
   isNavigation = false,
   IsReturn = false,
   ViewNameNavigate
 ) => {
-  try {
-    Axios.post('MyWsMobil/api/Mobil/CrearVisita/', data)
-      .then(response => {
-        if(!IsReturn){
-          Alert.alert(response.data.Mensaje);
-        }        
-        dispatch(SaveVisitCreated({
-          IdVisit:response.data.DocNum,
-          isEndVisit:IsReturn
-        }));
-        if (response.data.Resultado && IsReturn) {             
-          dispatch(
-            SetVisiActualityt([
-              {
-                ...data,
-                IdRegistro:  response.data.DocNum,
-              },
-            ])
-          );
-        }
-        if (isNavigation) {
-          navigation.navigate(ViewNameNavigate);
-        }
-      })
-      .catch(() => {
-        Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
-      })
-      .finally(() => {
-        dispatch(LoadSetRegisterVisit(false));
-      });
-  } finally {
+  try { 
+    const {data }=await Axios.post('MyWsMobil/api/Mobil/CrearVisita/', object)
+    return data;
+      // .then(response => {
+      //   if(!IsReturn){
+      //     Alert.alert(response.data.Mensaje);
+      //   }        
+      //   dispatch(SaveVisitCreated({
+      //     IdVisit:response.data.DocNum,
+      //     isEndVisit:IsReturn
+      //   }));
+      //   if (response.data.Resultado && IsReturn) {             
+      //     dispatch(
+      //       SetVisiActualityt([
+      //         {
+      //           ...data,
+      //           IdRegistro:  response.data.DocNum,
+      //         },
+      //       ])
+      //     );
+      //   }
+      //   if (isNavigation) {
+      //     navigation.navigate(ViewNameNavigate);
+      //   }
+      // })
+      // .catch(() => {
+      //   Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
+      // })
+      // .finally(() => {
+      //   dispatch(LoadSetRegisterVisit(false));
+      // });
+  }catch(Exception){
+    Alert.alert(""+Exception);
+    return null;
+  }
+   finally {
     dispatch(LoadSetRegisterVisit(false));
   }
 };
@@ -163,35 +169,40 @@ export const FunctionSetCoordsDetail = data => {
     //dispatch(SetCoordsDetailRealTime(false));
   }
 };
-export const FunctionUpdateVisit = (data, dispatch, navigation,nameViewRedirect="VisitCreated") => {
+export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRedirect="VisitCreated") => {
   try {
-    Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', data)
-      .then(response => {
-        if (response.data.Resultado && data.Proceso != 'EnProceso') {
-          dispatch(DeleteVisit(data.IdRegistro));
-          if(nameViewRedirect!=""){
-            navigation.navigate(nameViewRedirect);
-          }
+    const {data}=await Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', object)
+    return data;
+      // .then(response => {
+      //   if (response.data.Resultado && data.Proceso != 'EnProceso') {
+      //     dispatch(DeleteVisit(data.IdRegistro));
+      //     if(nameViewRedirect!=""){
+      //       navigation.navigate(nameViewRedirect);
+      //     }
           
-          // try {
-          //   AsyncStorageDeleteData('@dataRoute').finally(() => {
-          //     dispatch(SetIsInitDrivingVisit(false));
-          //     dispatch(SaveUUIDRoute(''));
-          //     navigation.navigate('VisitCreated');
-          //   });
-          // } catch {}
+      //     // try {
+      //     //   AsyncStorageDeleteData('@dataRoute').finally(() => {
+      //     //     dispatch(SetIsInitDrivingVisit(false));
+      //     //     dispatch(SaveUUIDRoute(''));
+      //     //     navigation.navigate('VisitCreated');
+      //     //   });
+      //     // } catch {}
 
-          //ELIMINAR CACH´W
-        }
-        Alert.alert(response.data.Mensaje);
-      })
-      .catch(() => {
-        Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
-      })
-      .finally(() => {
-        dispatch(LoadUpdateVisit(false));
-      });
-  } finally {
+      //     //ELIMINAR CACH´W
+      //   }
+      //   Alert.alert(response.data.Mensaje);
+      // })
+      // .catch(() => {
+      //   Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
+      // })
+      // .finally(() => {
+      //   dispatch(LoadUpdateVisit(false));
+      // });
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+   finally {
     dispatch(LoadUpdateVisit(false));
   }
 };
@@ -308,3 +319,7 @@ export const SaveVisitCreated=(data)=>({
   type:SAVE_VISIT_CREATED,
   payload:data
 })
+export const AddVisit = idVisit => ({
+  type: ADD_VISIT_CREATED,
+  payload: idVisit,
+});

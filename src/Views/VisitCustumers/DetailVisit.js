@@ -4,10 +4,12 @@ import {Text, View, Button,LoaderScreen, TextArea} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
-  FunctionUpdateVisit,
+  DeleteVisit,
+  FunctionUpdateVisit, LoadUpdateVisit,
 } from '../../Api/Customers/ApiCustumer';
 import { useNavigation } from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import { StopInitVisit } from '../../lib/Visits';
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
@@ -20,32 +22,48 @@ const DetailVisit = () => {
       IdRegistro: data.IdRegistro,
       Proceso: '',
       Comentario : comentary,
-      UUIDGroup:''
+      UUIDGroup:'',
+      isInitVisit:false,
+      isEndVisit:false
   });
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const HandleSetComentary=(e)=>{
     setComentary(e.value);
   }
-  const ConfirmCancelVisit=()=>{
+  const ConfirmCancelVisit=async()=>{
     visit.Proceso="Cerrado";
-    FunctionUpdateVisit(visit,dispatch,navigation);
+   const statusUpdate =await  FunctionUpdateVisit(visit,dispatch,navigation);
+   if(statusUpdate!=null && statusUpdate.Resultado){
+    dispatch(DeleteVisit(visit.IdRegistro)); 
+    navigation.navigate("VisitCreated");
+  }else if(statusUpdate!=null && !statusUpdate.Resultado){
+    Alert.alert(statusUpdate.Mensaje);
+  }
+   
   }
   const HandleUpdateVisit = async typeOption => {
     try{
-      if (!DrivingVisitDetail.isRouteInCourse &&typeOption==3 ) {
-        Alert.alert('Inicie primero el viaje antes de marcar su llegada');
+      if (!DrivingVisitDetail.isRouteInCourse &&typeOption==1 ) {
+        Alert.alert('Inicie primero el viaje antes de marcar su fin ');
         return;
       }
-
-     
+    dispatch(LoadUpdateVisit(true));     
       switch (typeOption) {
-        case 1: {
-          visit.Proceso = 'Finalizado';
+        case 1: {          
+          
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
-          FunctionUpdateVisit(visit, dispatch,navigation);
-          navigation.navigate("FormFinaliceVisit");
+          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
+          visit.isInitVisit=true;
+          const resultUpdate = await FunctionUpdateVisit(visit, dispatch,navigation);
+          if(resultUpdate!=null && resultUpdate.Resultado){
+            await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+            Alert.alert("Registro exitoso");
+          }else if(resultUpdate!=null && !resultUpdate.Resultado){
+            Alert.alert(resultUpdate.Mensaje);
+          }
+          //navigation.navigate("FormFinaliceVisit");
           //FunctionUpdateAddressCoords();
           break;
         }
@@ -60,6 +78,8 @@ const DetailVisit = () => {
       };      
     }catch(ex){
       Alert.alert("Error: "+ex)
+    }finally{
+      dispatch(LoadUpdateVisit(false));     
     }    
   };
   return (
@@ -80,7 +100,7 @@ const DetailVisit = () => {
         </Button>
         <Button
           onPress={() => {
-            HandleUpdateVisit(3);
+            HandleUpdateVisit(1);
           }}
           style={styles.button3}>
           <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
@@ -95,7 +115,8 @@ const DetailVisit = () => {
  
         <View flex centerH>
           <View style={styles.cardinfo1}>
-            <TextInput onChangeText={HandleSetComentary} placeholder='Comentario' multiline={true} numberOfLines={4} value={comentary}  ></TextInput>
+            {/* <TextInput onChangeText={HandleSetComentary} placeholder='Comentario' multiline={true} numberOfLines={4} value={comentary}  ></TextInput> */}
+            <Text>{data.Comentario}</Text>
           </View>
           <View style={styles.cardinfo2}>
             <Text>{data.Titulo}</Text>
