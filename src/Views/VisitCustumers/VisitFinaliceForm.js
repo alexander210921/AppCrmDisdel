@@ -15,7 +15,8 @@ import {
   SaveIdWatch,
   SetIsInitDrivingVisit,
   SaveUUIDRoute,
-  FunctionSetCoordsDetail
+  FunctionSetCoordsDetail,
+  DeleteVisit
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
@@ -47,7 +48,6 @@ const FormFinaliceVisit = () => {
   const submitForm =async FormData => {
     
     try {   
-       const coordsActuality = await  GetGeolocation();
         const visit = {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
@@ -64,7 +64,10 @@ const FormFinaliceVisit = () => {
         dispatch(SaveVisitCreated({
           IdVisit:dataVisist.IdRegistro,
           isEndVisit:true
-        }));        
+        }));
+        dispatch(DeleteVisit(dataVisist.IdRegistro));
+        Alert.alert(StatusUpdateVisit.Mensaje);  
+        navigation.navigate("VisitCreated");      
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
        }
