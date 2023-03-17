@@ -20,6 +20,7 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {generateUUID} from '../../lib/UUID';
 import {
   AsyncStorageDeleteData,
+  AsyncStorageGetData,
   AsyncStorageSaveDataJson,
 } from '../../lib/AsyncStorage';
 import {StartRealTimeCoords} from '../../lib/Permissions/Geolocation';
@@ -106,7 +107,22 @@ const VisitCreated = () => {
      if(ListRoutes.RoutesInProgress!=null && ListRoutes.RoutesInProgress.length > 0){
       //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
       await StartInitVisit(ListRoutes.RoutesInProgress,DrivingVisitDetail,dispatch);    
-      navigation.navigate("FormCreateRoute");
+      try{
+        //validando elinicio del kilometraje
+        const Mileague = await AsyncStorageGetData("@Mileague");
+        if(Mileague!=null){
+          let data = JSON.parse(Mileague);
+          //DateCreatedMileague : new Date().toLocaleDateString(),
+          if(data.DateCreatedMileague !=new Date().toLocaleDateString()){
+            await AsyncStorageDeleteData("@Mileague");
+            navigation.navigate("FormCreateRoute");
+          }
+        }else{
+          navigation.navigate("FormCreateRoute");
+        }
+      }finally{
+        dispatch(LoadGetVisitActuality(false));
+      }
      }else{
       Alert.alert("No hay visitas pendientes","Cree primero sus visitas antes de poder iniciar su captura de localización ");
      }

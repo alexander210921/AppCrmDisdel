@@ -107,13 +107,27 @@ const FormCreateRoute = () => {
           idVisita:Milaege.idVisitCreated?.IdVisit,
           TipoKilometraje:Milaege.idVisitCreated?.isEndVisit
         };              
-        SetMileage(data, dispatch,!Milaege.isInitMileage,navigation,Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer");
+        const statusCreateMileage = await SetMileage(data, dispatch,!Milaege.isInitMileage,navigation,Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer");
+        if(statusCreateMileage!=null && statusCreateMileage.Resultado){
+          const dataMileague={
+            ...data,
+            ImageName:statusCreateMileage.MensajeAux,
+            EntityID :statusCreateMileage.DocNum,
+            DateCreatedMileague : new Date().toLocaleDateString(),
+          }
+          await AsyncStorageSaveDataJson("@Mileague",dataMileague);
+          navigation.navigate("VisitCreated");
+        }else if(statusCreateMileage!=null && !statusCreateMileage.Resultado){
+          Alert.alert(""+statusCreateMileage.Mensaje);
+        }
       } else {
         Alert.alert(coords.Message);
         dispatch(LoadPostMileage(false));
       }
     }catch(ex){
       Alert.alert(ex);
+    }finally{
+      dispatch(LoadPostMileage(false));
     }
   }
   return (

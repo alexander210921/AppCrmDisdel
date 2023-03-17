@@ -1,23 +1,36 @@
 import {LOAD_POST_MILEAGE,SET_INIT_OR_END_MILEAGE} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
+import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 //post mileage for vendors or pilots
-export const SetMileage = (data, dispatch,isInitMileage=false,navigation,NameViewRedirect) => {  
+export const SetMileage =async (data, dispatch,isInitMileage=false,navigation,NameViewRedirect) => {  
   try {
-    Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', data)
-      .then(response => {
-        Alert.alert(response.data.Mensaje);
-        if(response.data.Resultado){
-          navigation.navigate(NameViewRedirect);
-          dispatch(setIsInitOrEndMileage(isInitMileage));
-        }
-      })
-      .catch(() => {
-        Alert.alert("Error: por favor intente nuevamente tomar la fotografía");
-      }).finally = () => {
-      dispatch(LoadPostMileage(false));
-    };
-  } finally {
+    const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', data)
+    return data;
+    //   .then(response => {
+    //     Alert.alert(response.data.Mensaje);
+    //     if(response.data.Resultado){
+    //       const dataMileague={
+    //         ...data,
+    //         ImageName:response.data.MensajeAux,
+    //         EntityID :response.data.DocNum 
+    //       }
+    //       AsyncStorageSaveDataJson("@Mileague",dataMileague).finally(()=>{
+    //         navigation.navigate(NameViewRedirect);
+    //         dispatch(setIsInitOrEndMileage(isInitMileage));
+    //       });          
+    //     }
+    //   })
+    //   .catch(() => {
+    //     Alert.alert("Error: por favor intente nuevamente tomar la fotografía");
+    //   }).finally = () => {
+    //   dispatch(LoadPostMileage(false));
+    // };
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+   finally {
     dispatch(LoadPostMileage(false));
   }
 };
