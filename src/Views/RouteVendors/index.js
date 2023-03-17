@@ -33,6 +33,8 @@ const HomeRouteVendors = () => {
      const visits = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
      if(visits!=null && visits.length > 0){
       dispatch(SetVisiActualityt(visits));                      
+     }else if(visits.length ==0){
+      dispatch(SetVisiActualityt([]));        
      }
     }catch(ex){
       Alert.alert(""+ex);

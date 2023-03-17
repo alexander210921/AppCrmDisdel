@@ -82,7 +82,7 @@ const DetailVisit = () => {
           break;
         }
         case 2: {          
-          setVisit({...visit,Proceso:'Cancelado'})
+          setVisit({...visit,Proceso:'Cancelado',isInitVisit:false,isEndVisit:false})
           AlertConditional(ConfirmCancelVisit,function(){},"¿Está seguro de cancelar esta visita?","");
           break;
         }
