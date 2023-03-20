@@ -50,7 +50,21 @@ export const GetCustumerVendor = (IdRelatoin, SearchTerm, dispatch) => {
     dispatch(LoadGeCustomer(false));
   }
 };
-
+export const getCustomersForVendor=async(IdRelatoin, SearchTerm)=>{
+  try{
+    const {data} = await Axios.get(
+      'MyWsMobil/api/Mobil/GetBuscarSocio/' +
+        IdRelatoin +
+        '/' +
+        SearchTerm +
+        '/',
+    )
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null
+  }
+}
 export const SetVisitCustomer =async (
   object,
   dispatch,
@@ -62,34 +76,7 @@ export const SetVisitCustomer =async (
   try { 
     const {data }=await Axios.post('MyWsMobil/api/Mobil/CrearVisita/', object)
     return data;
-      // .then(response => {
-      //   if(!IsReturn){
-      //     Alert.alert(response.data.Mensaje);
-      //   }        
-      //   dispatch(SaveVisitCreated({
-      //     IdVisit:response.data.DocNum,
-      //     isEndVisit:IsReturn
-      //   }));
-      //   if (response.data.Resultado && IsReturn) {             
-      //     dispatch(
-      //       SetVisiActualityt([
-      //         {
-      //           ...data,
-      //           IdRegistro:  response.data.DocNum,
-      //         },
-      //       ])
-      //     );
-      //   }
-      //   if (isNavigation) {
-      //     navigation.navigate(ViewNameNavigate);
-      //   }
-      // })
-      // .catch(() => {
-      //   Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
-      // })
-      // .finally(() => {
-      //   dispatch(LoadSetRegisterVisit(false));
-      // });
+
   }catch(Exception){
     Alert.alert(""+Exception);
     return null;
@@ -173,31 +160,7 @@ export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRe
   try {
     const {data}=await Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', object)
     return data;
-      // .then(response => {
-      //   if (response.data.Resultado && data.Proceso != 'EnProceso') {
-      //     dispatch(DeleteVisit(data.IdRegistro));
-      //     if(nameViewRedirect!=""){
-      //       navigation.navigate(nameViewRedirect);
-      //     }
-          
-      //     // try {
-      //     //   AsyncStorageDeleteData('@dataRoute').finally(() => {
-      //     //     dispatch(SetIsInitDrivingVisit(false));
-      //     //     dispatch(SaveUUIDRoute(''));
-      //     //     navigation.navigate('VisitCreated');
-      //     //   });
-      //     // } catch {}
 
-      //     //ELIMINAR CACH´W
-      //   }
-      //   Alert.alert(response.data.Mensaje);
-      // })
-      // .catch(() => {
-      //   Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
-      // })
-      // .finally(() => {
-      //   dispatch(LoadUpdateVisit(false));
-      // });
   }catch(ex){
     Alert.alert(""+ex);
     return null;

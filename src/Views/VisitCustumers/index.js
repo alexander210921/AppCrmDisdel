@@ -32,7 +32,7 @@ const VisitirCustomer = () => {
     FunctionGetAdressCustomer(customer.CardCode,company.NombreDB?company.NombreDB:"SBO_DISDELSA_2013",dispatch,true,navigation);    
   };
   useLayoutEffect(() => {
-    dispatch(GeCustomersVendor([]));
+    //dispatch(GeCustomersVendor([]));
   }, []);
   return (
     <ScrollView style={styles.secondWrapper}>

@@ -200,7 +200,7 @@ const FormCreateRoute = () => {
               </View>
               <View style={styles.containerButton}>
                 <ButtonPrimary
-                  HandleClick={()=>{navigation.navigate(Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer")}}
+                  HandleClick={()=>{navigation.navigate(Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"VisitCreated")}}
                   label="Omitir"
                   Backcolor="black"></ButtonPrimary>
               </View>

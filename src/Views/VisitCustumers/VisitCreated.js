@@ -5,30 +5,18 @@ import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  CancelListVisitsInCourse,
   FunctionGetMileageInit,
   SaveSelectVisitDetail,
-  SetVisitCustomer,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import Geolocation from '@react-native-community/geolocation';
 import {
-  SaveIdWatch,
-  SetIsInitDrivingVisit,
-  SaveUUIDRoute,
-} from '../../Api/Customers/ApiCustumer';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation';
-import {generateUUID} from '../../lib/UUID';
-import {
-  AsyncStorageDeleteData,
   AsyncStorageGetData,
-  AsyncStorageSaveDataJson,
 } from '../../lib/AsyncStorage';
-import {StartRealTimeCoords} from '../../lib/Permissions/Geolocation';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
-import {SetVisiActualityt,LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
-//import { StartInitVisit } from '../../lib/Visits/index/';
+import {LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
 import { StartInitVisit, StopInitVisit } from '../../lib/Visits/index';
+import { GeCustomersVendor,LoadGeCustomer,getCustomersForVendor } from '../../Api/Customers/ApiCustumer';
+import SearchBar from '../../Components/SearchBar';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -37,7 +25,6 @@ const VisitCreated = () => {
   const [ErrorConnection, setErrorConnection] = useState(' ');
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
-  const [returnBase,setReturnBase] = useState(false);
   const [MileageDetail,setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
   const [dataVisitReturn, setDataVisitReturn] = useState({
@@ -52,50 +39,25 @@ const VisitCreated = () => {
     Kilometraje: 0,
     IdRelacion: Rol[0]?.IdRelacion,
   });
-  // const GotoBaseVendor =async () => {
-  //   try {
-  //     let isDeleted = false;
-  //     if (ListRoutes.RoutesInProgress.length > 0) {
-  //       //eliminando
-  //      const dataList =  ListRoutes.RoutesInProgress.map(
-  //         visit => ( visit.IdRegistro
-  //         ),
-  //       );
-  //       //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
-  //        isDeleted =await CancelListVisitsInCourse(
-  //         dataList,
-  //         dispatch,
-  //       ).then(response =>{
-  //         if(response.data.length>0){
-  //           Alert.alert("",""+response.data.length+" Registros no se pudieron actualizar");
-  //         }    
-  //         dispatch(SetVisiActualityt([]));
-  //       });
-  //     }
-  //     SetVisitCustomer(
-  //       dataVisitReturn,
-  //       dispatch,
-  //       navigation,
-  //       false,
-  //       true,
-  //       'SearchCustomer',
-  //     );
-  //     const uuid = generateUUID();
-  //     StartRealTimeCoords(dispatch, uuid, 5);
-  //     dispatch(SaveUUIDRoute(uuid));
-  //     dispatch(SetIsInitDrivingVisit(true));
-  //     const infoRoute = {
-  //       DatevalidId: new Date().toLocaleDateString(),
-  //       UUidInProgress: uuid,
-  //       IdVisitInProgress: 0,
-  //       isRouteInCourse: true,
-  //       IdWatch:DrivingVisitDetail.IdWatchLocation,
-  //     };
-  //      AsyncStorageSaveDataJson('@dataRoute', infoRoute);
-  //   } catch (ex) {
-  //     Alert.alert('Error: ' + ex);
-  //   }
-  // };
+  const SubmitSearch = async value => {
+    try{
+      dispatch(LoadGeCustomer(true));    
+    const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
+    if(customers.Respuesta.Resultado){
+      dispatch(GeCustomersVendor(customers.Detalle));
+      navigation.navigate("SearchCustomer");
+    }else{
+      Alert.alert('No se encontraron registros');
+      dispatch(GeCustomersVendor([]));
+    }
+    }catch(ex){
+      Alert.alert(""+ex);
+    }
+    finally{
+      dispatch(LoadGeCustomer(false));    
+    }
+  };
+
   const HandleInitRoute=async()=>{
     try{
       if (
@@ -117,18 +79,6 @@ const VisitCreated = () => {
         }else{
 
         }
-        // //validando elinicio del kilometraje
-        // const Mileague = await AsyncStorageGetData("@Mileague");
-        // if(Mileague!=null){
-        //   let data = JSON.parse(Mileague);
-        //   //DateCreatedMileague : new Date().toLocaleDateString(),
-        //   if(data.DateCreatedMileague !=new Date().toLocaleDateString()){
-        //     await AsyncStorageDeleteData("@Mileague");
-        //     navigation.navigate("FormCreateRoute");
-        //   }
-        // }else{
-        //   navigation.navigate("FormCreateRoute");
-        // }
       }finally{
         dispatch(LoadGetVisitActuality(false));
       }
@@ -158,31 +108,6 @@ const VisitCreated = () => {
       dispatch(LoadGetVisitActuality(false));      
     }    
   }
-
-  // const CancelGotoBase = () => {
-  //   try{
-  //     setReturnBase(true);
-  //    // dispatch(SetVisiActualityt([]));
-  //   if (DrivingVisitDetail.IdWatchLocation != null) {
-  //     Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-  //   }
-  //   dispatch(SaveIdWatch(null));
-  //   dispatch(SetIsInitDrivingVisit(false));
-  //   dispatch(SaveUUIDRoute(''));
-  //   const dataList =  ListRoutes.RoutesInProgress.map(
-  //     visit => ( visit.IdRegistro        
-  //     ),
-  //   );
-  //   CancelListVisitsInCourse(
-  //     dataList,
-  //     dispatch,
-  //   );  
-   
-  //   }catch(Exception){
-  //     Alert.alert(""+Exception)
-  //   }    
-  // };
-
   const CancelVisit = () => {
     if(StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch)){
       Alert.alert("Cancelado correctamente");
@@ -210,22 +135,22 @@ const VisitCreated = () => {
     dispatch(SaveSelectVisitDetail(visit));
     Navigator.navigate('DetailVisit');
   };
-  const StopGeolocation=()=>{
-    if (
-      ListRoutes.RoutesInProgress.length == 0 && !returnBase
-    ) {
-      Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
+  // const StopGeolocation=()=>{
+  //   if (
+  //     ListRoutes.RoutesInProgress.length == 0 && !returnBase
+  //   ) {
+  //     Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
 
-      dispatch(SaveIdWatch(null));
-      dispatch(SetIsInitDrivingVisit(false));
-      dispatch(SaveUUIDRoute(''));
-      AsyncStorageDeleteData('@dataRoute').finally(() => {
-      });
-    }
-  }
-  useEffect(() => {
-    StopGeolocation();
-  }, [ListRoutes.RoutesInProgress]);
+  //     dispatch(SaveIdWatch(null));
+  //     dispatch(SetIsInitDrivingVisit(false));
+  //     dispatch(SaveUUIDRoute(''));
+  //     AsyncStorageDeleteData('@dataRoute').finally(() => {
+  //     });
+  //   }
+  // }
+  // useEffect(() => {
+  //   StopGeolocation();
+  // }, [ListRoutes.RoutesInProgress]);
   useEffect(()=>{
     try{
       async function getMileague (){
@@ -246,18 +171,18 @@ const VisitCreated = () => {
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
-          
+      <SearchBar onSubmit={SubmitSearch}></SearchBar>    
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
           
-          <Text style={styles.Title}>En Proceso...</Text>
+          <Text style={styles.Title}>Mis visitas</Text>
           <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
             // <LoaderScreen
             //   color="black"
             //   message="Procesando Ubicación"></LoaderScreen>
             <Text>Se está capturando su ubicación actual</Text>
-          ) : null}
+          ) : <Text>Cuando esté listo para salir presione el botón "Iniciar Ruta"</Text>}
           {MileageDetail? 
           <Text style={styles.title1}>kilometraje Inicial: {MileageDetail.Kilometraje}</Text>
           :null}
@@ -305,7 +230,9 @@ const VisitCreated = () => {
         </View>
       ) : (
         <View>
-          <Text style={styles.Title}>No hay rutas en curso</Text>
+          <Text style={styles.Title}>No hay visitas creadas aún</Text>
+          <Text style={styles.title1}>Cree primero su visita </Text>
+
           <ViewButtonsOption></ViewButtonsOption>
         </View>
       )}
