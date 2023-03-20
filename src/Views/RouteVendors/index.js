@@ -40,7 +40,7 @@ const HomeRouteVendors = () => {
       Alert.alert(""+ex);
     } finally{
       dispatch(LoadGetVisitActuality(false)); 
-      navigation.navigate("VisitCreated");
+      navigation.navigate("MenuEndVisit");
     }
   }
   

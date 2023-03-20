@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, LoaderScreen, Button} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
+import {Alert, StyleSheet, TextInput, Image, ScrollView, InteractionManager} from 'react-native';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
 import {
   LoadPostMileage,
@@ -14,6 +14,7 @@ import {_base64ToArrayBuffer} from '../../lib/Converts/index';
 import {requestExternalWritePermission} from '../../lib/Permissions/Files';
 import {requestCameraPermission} from '../../lib/Permissions/Camera';
 import { useNavigation } from '@react-navigation/native';
+import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const Rol = useSelector(state => state.rol.RolSelect);
@@ -99,7 +100,7 @@ const FormCreateRoute = () => {
       if (coords.Status) {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
-          Kilometraje: formData.milaege,
+          Kilometraje: parseInt(formData.milaege) ,
           Comentario: formData.commentary?formData.commentary:'',
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
@@ -125,7 +126,7 @@ const FormCreateRoute = () => {
         dispatch(LoadPostMileage(false));
       }
     }catch(ex){
-      Alert.alert(ex);
+      Alert.alert(""+ex);
     }finally{
       dispatch(LoadPostMileage(false));
     }

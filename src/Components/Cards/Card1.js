@@ -3,7 +3,7 @@ import {View, StyleSheet, TouchableWithoutFeedback, Text,TouchableHighlight} fro
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from 'react-native-ui-lib';
 const CardVisit = ({
-  principalColor = 'orange',
+  principalColor = 'rgba(249,214,125,255)',
   title = 'title',
   subtitle = '',
   handleSelectCard,
@@ -11,6 +11,41 @@ const CardVisit = ({
   title2 = '',
   FunctionInit
 }) => {
+  const styles = StyleSheet.create({
+
+    mainCardView: {
+      //height: 60,
+      display:'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: principalColor,
+      borderRadius: 15,
+      shadowColor: 'shadow',
+      shadowOffset: {width: 0, height: 0},
+      shadowOpacity: 1,
+      shadowRadius: 8,
+      elevation: 8,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingLeft: 14,
+      paddingRight: 14,
+      marginTop: 9,
+      marginBottom: 9,
+      width: '90%',
+    
+    },
+    subCardView: {
+      height: 50,
+      width: 54,
+      borderRadius: 25,
+      backgroundColor: 'white',
+      borderColor: 'white',
+      borderWidth: 1,
+      borderStyle: 'solid',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
   const HandlePressButton = () => {
     handleSelectCard(data);
   };
@@ -78,39 +113,5 @@ const CardVisit = ({
     </TouchableWithoutFeedback>
   );
 };
-const styles = StyleSheet.create({
 
-  mainCardView: {
-    //height: 60,
-    display:'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(249,214,125,255)',
-    borderRadius: 15,
-    shadowColor: 'shadow',
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 14,
-    paddingRight: 14,
-    marginTop: 9,
-    marginBottom: 9,
-    width: '90%',
-  
-  },
-  subCardView: {
-    height: 50,
-    width: 54,
-    borderRadius: 25,
-    backgroundColor: 'white',
-    borderColor: 'white',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 export default CardVisit;

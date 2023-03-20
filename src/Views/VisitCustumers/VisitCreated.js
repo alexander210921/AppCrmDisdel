@@ -6,6 +6,7 @@ import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   CancelListVisitsInCourse,
+  FunctionGetMileageInit,
   SaveSelectVisitDetail,
   SetVisitCustomer,
 } from '../../Api/Customers/ApiCustumer';
@@ -37,6 +38,8 @@ const VisitCreated = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
   const [returnBase,setReturnBase] = useState(false);
+  const [MileageDetail,setMileagueDetail] = useState(null);
+  const User = useSelector(state => state.login.user);  
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
     CardName: 'DISDEL, S.A.',
@@ -49,50 +52,50 @@ const VisitCreated = () => {
     Kilometraje: 0,
     IdRelacion: Rol[0]?.IdRelacion,
   });
-  const GotoBaseVendor =async () => {
-    try {
-      let isDeleted = false;
-      if (ListRoutes.RoutesInProgress.length > 0) {
-        //eliminando
-       const dataList =  ListRoutes.RoutesInProgress.map(
-          visit => ( visit.IdRegistro
-          ),
-        );
-        //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
-         isDeleted =await CancelListVisitsInCourse(
-          dataList,
-          dispatch,
-        ).then(response =>{
-          if(response.data.length>0){
-            Alert.alert("",""+response.data.length+" Registros no se pudieron actualizar");
-          }    
-          dispatch(SetVisiActualityt([]));
-        });
-      }
-      SetVisitCustomer(
-        dataVisitReturn,
-        dispatch,
-        navigation,
-        false,
-        true,
-        'SearchCustomer',
-      );
-      const uuid = generateUUID();
-      StartRealTimeCoords(dispatch, uuid, 5);
-      dispatch(SaveUUIDRoute(uuid));
-      dispatch(SetIsInitDrivingVisit(true));
-      const infoRoute = {
-        DatevalidId: new Date().toLocaleDateString(),
-        UUidInProgress: uuid,
-        IdVisitInProgress: 0,
-        isRouteInCourse: true,
-        IdWatch:DrivingVisitDetail.IdWatchLocation,
-      };
-       AsyncStorageSaveDataJson('@dataRoute', infoRoute);
-    } catch (ex) {
-      Alert.alert('Error: ' + ex);
-    }
-  };
+  // const GotoBaseVendor =async () => {
+  //   try {
+  //     let isDeleted = false;
+  //     if (ListRoutes.RoutesInProgress.length > 0) {
+  //       //eliminando
+  //      const dataList =  ListRoutes.RoutesInProgress.map(
+  //         visit => ( visit.IdRegistro
+  //         ),
+  //       );
+  //       //console.log(ListRoutes.RoutesInProgress,"LISTA DE RUTAS EN CURSO");
+  //        isDeleted =await CancelListVisitsInCourse(
+  //         dataList,
+  //         dispatch,
+  //       ).then(response =>{
+  //         if(response.data.length>0){
+  //           Alert.alert("",""+response.data.length+" Registros no se pudieron actualizar");
+  //         }    
+  //         dispatch(SetVisiActualityt([]));
+  //       });
+  //     }
+  //     SetVisitCustomer(
+  //       dataVisitReturn,
+  //       dispatch,
+  //       navigation,
+  //       false,
+  //       true,
+  //       'SearchCustomer',
+  //     );
+  //     const uuid = generateUUID();
+  //     StartRealTimeCoords(dispatch, uuid, 5);
+  //     dispatch(SaveUUIDRoute(uuid));
+  //     dispatch(SetIsInitDrivingVisit(true));
+  //     const infoRoute = {
+  //       DatevalidId: new Date().toLocaleDateString(),
+  //       UUidInProgress: uuid,
+  //       IdVisitInProgress: 0,
+  //       isRouteInCourse: true,
+  //       IdWatch:DrivingVisitDetail.IdWatchLocation,
+  //     };
+  //      AsyncStorageSaveDataJson('@dataRoute', infoRoute);
+  //   } catch (ex) {
+  //     Alert.alert('Error: ' + ex);
+  //   }
+  // };
   const HandleInitRoute=async()=>{
     try{
       if (
@@ -108,18 +111,24 @@ const VisitCreated = () => {
       //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
       await StartInitVisit(ListRoutes.RoutesInProgress,DrivingVisitDetail,dispatch);    
       try{
-        //validando elinicio del kilometraje
-        const Mileague = await AsyncStorageGetData("@Mileague");
-        if(Mileague!=null){
-          let data = JSON.parse(Mileague);
-          //DateCreatedMileague : new Date().toLocaleDateString(),
-          if(data.DateCreatedMileague !=new Date().toLocaleDateString()){
-            await AsyncStorageDeleteData("@Mileague");
-            navigation.navigate("FormCreateRoute");
-          }
+        const dataMileagueInit = await FunctionGetMileageInit(User.EntityID,0);
+        if(!dataMileagueInit || dataMileagueInit.length==0 ){
+            navigation.navigate("FormCreateRoute");          
         }else{
-          navigation.navigate("FormCreateRoute");
+
         }
+        // //validando elinicio del kilometraje
+        // const Mileague = await AsyncStorageGetData("@Mileague");
+        // if(Mileague!=null){
+        //   let data = JSON.parse(Mileague);
+        //   //DateCreatedMileague : new Date().toLocaleDateString(),
+        //   if(data.DateCreatedMileague !=new Date().toLocaleDateString()){
+        //     await AsyncStorageDeleteData("@Mileague");
+        //     navigation.navigate("FormCreateRoute");
+        //   }
+        // }else{
+        //   navigation.navigate("FormCreateRoute");
+        // }
       }finally{
         dispatch(LoadGetVisitActuality(false));
       }
@@ -130,7 +139,9 @@ const VisitCreated = () => {
       dispatch(LoadGetVisitActuality(false));      
     }       
   }
-
+  const AlertMessage=()=>{
+    AlertConditional(HandleStopVisit,function(){},"Cancelar Recorrido","¿Está seguro de cancelar?, se perderá todo su recorrido");
+  }
   const HandleStopVisit=async()=>{
     try{
       if(!DrivingVisitDetail.isRouteInCourse){
@@ -148,63 +159,42 @@ const VisitCreated = () => {
     }    
   }
 
-  const CancelGotoBase = () => {
-    try{
-      setReturnBase(true);
-     // dispatch(SetVisiActualityt([]));
-    if (DrivingVisitDetail.IdWatchLocation != null) {
-      Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-    }
-    dispatch(SaveIdWatch(null));
-    dispatch(SetIsInitDrivingVisit(false));
-    dispatch(SaveUUIDRoute(''));
-    const dataList =  ListRoutes.RoutesInProgress.map(
-      visit => ( visit.IdRegistro        
-      ),
-    );
-    CancelListVisitsInCourse(
-      dataList,
-      dispatch,
-    );  
+  // const CancelGotoBase = () => {
+  //   try{
+  //     setReturnBase(true);
+  //    // dispatch(SetVisiActualityt([]));
+  //   if (DrivingVisitDetail.IdWatchLocation != null) {
+  //     Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
+  //   }
+  //   dispatch(SaveIdWatch(null));
+  //   dispatch(SetIsInitDrivingVisit(false));
+  //   dispatch(SaveUUIDRoute(''));
+  //   const dataList =  ListRoutes.RoutesInProgress.map(
+  //     visit => ( visit.IdRegistro        
+  //     ),
+  //   );
+  //   CancelListVisitsInCourse(
+  //     dataList,
+  //     dispatch,
+  //   );  
    
-    }catch(Exception){
-      Alert.alert(""+Exception)
-    }    
-  };
+  //   }catch(Exception){
+  //     Alert.alert(""+Exception)
+  //   }    
+  // };
 
   const CancelVisit = () => {
     if(StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch)){
       Alert.alert("Cancelado correctamente");
-      //    AlertConditional(
-      //   GotoBaseVendor,
-      //   CancelGotoBase,
-      //   '¿Desea volver a su base?',
-      //   'Esto significa volver a su punto de salida',
-      // );
     }    
   };
   const HandleCancelAlert = () => {
-    //Alert.alert("Cancelando operacion ");
-    //Alert.alert("Cancelar");
-    //CancelGotoBase();
+   
   };
   const ViewButtonsOption = () => {
     return (
       <View flex style={styles.containerButton}>
-        {/* <Button
-          onPress={() => {
-            InitVisit();
-          }}
-          style={styles.button3}>
-          <Text style={{fontSize: 10, color: 'white'}}> Iniciar Ruta </Text>
-        </Button>
-        <Button
-          onPress={() => {
-            handleCancelVisit();
-          }}
-          style={styles.button4}>
-          <Text style={{fontSize: 10, color: 'white'}}> Regresar a su base </Text>
-        </Button> */}
+      
       </View>
     );
   };
@@ -230,18 +220,27 @@ const VisitCreated = () => {
       dispatch(SetIsInitDrivingVisit(false));
       dispatch(SaveUUIDRoute(''));
       AsyncStorageDeleteData('@dataRoute').finally(() => {
-        // AlertConditional(
-        //   GotoBaseVendor,
-        //   CancelGotoBase,
-        //   '¿Desea volver a su base?',
-        //   'Esto significa volver a su punto de salida',
-        // );
       });
     }
   }
   useEffect(() => {
     StopGeolocation();
   }, [ListRoutes.RoutesInProgress]);
+  useEffect(()=>{
+    try{
+      async function getMileague (){
+       return  await AsyncStorageGetData("@Mileague");
+      }
+       getMileague().then((res)=>{        
+        if(res!=null){
+          setMileagueDetail(JSON.parse(res))
+        }
+      });
+     
+    }catch(ex){
+
+    }    
+  }, [])
   async function InitVisit() {
     await StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch);  
   }
@@ -259,7 +258,9 @@ const VisitCreated = () => {
             //   message="Procesando Ubicación"></LoaderScreen>
             <Text>Se está capturando su ubicación actual</Text>
           ) : null}
-
+          {MileageDetail? 
+          <Text style={styles.title1}>kilometraje Inicial: {MileageDetail.Kilometraje}</Text>
+          :null}
           <Text>{ErrorConnection}</Text>
           <View flex center>
           {ListRoutes.loadGetCurrentVisit?
@@ -284,7 +285,7 @@ const VisitCreated = () => {
         style={styles.mainCardView2}
         flex
         center      
-        onPress={HandleStopVisit}>
+        onPress={AlertMessage}>
         <Text>Cancelar mi recorrido</Text>
       </Card>
 
@@ -319,6 +320,11 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 25,
     fontWeight: 600,
+  },
+  title1:{
+    color:'gray',
+    fontSize:15,
+    fontWeight:400
   },
   button3: {
     width: 35,

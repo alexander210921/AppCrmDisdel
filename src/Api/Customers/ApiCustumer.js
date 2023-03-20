@@ -206,6 +206,26 @@ export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRe
     dispatch(LoadUpdateVisit(false));
   }
 };
+export async function GetVisitByID (idvisit){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/Get/"+idvisit+"/");
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
+
+export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/GetKilometrajeInicio/"+IdUsuario+"/"+TypeMileage+"/");
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
+
 export const FunctionUpdateAddressCoords = (data, dispatch) => {
   try {
     Axios.post('MyWsOneVenta/api/Tracking/ActualizarCamposContacto/', data)

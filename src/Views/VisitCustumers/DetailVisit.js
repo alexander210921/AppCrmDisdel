@@ -6,7 +6,7 @@ import StylesWrapper from '../../Styles/Wrapers';
 import {
   DeleteVisit,
   FunctionSetCoordsDetail,
-  FunctionUpdateVisit, LoadUpdateVisit,
+  FunctionUpdateVisit, GetVisitByID, LoadUpdateVisit,
 } from '../../Api/Customers/ApiCustumer';
 import { useNavigation } from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
@@ -45,11 +45,13 @@ const DetailVisit = () => {
    
   }
   const HandleUpdateVisit = async typeOption => {
+    
     try{
       if (!DrivingVisitDetail.isRouteInCourse &&typeOption==1 ) {
         Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
         return;
       }
+    
     dispatch(LoadUpdateVisit(true));     
       switch (typeOption) {
         case 1: {          
@@ -86,7 +88,9 @@ const DetailVisit = () => {
           AlertConditional(ConfirmCancelVisit,function(){},"¿Está seguro de cancelar esta visita?","");
           break;
         }
-        case 3:{                            
+        case 3:{ 
+          const GetVisit = await GetVisitByID(data.IdRegistro);  
+          console.log(GetVisit["<Latitud>k__BackingField"],"GetVisitDetail")                         
           navigation.navigate("FormFinaliceVisit");                   
         }       
       };      

@@ -3,9 +3,9 @@ import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
 import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 //post mileage for vendors or pilots
-export const SetMileage =async (data, dispatch,isInitMileage=false,navigation,NameViewRedirect) => {  
+export const SetMileage =async (Object, dispatch,isInitMileage=false,navigation,NameViewRedirect) => {    
   try {
-    const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', data)
+    const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)
     return data;
     //   .then(response => {
     //     Alert.alert(response.data.Mensaje);
@@ -34,6 +34,15 @@ export const SetMileage =async (data, dispatch,isInitMileage=false,navigation,Na
     dispatch(LoadPostMileage(false));
   }
 };
+export const GetBasesVendor=async(idUser)=>{
+  try{
+    const {data} = await Axios.get('MyWsOneVenta/api/OCRDExternoBase/Get/'+idUser+"/");
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
 
 export const LoadPostMileage = RequestStatus => ({
   type: LOAD_POST_MILEAGE,
