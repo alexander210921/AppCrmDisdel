@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,  
   Text,  
+  LoaderScreen
 } from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, StyleSheet, Alert,ScrollView} from 'react-native';
@@ -45,9 +46,11 @@ const FormFinaliceVisit = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
+  const [loadFinishVisit,setLoadFinishVisit] = useState(false);
   const submitForm =async FormData => {
     
     try {   
+      setLoadFinishVisit(true);
         const visit = {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
@@ -75,6 +78,8 @@ const FormFinaliceVisit = () => {
     } catch(ex) {
       Alert.alert(""+ex);
       dispatch(LoadSetRegisterVisit(false));
+    }finally{
+      setLoadFinishVisit(false);
     }
   };
 
@@ -144,10 +149,15 @@ const FormFinaliceVisit = () => {
         {errors.Comment && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}          
-        <View style={styles.ContainerMargin}>                    
-            <ButtonPrimary
-              label="Dar por finalizado"
-              HandleClick={handleSubmit(submitForm)}></ButtonPrimary>          
+        <View style={styles.ContainerMargin}>     
+        {loadFinishVisit ?         
+
+        <LoaderScreen messague="Cargando..." color="black"></LoaderScreen> :
+        <ButtonPrimary
+        label="Dar por finalizado"
+        HandleClick={handleSubmit(submitForm)}></ButtonPrimary>          
+        }               
+            
         </View>
       </View>
     </ScrollView>
