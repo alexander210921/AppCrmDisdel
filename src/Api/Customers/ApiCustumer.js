@@ -188,7 +188,14 @@ export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
     return null;
   }
 }
-
+export async function FunctionGetCustomerDefaultForRoute (IdUsuario,company){  
+  try{
+    const {data} = await Axios.get("MyWsMobil/Api/Mobil/GetDatosClienteRuta/"+IdUsuario+"/"+company+"/");
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
 export const FunctionUpdateAddressCoords = (data, dispatch) => {
   try {
     Axios.post('MyWsOneVenta/api/Tracking/ActualizarCamposContacto/', data)

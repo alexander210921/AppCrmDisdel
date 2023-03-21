@@ -9,7 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {GetBasesVendor} from '../../Api/Vendors/ApiVendors';
 import CardVisit from '../../Components/Cards/Card1';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
-import {SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
+import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 const MenuEndVisit = () => {
   const User = useSelector(state => state.login.user);
@@ -90,6 +90,16 @@ const MenuEndVisit = () => {
     try {
       setIsLoad(true);
       const bases = await GetBasesVendor(User.EntityID);
+      const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,"SBO_DISDELSA_2013");      
+      if(CustomerDefault?.CardCode){
+        setDataVisitReturn(
+            {
+                ...dataVisitReturn,
+                CardCode:CustomerDefault.CardCode,
+                CardName:CustomerDefault.CardName,
+            }
+        );
+      }
       if (bases && bases.length > 0) {
         setBases(bases);
       } else if (bases && bases.length == 0) {

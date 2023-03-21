@@ -69,13 +69,11 @@ const VisitCreated = () => {
           dispatch,
         );
         try {
-          if (statusInit) {
-            console.log(User.EntityID,"User id")
+          if (statusInit) {            
             const dataMileagueInit = await FunctionGetMileageInit(
               User.EntityID,
               0,
-            );
-            console.log(dataMileagueInit,"Inicio Kilometraje");
+            );            
             if(!dataMileagueInit){
               return ;
             }
