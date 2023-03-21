@@ -76,6 +76,7 @@ const FormCreateVisit = () => {
           GrupoVisita:'',
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
+          EsRegreso:'N'
         };        
         const VisitCreated = await SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
         if(VisitCreated!=null && VisitCreated.Resultado){

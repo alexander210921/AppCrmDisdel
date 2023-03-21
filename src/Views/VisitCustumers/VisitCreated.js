@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
-import {Text, View, LoaderScreen, Button,Card} from 'react-native-ui-lib';
+import {Text, View, LoaderScreen, Button, Card} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
@@ -9,13 +9,15 @@ import {
   SaveSelectVisitDetail,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import {
-  AsyncStorageGetData,
-} from '../../lib/AsyncStorage';
+import {AsyncStorageGetData} from '../../lib/AsyncStorage';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
-import { StartInitVisit, StopInitVisit } from '../../lib/Visits/index';
-import { GeCustomersVendor,LoadGeCustomer,getCustomersForVendor } from '../../Api/Customers/ApiCustumer';
+import {StartInitVisit, StopInitVisit} from '../../lib/Visits/index';
+import {
+  GeCustomersVendor,
+  LoadGeCustomer,
+  getCustomersForVendor,
+} from '../../Api/Customers/ApiCustumer';
 import SearchBar from '../../Components/SearchBar';
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
@@ -25,41 +27,28 @@ const VisitCreated = () => {
   const [ErrorConnection, setErrorConnection] = useState(' ');
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
-  const [MileageDetail,setMileagueDetail] = useState(null);
+  const [MileageDetail, setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
-  const [dataVisitReturn, setDataVisitReturn] = useState({
-    CardCode: 'C46306293',
-    CardName: 'DISDEL, S.A.',
-    Comentario: 'De Regreso a la base',
-    IdRegistro: 0,
-    Contacto: '',
-    Longitud: 0,
-    Latitud: 0,
-    ShipToCode: '',
-    Kilometraje: 0,
-    IdRelacion: Rol[0]?.IdRelacion,
-  });
   const SubmitSearch = async value => {
-    try{
-      dispatch(LoadGeCustomer(true));    
-    const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
-    if(customers.Respuesta.Resultado){
-      dispatch(GeCustomersVendor(customers.Detalle));
-      navigation.navigate("SearchCustomer");
-    }else{
-      Alert.alert('No se encontraron registros');
-      dispatch(GeCustomersVendor([]));
-    }
-    }catch(ex){
-      Alert.alert(""+ex);
-    }
-    finally{
-      dispatch(LoadGeCustomer(false));    
+    try {
+      dispatch(LoadGeCustomer(true));
+      const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
+      if (customers.Respuesta.Resultado) {
+        dispatch(GeCustomersVendor(customers.Detalle));
+        navigation.navigate('SearchCustomer');
+      } else {
+        Alert.alert('No se encontraron registros');
+        dispatch(GeCustomersVendor([]));
+      }
+    } catch (ex) {
+      Alert.alert('' + ex);
+    } finally {
+      dispatch(LoadGeCustomer(false));
     }
   };
 
-  const HandleInitRoute=async()=>{
-    try{
+  const HandleInitRoute = async () => {
+    try {
       if (
         DrivingVisitDetail.isRouteInCourse &&
         DrivingVisitDetail.IdWatchLocation != null
@@ -67,61 +56,85 @@ const VisitCreated = () => {
         Alert.alert('La ruta ya ha sido iniciada');
         return;
       }
-    dispatch(LoadGetVisitActuality(true));          
-     //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);        
-     if(ListRoutes.RoutesInProgress!=null && ListRoutes.RoutesInProgress.length > 0){
-      //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
-      await StartInitVisit(ListRoutes.RoutesInProgress,DrivingVisitDetail,dispatch);    
-      try{
-        const dataMileagueInit = await FunctionGetMileageInit(User.EntityID,0);
-        if(!dataMileagueInit || dataMileagueInit.length==0 ){
-            navigation.navigate("FormCreateRoute");          
-        }else{
-
+      dispatch(LoadGetVisitActuality(true));
+      //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
+      if (
+        ListRoutes.RoutesInProgress != null &&
+        ListRoutes.RoutesInProgress.length > 0
+      ) {
+        //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
+        const statusInit = await StartInitVisit(
+          ListRoutes.RoutesInProgress,
+          DrivingVisitDetail,
+          dispatch,
+        );
+        try {
+          if (statusInit) {
+            console.log(User.EntityID,"User id")
+            const dataMileagueInit = await FunctionGetMileageInit(
+              User.EntityID,
+              0,
+            );
+            console.log(dataMileagueInit,"Inicio Kilometraje");
+            if(!dataMileagueInit){
+              return ;
+            }
+            if (!dataMileagueInit || dataMileagueInit.length == 0) {
+              navigation.navigate('FormCreateRoute');
+            } else {
+            }
+          }
+        } finally {
+          dispatch(LoadGetVisitActuality(false));
         }
-      }finally{
-        dispatch(LoadGetVisitActuality(false));
+      } else {
+        Alert.alert(
+          'No hay visitas pendientes',
+          'Cree primero sus visitas antes de poder iniciar su captura de localización ',
+        );
       }
-     }else{
-      Alert.alert("No hay visitas pendientes","Cree primero sus visitas antes de poder iniciar su captura de localización ");
-     }
-    }finally{
-      dispatch(LoadGetVisitActuality(false));      
-    }       
-  }
-  const AlertMessage=()=>{
-    AlertConditional(HandleStopVisit,function(){},"Cancelar Recorrido","¿Está seguro de cancelar?, se perderá todo su recorrido");
-  }
-  const HandleStopVisit=async()=>{
-    try{
-      if(!DrivingVisitDetail.isRouteInCourse){
-          Alert.alert("Cancelacion de ruta","La ruta no ha sido iniciada para poder cancelar");
-          return;
-      }
-      dispatch(LoadGetVisitActuality(true));      
-      const cancelStatus = await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch);
-      if(cancelStatus){
-        Alert.alert("Cancelado correctamente");
+    } finally {
+      dispatch(LoadGetVisitActuality(false));
+    }
+  };
+  const AlertMessage = () => {
+    AlertConditional(
+      HandleStopVisit,
+      function () {},
+      'Cancelar Recorrido',
+      '¿Está seguro de cancelar?, se perderá todo su recorrido',
+    );
+  };
+  const HandleStopVisit = async () => {
+    try {
+      if (!DrivingVisitDetail.isRouteInCourse) {
+        Alert.alert(
+          'Cancelacion de ruta',
+          'La ruta no ha sido iniciada para poder cancelar',
+        );
         return;
       }
-    }finally{
-      dispatch(LoadGetVisitActuality(false));      
-    }    
-  }
+      dispatch(LoadGetVisitActuality(true));
+      const cancelStatus = await StopInitVisit(
+        DrivingVisitDetail.IdWatchLocation,
+        dispatch,
+      );
+      if (cancelStatus) {
+        Alert.alert('Cancelado correctamente');
+        return;
+      }
+    } finally {
+      dispatch(LoadGetVisitActuality(false));
+    }
+  };
   const CancelVisit = () => {
-    if(StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch)){
-      Alert.alert("Cancelado correctamente");
-    }    
+    if (StopInitVisit(DrivingVisitDetail.IdWatchLocation, dispatch)) {
+      Alert.alert('Cancelado correctamente');
+    }
   };
-  const HandleCancelAlert = () => {
-   
-  };
+  const HandleCancelAlert = () => {};
   const ViewButtonsOption = () => {
-    return (
-      <View flex style={styles.containerButton}>
-      
-      </View>
-    );
+    return <View flex style={styles.containerButton}></View>;
   };
   handleCancelVisit = () => {
     AlertConditional(
@@ -151,30 +164,26 @@ const VisitCreated = () => {
   // useEffect(() => {
   //   StopGeolocation();
   // }, [ListRoutes.RoutesInProgress]);
-  useEffect(()=>{
-    try{
-      async function getMileague (){
-       return  await AsyncStorageGetData("@Mileague");
+  useEffect(() => {
+    try {
+      async function getMileague() {
+        return await AsyncStorageGetData('@Mileague');
       }
-       getMileague().then((res)=>{        
-        if(res!=null){
-          setMileagueDetail(JSON.parse(res))
+      getMileague().then(res => {
+        if (res != null) {
+          setMileagueDetail(JSON.parse(res));
         }
       });
-     
-    }catch(ex){
-
-    }    
-  }, [])
+    } catch (ex) {}
+  }, []);
   async function InitVisit() {
-    await StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch);  
+    await StartInitVisit(ListRoutes, DrivingVisitDetail, dispatch);
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
-      <SearchBar onSubmit={SubmitSearch}></SearchBar>    
+      <SearchBar onSubmit={SubmitSearch}></SearchBar>
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
-          
           <Text style={styles.Title}>Mis visitas</Text>
           <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
@@ -182,37 +191,45 @@ const VisitCreated = () => {
             //   color="black"
             //   message="Procesando Ubicación"></LoaderScreen>
             <Text>Se está capturando su ubicación actual</Text>
-          ) : <Text>Cuando esté listo para salir presione el botón "Iniciar Ruta"</Text>}
-          {MileageDetail? 
-          <Text style={styles.title1}>kilometraje Inicial: {MileageDetail.Kilometraje}</Text>
-          :null}
+          ) : (
+            <Text>
+              Cuando esté listo para salir presione el botón "Iniciar Ruta"
+            </Text>
+          )}
+          {/* {MileageDetail ? (
+            <Text style={styles.title1}>
+              kilometraje Inicial: {MileageDetail.Kilometraje}
+            </Text>
+          ) : null} */}
           <Text>{ErrorConnection}</Text>
           <View flex center>
-          {ListRoutes.loadGetCurrentVisit?
-      <LoaderScreen color="black" message="Cargando proceso..." ></LoaderScreen>:null
-      }
-      <Card
-        selected={false}
-        selectionOptions={styles.selectOptionCard}
-        elevation={20}
-        flexS
-        style={styles.mainCardView}
-        flex
-        center
-        onPress={HandleInitRoute}>
-        <Text>Iniciar Ruta</Text>
-      </Card>
-      <Card
-        selected={false}
-        selectionOptions={styles.selectOptionCard}
-        elevation={20}
-        flexS
-        style={styles.mainCardView2}
-        flex
-        center      
-        onPress={AlertMessage}>
-        <Text>Cancelar mi recorrido</Text>
-      </Card>
+            {ListRoutes.loadGetCurrentVisit ? (
+              <LoaderScreen
+                color="black"
+                message="Cargando proceso..."></LoaderScreen>
+            ) : null}
+            <Card
+              selected={false}
+              selectionOptions={styles.selectOptionCard}
+              elevation={20}
+              flexS
+              style={styles.mainCardView}
+              flex
+              center
+              onPress={HandleInitRoute}>
+              <Text>Iniciar Ruta</Text>
+            </Card>
+            <Card
+              selected={false}
+              selectionOptions={styles.selectOptionCard}
+              elevation={20}
+              flexS
+              style={styles.mainCardView2}
+              flex
+              center
+              onPress={AlertMessage}>
+              <Text>Cancelar mi recorrido</Text>
+            </Card>
 
             {ListRoutes.RoutesInProgress.map(route => {
               return (
@@ -248,10 +265,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 600,
   },
-  title1:{
-    color:'gray',
-    fontSize:15,
-    fontWeight:400
+  title1: {
+    color: 'gray',
+    fontSize: 15,
+    fontWeight: 400,
   },
   button3: {
     width: 35,
@@ -270,20 +287,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   card3: {
-    height: '60%', 
+    height: '60%',
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: 'black',
   },
   card4: {
-    height: '60%', 
+    height: '60%',
     borderColor: 'red',
     marginTop: '4%',
-    color:'red',
+    color: 'red',
     backgroundColor: '#957DAD',
   },
   mainCardView: {
-    display:'flex',
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#D7ECD9',
@@ -303,7 +320,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   mainCardView2: {
-    display:'flex',
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f6ecf5',
@@ -320,6 +337,6 @@ const styles = StyleSheet.create({
     marginTop: 9,
     marginBottom: 9,
     width: '90%',
-    height: 50,    
+    height: 50,
   },
 });

@@ -184,7 +184,7 @@ export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
     const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/GetKilometrajeInicio/"+IdUsuario+"/"+TypeMileage+"/");
     return data;
   }catch(ex){
-    Alert.alert(""+ex);
+   // Alert.alert(""+ex);
     return null;
   }
 }

@@ -67,7 +67,7 @@ const FormFinaliceVisit = () => {
         }));
         dispatch(DeleteVisit(dataVisist.IdRegistro));
         Alert.alert(StatusUpdateVisit.Mensaje);  
-        navigation.navigate("VisitCreated");      
+        navigation.navigate("MenuEndVisit");      
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
        }

@@ -89,9 +89,12 @@ const DetailVisit = () => {
           break;
         }
         case 3:{ 
-          const GetVisit = await GetVisitByID(data.IdRegistro);  
-          console.log(GetVisit["<Latitud>k__BackingField"],"GetVisitDetail")                         
-          navigation.navigate("FormFinaliceVisit");                   
+          const GetVisit = await GetVisitByID(data.IdRegistro);             
+          if(GetVisit!=null && GetVisit["<isMarkerArrival>k__BackingField"] ){
+            navigation.navigate("FormFinaliceVisit");                   
+          }else{
+            Alert.alert("No se ha marcado la llegada","Marque su llegada primero antes de finalizar");
+          }                
         }       
       };      
     }catch(ex){
@@ -128,7 +131,7 @@ const DetailVisit = () => {
             HandleUpdateVisit(2);
           }}
           style={styles.button}>
-          <Text style={{fontSize: 9, color: 'white'}}> Cancelar</Text>
+          <Text style={{fontSize: 9, color: 'white'}}> Eliminar Visita</Text>
         </Button>
  
         <View flex centerH>
