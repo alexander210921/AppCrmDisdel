@@ -47,6 +47,7 @@ const FormFinaliceVisit = () => {
   const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const [loadFinishVisit,setLoadFinishVisit] = useState(false);
+  const isEndVisit = useSelector(state=>state.Customer);
   const submitForm =async FormData => {
     
     try {   
@@ -69,8 +70,14 @@ const FormFinaliceVisit = () => {
           isEndVisit:true
         }));
         dispatch(DeleteVisit(dataVisist.IdRegistro));
-        Alert.alert(StatusUpdateVisit.Mensaje);  
-        navigation.navigate("MenuEndVisit");      
+        Alert.alert(StatusUpdateVisit.Mensaje);
+        if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
+          navigation.navigate("MenuEndVisit");      
+        }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
+          navigation.navigate("FormCreateRoute");
+        }else{
+          navigation.navigate("MenuEndVisit");      
+        }
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
        }

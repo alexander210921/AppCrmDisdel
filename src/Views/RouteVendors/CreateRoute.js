@@ -19,6 +19,7 @@ const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const Rol = useSelector(state => state.rol.RolSelect);
   const Milaege = useSelector(state => state.Mileage);
+  const isEndVisit = useSelector(state=>state.Customer);
   const navigation = useNavigation();
   //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
@@ -95,6 +96,12 @@ const FormCreateRoute = () => {
   });
   async function onSubmit(formData) {
     try{
+      let isEndMileague = false;
+      if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd =="N" ){
+        isEndMileague = false;
+      }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd =="Y"){
+        isEndMileague = true;
+      }
       dispatch(LoadPostMileage(true));
       const coords = await GetGeolocation();
       if (coords.Status) {
@@ -106,7 +113,7 @@ const FormCreateRoute = () => {
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
           idVisita:Milaege.idVisitCreated?.IdVisit,
-          TipoKilometraje:Milaege.idVisitCreated?.isEndVisit
+          TipoKilometraje:isEndMileague
         };              
         const statusCreateMileage = await SetMileage(data, dispatch,!Milaege.isInitMileage,navigation,Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer");
         if(statusCreateMileage!=null && statusCreateMileage.Resultado){

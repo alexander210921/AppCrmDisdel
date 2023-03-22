@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED,SAVE_IS_ARRIVE_OR_END_VISIT} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -10,7 +10,8 @@ const initialState = {
     ListAdressCustomerSelect:[],
     loadGetAdress:false,
     VisitDetailSelected:null,
-    loadUpdateVisit:false   
+    loadUpdateVisit:false,
+    VisitArriveOrEnd:null   
 };
     
   export default  function  (state = initialState, action) {
@@ -95,7 +96,12 @@ const initialState = {
         return {
           ...state,
           RoutesInProgress:newVisit
-        }   
+        }
+      case SAVE_IS_ARRIVE_OR_END_VISIT:
+        return{
+          ...state,
+          VisitArriveOrEnd:action.payload
+        }     
       default:
         return state;
     }

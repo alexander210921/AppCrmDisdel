@@ -6,7 +6,7 @@ import StylesWrapper from '../../Styles/Wrapers';
 import {
   DeleteVisit,
   FunctionSetCoordsDetail,
-  FunctionUpdateVisit, GetVisitByID, LoadUpdateVisit,
+  FunctionUpdateVisit, GetVisitByID, LoadUpdateVisit, SaveIsArriveOrNotTheVisit,
 } from '../../Api/Customers/ApiCustumer';
 import { useNavigation } from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
@@ -89,9 +89,17 @@ const DetailVisit = () => {
           break;
         }
         case 3:{ 
-          const GetVisit = await GetVisitByID(data.IdRegistro);             
+          const GetVisit = await GetVisitByID(data.IdRegistro);           
+          const isEndVisit =  GetVisit["<EsRegreso>k__BackingField"];   
+          dispatch(SaveIsArriveOrNotTheVisit(isEndVisit));  
+                
           if(GetVisit!=null && GetVisit["<isMarkerArrival>k__BackingField"] ){
-            navigation.navigate("FormFinaliceVisit");                   
+            // if(isEndVisit!=null && isEndVisit=="Y"){
+            //   navigation.navigate("FormCreateVisit");
+            // }else{
+            //   navigation.navigate("FormFinaliceVisit");
+            // }   
+            navigation.navigate("FormFinaliceVisit");                              
           }else{
             Alert.alert("No se ha marcado la llegada","Marque su llegada primero antes de finalizar");
           }                

@@ -17,7 +17,8 @@ import {
   SAVE_UUID_ROUTE_CUSTOMER,
   LOAD_CANCEL_VISITS_IN_COURSE,
   SAVE_VISIT_CREATED,
-  ADD_VISIT_CREATED
+  ADD_VISIT_CREATED,
+  SAVE_IS_ARRIVE_OR_END_VISIT
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -312,4 +313,8 @@ export const SaveVisitCreated=(data)=>({
 export const AddVisit = idVisit => ({
   type: ADD_VISIT_CREATED,
   payload: idVisit,
+});
+export const SaveIsArriveOrNotTheVisit=(status)=>({
+  type:SAVE_IS_ARRIVE_OR_END_VISIT,
+  payload:status
 });
