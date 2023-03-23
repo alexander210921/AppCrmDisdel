@@ -18,6 +18,7 @@ const DetailVisit = () => {
   const isLoadUpadateVisit = useSelector(state=>state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const Rol = useSelector(state => state.rol.RolSelect);
+  const User = useSelector(state=>state.user);
   const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
   const [visit,setVisit] = useState({    
       IdRelacion: Rol[0].IdRelacion,
@@ -37,6 +38,11 @@ const DetailVisit = () => {
     visit.Proceso="Cerrado";
    const statusUpdate =await  FunctionUpdateVisit(visit,dispatch,navigation);
    if(statusUpdate!=null && statusUpdate.Resultado){
+    //to canceled visita if nor are visit
+    //StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+    if(isLoadUpadateVisit.RoutesInProgress.length==1){
+      await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+    }
     dispatch(DeleteVisit(visit.IdRegistro)); 
     navigation.navigate("VisitCreated");
   }else if(statusUpdate!=null && !statusUpdate.Resultado){
@@ -73,7 +79,8 @@ const DetailVisit = () => {
               const coords = {
                 Latitud:getCoords.Data.coords.latitude,
                 Longitud:getCoords.Data.coords.longitude,
-                UUIRecorrido:DrivingVisitDetail.UUIDRoute
+                UUIRecorrido:DrivingVisitDetail.UUIDRoute,
+                idUsuario:User.EntityID
               } 
               if(coords.Latitud && coords.Latitud>0){
                 FunctionSetCoordsDetail(coords);                

@@ -104,7 +104,7 @@ const VisitCreated = () => {
       '¿Está seguro de cancelar?, se perderá todo su recorrido',
     );
   };
-  const HandleStopVisit = async () => {
+   const HandleStopVisit = async () => {
     try {
       if (!DrivingVisitDetail.isRouteInCourse) {
         Alert.alert(
