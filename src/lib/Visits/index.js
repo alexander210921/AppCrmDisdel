@@ -7,7 +7,10 @@ import { AsyncStorageSaveDataJson,AsyncStorageDeleteData } from '../AsyncStorage
 import { StartRealTimeCoords } from '../Permissions/Geolocation/index';
 import { SaveIdWatch } from '../../Api/Customers/ApiCustumer';
 import Geolocation from '@react-native-community/geolocation';
-export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch) {
+export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch,UserId=0) {
+    if(UserId==null || UserId ==undefined){
+      UserId = 0;
+    }
     if (ListRoutes.length == 0) {
       Alert.alert('No existen visitas en curso');
       
@@ -33,7 +36,7 @@ export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch) {
         uuid = DrivingVisitDetail.UUIDRoute;
       }
       dispatch(SaveUUIDRoute(uuid));
-      const IdWatch = StartRealTimeCoords(dispatch, uuid, 5);
+      const IdWatch = StartRealTimeCoords(dispatch, uuid, 5,UserId);
       dispatch(SetIsInitDrivingVisit(true));
       const infoRoute = {
         DatevalidId: new Date().toLocaleDateString(),

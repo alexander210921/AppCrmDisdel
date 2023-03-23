@@ -12,6 +12,7 @@ import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 const MenuEndVisit = () => {
+  let basesSelected=null;
   const User = useSelector(state => state.login.user);
   const ListRoutes = useSelector(state => state.Customer);
   const Rol = useSelector(state => state.rol.RolSelect);
@@ -20,6 +21,7 @@ const MenuEndVisit = () => {
   const [bases, setBases] = useState([]);
   const [isLoad, setIsLoad] = useState(false);
   const [isLoadVisit, setIsLoadVisit] = useState(false);
+  const [baseSelect, setBaseSelect] = useState(null);
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
     CardName: 'DISDEL, S.A.',
@@ -36,17 +38,17 @@ const MenuEndVisit = () => {
   const goToCreateMoreVisit = () => {
     navigation.navigate('VisitCreated');
   };
-  const [baseSelect, setBaseSelect] = useState(null);
+  
   const CreateAVisitBase = async () => {
-    setIsLoadVisit(true);
+    setIsLoadVisit(true);      
     try {
-      if (baseSelect) {
+      if (basesSelected) {
         setDataVisitReturn({
           ...dataVisitReturn,
           Direccion:
-            baseSelect['<Descripcion>k__BackingField'] +
+          basesSelected['<Descripcion>k__BackingField'] +
             ': ' +
-            baseSelect['<NombreBase>k__BackingField'],
+            basesSelected['<NombreBase>k__BackingField'],
         });
         const statusCreateVisit = await SetVisitCustomer(
           dataVisitReturn,
@@ -73,9 +75,10 @@ const MenuEndVisit = () => {
       setIsLoadVisit(false);
     }
   };
-  const SelectBase = base => {
-    try {
-      setBaseSelect(base);
+  const SelectBase = base => {    
+     setBaseSelect(base);
+     basesSelected = base;
+    try {      
       AlertConditional(
         CreateAVisitBase,
         function () {},
@@ -90,7 +93,8 @@ const MenuEndVisit = () => {
     try {
       setIsLoad(true);
       const bases = await GetBasesVendor(User.EntityID);
-      const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,"SBO_DISDELSA_2013");      
+      //validar la compania
+      const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,"SBO_DISDELSA_2013");            
       if(CustomerDefault?.CardCode){
         setDataVisitReturn(
             {

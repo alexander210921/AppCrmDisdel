@@ -46,16 +46,22 @@ const DetailVisit = () => {
   }
   const HandleUpdateVisit = async typeOption => {
     
-    try{
-      if (!DrivingVisitDetail.isRouteInCourse &&typeOption==1 ) {
-        Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
-        return;
-      }
-    
+    try{      
     dispatch(LoadUpdateVisit(true));     
       switch (typeOption) {
         case 1: {          
-          
+          const GetVisit = await GetVisitByID(data.IdRegistro);           
+          if(GetVisit!=null && (GetVisit["<isMarkerArrival>k__BackingField"]==true) ){        
+            Alert.alert("Ya se marcó la llegada","Esta visita ya tiene marcado un horario de llegada");                              
+            return;
+          }else if(GetVisit==null){
+            Alert.alert("Ocurrió un error","Intenta nuevamente por favor");
+            return ;
+          } 
+          if (!DrivingVisitDetail.isRouteInCourse &&typeOption==1 ) {
+            Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
+            return;
+          }
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
           visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
@@ -93,12 +99,7 @@ const DetailVisit = () => {
           const isEndVisit =  GetVisit["<EsRegreso>k__BackingField"];   
           dispatch(SaveIsArriveOrNotTheVisit(isEndVisit));  
                 
-          if(GetVisit!=null && GetVisit["<isMarkerArrival>k__BackingField"] ){
-            // if(isEndVisit!=null && isEndVisit=="Y"){
-            //   navigation.navigate("FormCreateVisit");
-            // }else{
-            //   navigation.navigate("FormFinaliceVisit");
-            // }   
+          if(GetVisit!=null && GetVisit["<isMarkerArrival>k__BackingField"] ){        
             navigation.navigate("FormFinaliceVisit");                              
           }else{
             Alert.alert("No se ha marcado la llegada","Marque su llegada primero antes de finalizar");

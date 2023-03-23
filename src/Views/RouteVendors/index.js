@@ -46,7 +46,7 @@ const HomeRouteVendors = () => {
   
  
   const User = useSelector(state => state.login.user);  
-  useEffect(()=>{
+  useEffect(()=>{    
     if(!User){
       navigation.navigate("Login");
       return;
@@ -55,9 +55,9 @@ const HomeRouteVendors = () => {
     //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation)
     // }
     // else
-    if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {      
-      StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute);
-    }
+    if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {            
+      StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute,5,User.EntityID);
+    }    
   },[User])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>

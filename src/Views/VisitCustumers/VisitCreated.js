@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
-import {Text, View, LoaderScreen, Button, Card} from 'react-native-ui-lib';
+import {Text, View, LoaderScreen, Button, Card,Chip} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
@@ -67,6 +67,7 @@ const VisitCreated = () => {
           ListRoutes.RoutesInProgress,
           DrivingVisitDetail,
           dispatch,
+          User.EntityID
         );
         try {
           if (statusInit) {            
@@ -175,11 +176,21 @@ const VisitCreated = () => {
     } catch (ex) {}
   }, []);
   async function InitVisit() {
-    await StartInitVisit(ListRoutes, DrivingVisitDetail, dispatch);
+    await StartInitVisit(ListRoutes, DrivingVisitDetail, dispatch,User.EntityID);
   }
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <SearchBar onSubmit={SubmitSearch}></SearchBar>
+      <View style={styles.chip}>
+        <Chip  label={'kilometraje Inicial'} onPress={() => console.log('pressed')}/>
+      </View >
+      <View style={styles.chip}>
+        <Chip label={'kilometraje Final'} onPress={() => console.log('pressed')}/>
+      </View>
+      <View style={styles.chip}>
+        <Chip label={'Bases'} onPress={() => console.log('pressed')}/>
+      </View>
+      
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
           <Text style={styles.Title}>Mis visitas</Text>
@@ -337,4 +348,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 50,
   },
+  chip:{
+    margin:'1%'
+  }
 });

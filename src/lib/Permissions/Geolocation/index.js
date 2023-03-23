@@ -52,8 +52,10 @@ export const GetGeolocation = async () => {
   }
 };
 
-export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5)=>{
- 
+export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5,IdUsuario=0)=>{
+ if(IdUsuario==null ||IdUsuario==undefined  ){
+  IdUsuario = 0;
+ }
   const isValidateGPS = await GetGeolocation();
   if(!isValidateGPS.Status){
     Alert.alert(isValidateGPS.Message);
@@ -68,6 +70,7 @@ export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5)=>{
           Longitud: longitude,
           UUIRecorrido: uuid,
           isRouteInCourse:true,
+          idUsuario:IdUsuario
         };
         FunctionSetCoordsDetail(data);
       },
