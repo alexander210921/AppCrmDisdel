@@ -36,7 +36,8 @@ export async function StartInitVisit(ListRoutes,DrivingVisitDetail,dispatch,User
         uuid = DrivingVisitDetail.UUIDRoute;
       }
       dispatch(SaveUUIDRoute(uuid));
-      const IdWatch = StartRealTimeCoords(dispatch, uuid, 5,UserId);
+      //const IdWatch = StartRealTimeCoords(dispatch, uuid, 5,UserId);
+      const  IdWatch = 0 ;
       dispatch(SetIsInitDrivingVisit(true));
       const infoRoute = {
         DatevalidId: new Date().toLocaleDateString(),

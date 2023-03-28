@@ -157,13 +157,27 @@ export const FunctionSetCoordsDetail = data => {
     //dispatch(SetCoordsDetailRealTime(false));
   }
 };
+export const AsyncFunctionSetCoordsDetail =async object => {
+  try {
+    const {data}= await Axios.post(
+      'MyWsOneVenta/api/OCRDExternoActividadVisitaDetalle/CrearRegistro/',
+      object,
+    );
+    return data;      
+  }catch{
+    return null;
+  }
+   finally {
+    //dispatch(SetCoordsDetailRealTime(false));
+  }
+};
 export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRedirect="VisitCreated") => {
   try {
     const {data}=await Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', object)
     return data;
 
   }catch(ex){
-    Alert.alert(""+ex);
+    Alert.alert(ex);
     return null;
   }
    finally {

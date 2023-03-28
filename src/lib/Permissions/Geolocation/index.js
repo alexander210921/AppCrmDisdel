@@ -1,6 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
-import {PermissionsAndroid, Alert} from 'react-native';
+import {PermissionsAndroid, Alert,Platform} from 'react-native';
 import { SaveIdWatch,FunctionSetCoordsDetail } from '../../../Api/Customers/ApiCustumer';
+import { check, PERMISSIONS, request } from 'react-native-permissions';
 
 export async function requestLocationPermission() {
   let PermissionIsOk = false;
@@ -84,11 +85,53 @@ export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5,IdUsuar
         distanceFilter: 200,
       },
     );    
-    dispatch(SaveIdWatch(IdWatchClock));
+    if(dispatch!=null){
+      dispatch(SaveIdWatch(IdWatchClock));
+    }
     return IdWatchClock;
   }catch(error){
     Alert.alert(""+error);
     return null;
   }
    
+}
+export const getLocationInBackground = async () => {
+  const locationOptions = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000,distanceFilter:0 };
+  const locationPromise = new Promise((resolve, reject) => {
+    Geolocation.getCurrentPosition(resolve, reject, locationOptions);
+  });
+
+  const location = await locationPromise;
+};
+export async function requestBackgroundLocationPermission() {
+  let permission;
+  if (Platform.OS === 'ios') {
+    permission = PERMISSIONS.IOS.LOCATION_ALWAYS;
+  } else if (Platform.OS === 'android') {
+    permission = PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
+  }
+
+  try {
+    const result = await check(permission);
+    if (result === 'granted') {
+      console.log('Permiso de ubicación en segundo plano ya concedido');
+      return true;
+    }
+    if (result === 'blocked') {
+      console.log('Permiso de ubicación en segundo plano anteriormente bloqueado');
+      return false;
+    }
+    if (result === 'denied') {
+      const status = await request(permission);
+      if (status === 'granted') {
+        console.log('Permiso de ubicación en segundo plano co  ncedido');
+        return true;
+      }
+      console.log('Permiso de ubicación en segundo plano denegado');
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 }

@@ -7,9 +7,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   FunctionGetMileageInit,
   SaveSelectVisitDetail,
+  AsyncFunctionSetCoordsDetail,
+  SaveUUIDRoute
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import {AsyncStorageGetData} from '../../lib/AsyncStorage';
+import {AsyncStorageDeleteData, AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
 import {StartInitVisit, StopInitVisit} from '../../lib/Visits/index';
@@ -19,6 +21,59 @@ import {
   getCustomersForVendor,
 } from '../../Api/Customers/ApiCustumer';
 import SearchBar from '../../Components/SearchBar';
+import BackgroundService from 'react-native-background-actions';
+import  geolocation from '@react-native-community/geolocation';
+import { GetGeolocation } from '../../lib/Permissions/Geolocation';
+import Geolocation from '@react-native-community/geolocation';
+import { generateUUID } from '../../lib/UUID';
+import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
+const StartNotification=async(userId=0,uuId="")=>{     
+const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
+const veryIntensiveTask2 = async (taskDataArguments) => {
+    const { delay } = taskDataArguments; 
+    await new Promise( async (resolve) => {
+        for (let i = 0; BackgroundService.isRunning(); i++) {                        
+            const isValidateGPS = await GetGeolocation();
+            if(!isValidateGPS.Status){             
+              return;
+            }
+            const { coords } = await new Promise((resolve, reject) => {
+              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
+            });            
+            try{
+              const data = {
+                Latitud:coords.latitude,
+                Longitud:coords.longitude,
+                UUIRecorrido:uuId,
+                idUsuario:userId
+              } 
+              if(data.Latitud && data.Latitud>0){
+               const resultR= await AsyncFunctionSetCoordsDetail(data);                               
+              }
+            }catch(ex){
+              console.log(ex,"Al insertar ocurrió un error")
+            }
+            await BackgroundService.updateNotification({taskDesc: 'Marcando ubicación, Excelente Viaje '+i}); 
+            await sleep(delay);  
+        }
+    });
+};
+  const options = {
+    taskName: '',
+    taskTitle: 'Ubicación en curso',
+    taskDesc: '',
+    taskIcon: {
+        name: 'ic_launcher',
+        type: 'mipmap',
+    },
+    color: '#ff00ff',
+    linkingURI: 'yourSchemeHere://Home', // See Deep Linking for more info
+    parameters: {
+        delay: 1000,
+    },
+  };
+  await BackgroundService.start(veryIntensiveTask2, options);  
+}
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -50,38 +105,57 @@ const VisitCreated = () => {
   const HandleInitRoute = async () => {
     try {
       if (
-        DrivingVisitDetail.isRouteInCourse &&
-        DrivingVisitDetail.IdWatchLocation != null
+        DrivingVisitDetail.isRouteInCourse 
       ) {
         Alert.alert('La ruta ya ha sido iniciada');
         return;
       }
-      dispatch(LoadGetVisitActuality(true));
+      dispatch(LoadGetVisitActuality(true));     
+     let uuid;
+     let isValidUUID = await AsyncStorageGetData("@uuid");
+     if (isValidUUID==null || isValidUUID == '' ) {
+       uuid = generateUUID();
+       await AsyncStorageSaveData("@uuid",uuid);
+     } else {
+       uuid = isValidUUID;
+     }   
+     dispatch(SaveUUIDRoute(uuid));       
+     dispatch(SetIsInitDrivingVisit(true));     
+     await StartNotification(User.EntityID,uuid);
+     const infoRoute = {
+      DatevalidId: new Date().toLocaleDateString(),
+      UUidInProgress: uuid,
+      IdVisitInProgress: 0,
+      isRouteInCourse: true,
+      IdWatch:0,
+    };
+    await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       if (
         ListRoutes.RoutesInProgress != null &&
         ListRoutes.RoutesInProgress.length > 0
       ) {
         //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
-        const statusInit = await StartInitVisit(
-          ListRoutes.RoutesInProgress,
-          DrivingVisitDetail,
-          dispatch,
-          User.EntityID
-        );
+        // const statusInit = await StartInitVisit(
+        //   ListRoutes.RoutesInProgress,
+        //   DrivingVisitDetail,
+        //   dispatch,
+        //   User.EntityID
+        // );
         try {
-          if (statusInit) {            
-            const dataMileagueInit = await FunctionGetMileageInit(
-              User.EntityID,
-              0,
-            );            
-            if(!dataMileagueInit){
-              return ;
-            }
-            if (!dataMileagueInit || dataMileagueInit.length == 0) {
-              navigation.navigate('FormCreateRoute');
-            } else {
-            }
+          if (true) {            
+            // const dataMileagueInit = await FunctionGetMileageInit(
+            //   User.EntityID,
+            //   0,
+            // );            
+            // if(!dataMileagueInit){
+            //   return ;
+            // }
+            navigation.navigate('FormCreateRoute');
+            // if (!dataMileagueInit || dataMileagueInit.length == 0) {
+              
+            // } else {
+            // }
           }
         } finally {
           dispatch(LoadGetVisitActuality(false));
@@ -105,7 +179,7 @@ const VisitCreated = () => {
     );
   };
    const HandleStopVisit = async () => {
-    try {
+    try {      
       if (!DrivingVisitDetail.isRouteInCourse) {
         Alert.alert(
           'Cancelacion de ruta',
@@ -114,8 +188,11 @@ const VisitCreated = () => {
         return;
       }
       dispatch(LoadGetVisitActuality(true));
+      await BackgroundService.stop();
+      Geolocation.stopObserving();
+      await AsyncStorageDeleteData("@uuid");      
       const cancelStatus = await StopInitVisit(
-        DrivingVisitDetail.IdWatchLocation,
+        null,
         dispatch,
       );
       if (cancelStatus) {

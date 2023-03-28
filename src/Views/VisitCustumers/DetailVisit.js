@@ -18,7 +18,7 @@ const DetailVisit = () => {
   const isLoadUpadateVisit = useSelector(state=>state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const Rol = useSelector(state => state.rol.RolSelect);
-  const User = useSelector(state=>state.user);
+  const User = useSelector(state=>state.login.user);
   const [comentary, setComentary] = useState(data.Comentario? data.Comentario:'');
   const [visit,setVisit] = useState({    
       IdRelacion: Rol[0].IdRelacion,
@@ -71,22 +71,23 @@ const DetailVisit = () => {
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
           visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
-          visit.isInitVisit=true;
-          const resultUpdate = await FunctionUpdateVisit(visit, dispatch,navigation);
+          visit.isInitVisit=true;          
+          const resultUpdate = await FunctionUpdateVisit(visit, dispatch,navigation);          ;
           if(resultUpdate!=null && resultUpdate.Resultado){            
             try{
               const getCoords = await GetGeolocation();
               const coords = {
                 Latitud:getCoords.Data.coords.latitude,
                 Longitud:getCoords.Data.coords.longitude,
-                UUIRecorrido:DrivingVisitDetail.UUIDRoute,
+                UUIRecorrido:DrivingVisitDetail.UUIDRoute?DrivingVisitDetail.UUIDRoute:'',
                 idUsuario:User.EntityID
-              } 
+              }               
+              //console.log(coords.idUsuario,"El usuario");
               if(coords.Latitud && coords.Latitud>0){
                 FunctionSetCoordsDetail(coords);                
               }
             }finally{              
-              await StopInitVisit(DrivingVisitDetail.IdWatchLocation,dispatch); 
+              await StopInitVisit(null,dispatch); 
             }  
             Alert.alert("Registro exitoso");
           }else if(resultUpdate!=null && !resultUpdate.Resultado){

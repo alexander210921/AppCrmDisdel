@@ -50,14 +50,14 @@ const HomeRouteVendors = () => {
     if(!User){
       navigation.navigate("Login");
       return;
-     dispatch(LoadGetVisitActuality(false));            }
+                 }
     // if(listVisit.RoutesInProgress.length==0&&DrivingVisitDetail.IdWatchLocation!=null){
     //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation)
     // }
     // else
-    if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {            
-      StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute,5,User.EntityID);
-    }    
+    // if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {            
+    //   StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute,5,User.EntityID);
+    // }    
   },[User])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
