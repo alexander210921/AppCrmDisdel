@@ -14,7 +14,17 @@ export async function requestLocationPermission() {
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the location');
+      console.log('You can use the locations');
+      const grantedBackround = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+        {
+          title: 'Acceso a Geolocalización',
+          message: 'Acepe el uso del GPS en segundo plano en la ventana que se muentre a continuación, permitir la opción "Permitir siempre" ',
+        },
+      );
+        if(grantedBackround=== PermissionsAndroid.RESULTS.GRANTED){
+          console.log("segundo plano activado");
+        }
       PermissionIsOk = true;
     } else {
       console.log('location permission denied');
