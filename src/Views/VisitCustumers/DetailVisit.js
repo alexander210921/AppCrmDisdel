@@ -12,7 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { StopInitVisit } from '../../lib/Visits';
 import { GetGeolocation } from '../../lib/Permissions/Geolocation';
-
+import BackgroundService from 'react-native-background-actions';
+import Geolocation from '@react-native-community/geolocation';
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state=>state.Customer);
@@ -73,7 +74,10 @@ const DetailVisit = () => {
           visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
           visit.isInitVisit=true;          
           const resultUpdate = await FunctionUpdateVisit(visit, dispatch,navigation);          ;
-          if(resultUpdate!=null && resultUpdate.Resultado){            
+          if(resultUpdate!=null && resultUpdate.Resultado){  
+            await StopInitVisit(null,dispatch); 
+            await BackgroundService.stop();  
+            Geolocation.stopObserving();        
             try{
               const getCoords = await GetGeolocation();
               const coords = {
@@ -87,7 +91,8 @@ const DetailVisit = () => {
                 FunctionSetCoordsDetail(coords);                
               }
             }finally{              
-              await StopInitVisit(null,dispatch); 
+              
+
             }  
             Alert.alert("Registro exitoso");
           }else if(resultUpdate!=null && !resultUpdate.Resultado){

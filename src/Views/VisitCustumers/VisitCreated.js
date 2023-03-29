@@ -27,9 +27,31 @@ import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 import Geolocation from '@react-native-community/geolocation';
 import { generateUUID } from '../../lib/UUID';
 import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
-const StartNotification=async(userId=0,uuId="")=>{     
+const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
+try{
+  let uuid;
+  let isValidUUID = await AsyncStorageGetData("@uuid");
+  if (isValidUUID==null || isValidUUID == '' ) {
+    uuid = generateUUID();
+    await AsyncStorageSaveData("@uuid",uuid);
+  } else {
+    uuid = isValidUUID;
+  }   
+  uuId = uuid;
+  dispatch(SaveUUIDRoute(uuid));       
+  dispatch(SetIsInitDrivingVisit(true)); 
+  const infoRoute = {
+    DatevalidId: new Date().toLocaleDateString(),
+    UUidInProgress: uuid,
+    IdVisitInProgress: 0,
+    isRouteInCourse: true,
+    IdWatch:0,
+    idUsuario:userId
+  };
+  await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
+
     const { delay } = taskDataArguments; 
     await new Promise( async (resolve) => {
         for (let i = 0; BackgroundService.isRunning(); i++) {                        
@@ -38,7 +60,7 @@ const veryIntensiveTask2 = async (taskDataArguments) => {
               return;
             }
             const { coords } = await new Promise((resolve, reject) => {
-              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
+              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:0 });
             });            
             try{
               const data = {
@@ -56,7 +78,10 @@ const veryIntensiveTask2 = async (taskDataArguments) => {
             await BackgroundService.updateNotification({taskDesc: 'Marcando ubicación, Excelente Viaje '+i}); 
             await sleep(delay);  
         }
-    });
+    });  
+}catch(ex){
+  console.log("ocurrió un error :"+ex)
+}
 };
   const options = {
     taskName: '',
@@ -72,7 +97,12 @@ const veryIntensiveTask2 = async (taskDataArguments) => {
         delay: 1000,
     },
   };
-  await BackgroundService.start(veryIntensiveTask2, options);  
+  try{
+    await BackgroundService.start(veryIntensiveTask2, options);  
+  }catch(exeption){
+    console.log("ocurrió un error ",exeption)
+  }
+  
 }
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
@@ -111,25 +141,9 @@ const VisitCreated = () => {
         return;
       }
       dispatch(LoadGetVisitActuality(true));     
-     let uuid;
-     let isValidUUID = await AsyncStorageGetData("@uuid");
-     if (isValidUUID==null || isValidUUID == '' ) {
-       uuid = generateUUID();
-       await AsyncStorageSaveData("@uuid",uuid);
-     } else {
-       uuid = isValidUUID;
-     }   
-     dispatch(SaveUUIDRoute(uuid));       
-     dispatch(SetIsInitDrivingVisit(true));     
-     await StartNotification(User.EntityID,uuid);
-     const infoRoute = {
-      DatevalidId: new Date().toLocaleDateString(),
-      UUidInProgress: uuid,
-      IdVisitInProgress: 0,
-      isRouteInCourse: true,
-      IdWatch:0,
-    };
-    await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
+        
+     await StartNotification(User.EntityID,"",dispatch);
+   
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       if (
         ListRoutes.RoutesInProgress != null &&
@@ -190,7 +204,7 @@ const VisitCreated = () => {
       dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
       Geolocation.stopObserving();
-      await AsyncStorageDeleteData("@uuid");      
+      //await AsyncStorageDeleteData("@uuid");      
       const cancelStatus = await StopInitVisit(
         null,
         dispatch,

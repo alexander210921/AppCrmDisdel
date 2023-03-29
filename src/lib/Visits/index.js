@@ -63,6 +63,7 @@ export async function StopInitVisit(IdLocation,dispatch){
     dispatch(SetIsInitDrivingVisit(false));
     dispatch(SaveUUIDRoute(''));
     await AsyncStorageDeleteData('@dataRoute');
+    await AsyncStorageDeleteData('@uuid');
     return true;
   }catch(ex){
     Alert.alert(""+ex);

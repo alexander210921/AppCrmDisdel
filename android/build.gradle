@@ -24,7 +24,7 @@ allprojects {
     repositories {
       
         maven { url "https://storage.googleapis.com/logrocket-maven/" }
-     
-
+        //maven { url "${project(':react-native-background-fetch').projectDir}/libs"}
+        //maven { url "${project(':react-native-background-geolocation').projectDir}/libs"}
     }
 }
