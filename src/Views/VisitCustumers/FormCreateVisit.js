@@ -96,6 +96,8 @@ const FormCreateVisit = () => {
     } catch {
       Alert.alert('Ocurrió un error, intente nuevamente');
       dispatch(LoadSetRegisterVisit(false));
+    }finally{
+      dispatch(LoadSetRegisterVisit(false));
     }
   };
 
