@@ -8,7 +8,8 @@ import {
   FunctionGetMileageInit,
   SaveSelectVisitDetail,
   AsyncFunctionSetCoordsDetail,
-  SaveUUIDRoute
+  SaveUUIDRoute,
+  GetVisitByID
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import {AsyncStorageDeleteData, AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
@@ -27,6 +28,7 @@ import { GetGeolocation } from '../../lib/Permissions/Geolocation';
 import Geolocation from '@react-native-community/geolocation';
 import { generateUUID } from '../../lib/UUID';
 import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
+import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
@@ -114,6 +116,7 @@ const VisitCreated = () => {
   const navigation = useNavigation();
   const [MileageDetail, setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
+  const [loadGetVisit,setLoadGetVisit] = useState(false);
   const SubmitSearch = async value => {
     try {
       dispatch(LoadGeCustomer(true));
@@ -141,36 +144,27 @@ const VisitCreated = () => {
         return;
       }
       dispatch(LoadGetVisitActuality(true));     
-        
-     await StartNotification(User.EntityID,"",dispatch);
-   
+
+        const dataMileagueInit = await FunctionGetMileageInit(
+              User.EntityID,
+              0,
+            );            
+        if(dataMileagueInit==null){
+          Alert.alert("Ocurrió un error","Vuelva a intentarlo nuevamente por favor");
+              return ;
+        }        
+     await StartNotification(User.EntityID,"",dispatch);   
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
+      dispatch(SaveIsArriveOrNotTheVisit("N"));
       if (
         ListRoutes.RoutesInProgress != null &&
         ListRoutes.RoutesInProgress.length > 0
-      ) {
-        //dispatch(SetVisiActualityt(ListRoutes.RoutesInProgress));
-        // const statusInit = await StartInitVisit(
-        //   ListRoutes.RoutesInProgress,
-        //   DrivingVisitDetail,
-        //   dispatch,
-        //   User.EntityID
-        // );
-        try {
-          if (true) {            
-            // const dataMileagueInit = await FunctionGetMileageInit(
-            //   User.EntityID,
-            //   0,
-            // );            
-            // if(!dataMileagueInit){
-            //   return ;
-            // }
+      ) {        
+        try { 
+          if(dataMileagueInit.Id==0){
+            dispatch(SaveIsArriveOrNotTheVisit("Y"));
             navigation.navigate('FormCreateRoute');
-            // if (!dataMileagueInit || dataMileagueInit.length == 0) {
-              
-            // } else {
-            // }
-          }
+          }                               
         } finally {
           dispatch(LoadGetVisitActuality(false));
         }
@@ -234,9 +228,22 @@ const VisitCreated = () => {
       '',
     );
   };
-  const SelectViewVisitDetail = visit => {
-    dispatch(SaveSelectVisitDetail(visit));
-    Navigator.navigate('DetailVisit');
+  const SelectViewVisitDetail =async visit => {    
+    try{
+      visit.isMarkerArrival = false;
+      setLoadGetVisit(true);
+      const GetVisit = await GetVisitByID(visit.IdRegistro);           
+      if(GetVisit!=null && (GetVisit["<isMarkerArrival>k__BackingField"]==true) ){        
+        visit.isMarkerArrival = true;      
+      }else if(GetVisit==null){
+        Alert.alert("Ocurrió un error","Por favor intenta nuevamente");        
+        return;
+      }    
+      dispatch(SaveSelectVisitDetail(visit));
+      Navigator.navigate('DetailVisit');
+    }finally{
+      setLoadGetVisit(false);  
+    }   
   };
   // const StopGeolocation=()=>{
   //   if (
@@ -272,12 +279,12 @@ const VisitCreated = () => {
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <SearchBar onSubmit={SubmitSearch}></SearchBar>
-      <View style={styles.chip}>
+      {/* <View style={styles.chip}>
         <Chip  label={'kilometraje Inicial'} onPress={() => console.log('pressed')}/>
       </View >
       <View style={styles.chip}>
         <Chip label={'kilometraje Final'} onPress={() => console.log('pressed')}/>
-      </View>
+      </View> */}
       <View style={styles.chip}>
         <Chip label={'Bases'} onPress={() => console.log('pressed')}/>
       </View>
@@ -285,6 +292,7 @@ const VisitCreated = () => {
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
           <Text style={styles.Title}>Mis visitas</Text>
+          {loadGetVisit? <LoaderScreen message="Obteniendo visita..." color="black"></LoaderScreen> :null}
           <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
             // <LoaderScreen

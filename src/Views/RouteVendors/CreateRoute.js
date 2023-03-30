@@ -23,7 +23,8 @@ const FormCreateRoute = () => {
   const navigation = useNavigation();
   //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
-  const [base64Image, setBase64Image] = useState('');
+  const [base64Image, setBase64Image] = useState('');  
+  const visitSelect = useSelector(state => state.Customer.VisitDetailSelected);
   const captureImage = async type => {
     let options = {
       mediaType: type,
@@ -62,7 +63,7 @@ const FormCreateRoute = () => {
   const chooseFile = type => {
     let options = {
       mediaType: type,
-      quality: 4,
+      quality: 2,
       base64: true,
       includeBase64: true,
     };
@@ -101,7 +102,7 @@ const FormCreateRoute = () => {
         isEndMileague = false;
       }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd =="Y"){
         isEndMileague = true;
-      }
+      }      
       dispatch(LoadPostMileage(true));
       const coords = await GetGeolocation();
       if (coords.Status) {
@@ -112,19 +113,27 @@ const FormCreateRoute = () => {
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
-          idVisita:Milaege.idVisitCreated?.IdVisit,
+          idVisita:visitSelect.IdRegistro,
           TipoKilometraje:isEndMileague
-        };              
-        const statusCreateMileage = await SetMileage(data, dispatch,!Milaege.isInitMileage,navigation,Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"SearchCustomer");
+        };
+                 
+        const statusCreateMileage = await SetMileage(data, dispatch);
         if(statusCreateMileage!=null && statusCreateMileage.Resultado){
-          const dataMileague={
-            ...data,
-            ImageName:statusCreateMileage.MensajeAux,
-            EntityID :statusCreateMileage.DocNum,
-            DateCreatedMileague : new Date().toLocaleDateString(),
+          if(false){
+            const dataMileague={
+              ...data,
+              ImageName:statusCreateMileage.MensajeAux,
+              EntityID :statusCreateMileage.DocNum,
+              DateCreatedMileague : new Date().toLocaleDateString(),
+            }
+            await AsyncStorageSaveDataJson("@Mileague",dataMileague);
           }
-          await AsyncStorageSaveDataJson("@Mileague",dataMileague);
-          navigation.navigate("VisitCreated");
+          if(isEndMileague){
+            navigation.navigate("VisitCreated");
+          }else{
+            navigation.navigate("DetailVisit");
+          }
+          
         }else if(statusCreateMileage!=null && !statusCreateMileage.Resultado){
           Alert.alert(""+statusCreateMileage.Mensaje);
         }
@@ -141,6 +150,7 @@ const FormCreateRoute = () => {
   return (
     <ScrollView>
       <View flex>
+        {isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd =="N" ?<Text style={styles.titleText} >Adjunte su kilometraje final</Text>:<Text style={styles.titleText}>Adjunte su kilometraje inicial</Text>}
         <Controller
           control={control}
           rules={{
@@ -205,12 +215,12 @@ const FormCreateRoute = () => {
                   label="Crear"
                   Backcolor="black"></ButtonPrimary>
               </View>
-              <View style={styles.containerButton}>
+              {/* <View style={styles.containerButton}>
                 <ButtonPrimary
                   HandleClick={()=>{navigation.navigate(Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"VisitCreated")}}
                   label="Omitir"
                   Backcolor="black"></ButtonPrimary>
-              </View>
+              </View> */}
             </>
           )}
         </View>
@@ -254,10 +264,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    fontSize: 22,
+    fontSize: 15,
     fontWeight: 'bold',
-    textAlign: 'center',
-    paddingVertical: 20,
+    padding:20
+    //textAlign: 'center',
+    //paddingVertical: 20,
   },
   textStyle: {
     padding: 10,

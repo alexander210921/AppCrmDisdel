@@ -38,9 +38,11 @@ export default function StackNavigation() {
         name="FormCreateRoute"
         component={FormCreateRoute}
         options={{
-          title: 'Kilometraje',
-          headerShown: false,
+          title: '',
+          headerShown: true,
+          
         }}
+        
       />
       <Stack.Screen
         name="VisistCustomer"

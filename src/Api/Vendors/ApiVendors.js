@@ -1,12 +1,13 @@
 import {LOAD_POST_MILEAGE,SET_INIT_OR_END_MILEAGE} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
-import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
+import axios from 'axios';
 //post mileage for vendors or pilots
-export const SetMileage =async (Object, dispatch,isInitMileage=false,navigation,NameViewRedirect) => {    
+export const SetMileage =async (Object, dispatch) => {    
   try {
-    const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)
+    const {data} = await Axios.post('api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)    
     return data;
+    
     //   .then(response => {
     //     Alert.alert(response.data.Mensaje);
     //     if(response.data.Resultado){
@@ -28,6 +29,7 @@ export const SetMileage =async (Object, dispatch,isInitMileage=false,navigation,
     // };
   }catch(ex){
     Alert.alert(""+ex);
+   // console.log("error ve "+ex);
     return null;
   }
    finally {
