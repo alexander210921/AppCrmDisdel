@@ -49,7 +49,7 @@ const MenuEndVisit = () => {
           basesSelected['<Descripcion>k__BackingField'] +
             ': ' +
             basesSelected['<NombreBase>k__BackingField'],
-          Comentario:'DE REGRESO A LA BASE: '+basesSelected['<Descripcion>k__BackingField']
+          Comentario:'DE REGRESO A LA BASE: '+basesSelected['<NombreBase>k__BackingField']
         });
         const statusCreateVisit = await SetVisitCustomer(
           dataVisitReturn,
