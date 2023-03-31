@@ -1,11 +1,10 @@
 import {LOAD_POST_MILEAGE,SET_INIT_OR_END_MILEAGE} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
-import axios from 'axios';
 //post mileage for vendors or pilots
 export const SetMileage =async (Object, dispatch) => {    
   try {
-    const {data} = await Axios.post('api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)    
+    const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)    
     return data;
     
     //   .then(response => {

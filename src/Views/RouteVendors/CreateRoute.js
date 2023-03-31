@@ -66,6 +66,8 @@ const FormCreateRoute = () => {
       quality: 2,
       base64: true,
       includeBase64: true,
+      maxWidth:300,
+      maxHeight:300
     };
     launchImageLibrary(options, response => {
       if (response.didCancel) {
@@ -116,7 +118,7 @@ const FormCreateRoute = () => {
           idVisita:visitSelect.IdRegistro,
           TipoKilometraje:isEndMileague
         };
-                 
+
         const statusCreateMileage = await SetMileage(data, dispatch);
         if(statusCreateMileage!=null && statusCreateMileage.Resultado){
           if(false){
