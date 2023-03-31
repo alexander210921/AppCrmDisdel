@@ -63,13 +63,13 @@ const FormCreateRoute = () => {
   const chooseFile = type => {
     let options = {
       mediaType: type,
-      quality: 2,
+      quality: 1,
       base64: true,
       includeBase64: true,
       maxWidth:300,
-      maxHeight:300
+      maxHeight:300,      
     };
-    launchImageLibrary(options, response => {
+    launchImageLibrary(options,async response => {
       if (response.didCancel) {
         return;
       } else if (response.errorCode == 'camera_unavailable') {
@@ -83,7 +83,7 @@ const FormCreateRoute = () => {
         return;
       }
       setFilePath(response.assets[0]);
-      setBase64Image(response.assets[0].base64);
+      setBase64Image(response.assets[0].base64);           
     });
   };
   // end config acces

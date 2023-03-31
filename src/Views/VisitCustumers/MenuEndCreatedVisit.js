@@ -25,7 +25,7 @@ const MenuEndVisit = () => {
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
     CardName: 'DISDEL, S.A.',
-    Comentario: 'FINALIZACIÓN DE RUTAS DEL DÍA, DE REGRESO A LA BASE',
+    Comentario: 'DE REGRESO A LA BASE',
     IdRegistro: 0,
     Contacto: '',
     Longitud: 0,
@@ -49,6 +49,7 @@ const MenuEndVisit = () => {
           basesSelected['<Descripcion>k__BackingField'] +
             ': ' +
             basesSelected['<NombreBase>k__BackingField'],
+          Comentario:'DE REGRESO A LA BASE: '+basesSelected['<Descripcion>k__BackingField']
         });
         const statusCreateVisit = await SetVisitCustomer(
           dataVisitReturn,
@@ -64,6 +65,7 @@ const MenuEndVisit = () => {
               CardCode: dataVisitReturn.CardCode,
               CardName: dataVisitReturn.CardName,
               IdRegistro: statusCreateVisit.DocNum,
+              Comentario:dataVisitReturn.Comentario
             }),
           );
           navigation.navigate('VisitCreated');

@@ -62,7 +62,7 @@ try{
               return;
             }
             const { coords } = await new Promise((resolve, reject) => {
-              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:0 });
+              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
             });            
             try{
               const data = {
@@ -286,7 +286,9 @@ const VisitCreated = () => {
         <Chip label={'kilometraje Final'} onPress={() => console.log('pressed')}/>
       </View> */}
       <View style={styles.chip}>
-        <Chip label={'Bases'} onPress={() => console.log('pressed')}/>
+        <Chip label={'Bases'} onPress={()=>{
+          navigation.navigate("MenuEndVisit");
+        }}/>
       </View>
       
       {ListRoutes.RoutesInProgress.length > 0 ? (
