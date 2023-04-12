@@ -193,7 +193,15 @@ export async function GetVisitByID (idvisit){
     return null;
   }
 }
-
+export async function GetMileagueByIdVisit (idvisit){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/BitacoraKilometraje/GetByVisit/"+idvisit+"/");
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
 export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
   try{
     const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/GetKilometrajeInicio/"+IdUsuario+"/"+TypeMileage+"/");

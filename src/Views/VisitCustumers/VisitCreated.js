@@ -29,6 +29,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { generateUUID } from '../../lib/UUID';
 import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
+import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
 const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
@@ -231,14 +232,19 @@ const VisitCreated = () => {
   const SelectViewVisitDetail =async visit => {    
     try{
       visit.isMarkerArrival = false;
+      visit.isMarkerMileague = false;
       setLoadGetVisit(true);
-      const GetVisit = await GetVisitByID(visit.IdRegistro);           
+      const GetVisit = await GetVisitByID(visit.IdRegistro);  
+      const GetMileagueById = await GetMileagueByIdVisit(visit.IdRegistro);         
       if(GetVisit!=null && (GetVisit["<isMarkerArrival>k__BackingField"]==true) ){        
         visit.isMarkerArrival = true;      
       }else if(GetVisit==null){
         Alert.alert("Ocurrió un error","Por favor intenta nuevamente");        
         return;
-      }    
+      }
+      if(GetMileagueById!=null && GetMileagueById.EntityID>0){
+        visit.isMarkerMileague = true;
+      }   
       dispatch(SaveSelectVisitDetail(visit));
       Navigator.navigate('DetailVisit');
     }finally{

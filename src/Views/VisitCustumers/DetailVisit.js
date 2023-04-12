@@ -32,6 +32,7 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import BackgroundService from 'react-native-background-actions';
 import Geolocation from '@react-native-community/geolocation';
 import FormCreateRoute from '../RouteVendors/CreateRoute';
+import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state => state.Customer);
@@ -131,6 +132,12 @@ const DetailVisit = () => {
             }
             Alert.alert('Registro exitoso');
             setIsUpdateVisitArrive(true);
+            dispatch(SaveIsArriveOrNotTheVisit("N"));
+            dispatch(SaveSelectVisitDetail({
+              ...data,
+              isMarkerArrival:true
+            }));
+            navigation.navigate("FormCreateRoute");
           } else if (resultUpdate != null && !resultUpdate.Resultado) {
             Alert.alert(resultUpdate.Mensaje);
           }
@@ -230,20 +237,24 @@ const DetailVisit = () => {
         {isLoadUpadateVisit.loadUpdateVisit ? (
           <LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>
         ) : null}
+          {data.isMarkerArrival ?
         <Button
-          onPress={() => {
-            HandleUpdateVisit(3);
-          }}
-          style={styles.button1}>
-          <Text style={{fontSize: 9, color: 'white'}}> Finalizar </Text>
-        </Button>
+        onPress={() => {
+          HandleUpdateVisit(3);
+        }}
+        style={styles.button1}>
+        <Text style={{fontSize: 9, color: 'white'}}> Finalizar </Text>
+      </Button>
+        :null}       
+        {!data.isMarkerArrival ?
         <Button
-          onPress={() => {
-            HandleUpdateVisit(1);
-          }}
-          style={styles.button3}>
-          <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
-        </Button>
+        onPress={() => {
+          HandleUpdateVisit(1);
+        }}
+        style={styles.button3}>
+        <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
+      </Button>
+        :null}        
         <Button
           onPress={() => {
             HandleUpdateVisit(2);
@@ -251,7 +262,7 @@ const DetailVisit = () => {
           style={styles.button}>
           <Text style={{fontSize: 9, color: 'white'}}> Eliminar Visita</Text>
         </Button>
-        {data.isMarkerArrival || isUpdateVisitArrive ? (
+        {data.isMarkerArrival  && !data.isMarkerMileague  ? (
           <View style={styles.chip}>
             <Chip
               label={'Kilometraje De Llegada'}

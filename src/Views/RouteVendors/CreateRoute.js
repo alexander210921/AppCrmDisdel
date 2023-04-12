@@ -15,8 +15,10 @@ import {requestExternalWritePermission} from '../../lib/Permissions/Files';
 import {requestCameraPermission} from '../../lib/Permissions/Camera';
 import { useNavigation } from '@react-navigation/native';
 import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
+import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
+  const visitSelected = useSelector(state => state.Customer.VisitDetailSelected);
   const Rol = useSelector(state => state.rol.RolSelect);
   const Milaege = useSelector(state => state.Mileage);
   const isEndVisit = useSelector(state=>state.Customer);
@@ -130,9 +132,13 @@ const FormCreateRoute = () => {
             }
             await AsyncStorageSaveDataJson("@Mileague",dataMileague);
           }
+          dispatch(SaveSelectVisitDetail({
+            ...visitSelected,
+            isMarkerMileague:true
+          }));
           if(isEndMileague){
             navigation.navigate("VisitCreated");
-          }else{
+          }else{         
             navigation.navigate("DetailVisit");
           }
           
@@ -214,7 +220,7 @@ const FormCreateRoute = () => {
               <View style={styles.containerButton}>
                 <ButtonPrimary
                   HandleClick={handleSubmit(onSubmit)}
-                  label="Crear"
+                  label="Grabar Kilometraje"
                   Backcolor="black"></ButtonPrimary>
               </View>
               {/* <View style={styles.containerButton}>
