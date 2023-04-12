@@ -277,10 +277,10 @@ const DetailVisit = () => {
         <View flex centerH>
           <View style={styles.cardinfo1}>
             {/* <TextInput onChangeText={HandleSetComentary} placeholder='Comentario' multiline={true} numberOfLines={4} value={comentary}  ></TextInput> */}
-            <Text>{data.Comentario}</Text>
+            <Text>{data.Titulo}</Text>
           </View>
           <View style={styles.cardinfo2}>
-            <Text>{data.Titulo}</Text>
+            <Text>{data.Comentario}</Text>
           </View>
         </View>
       </View>

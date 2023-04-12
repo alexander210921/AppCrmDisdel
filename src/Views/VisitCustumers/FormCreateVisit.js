@@ -47,6 +47,7 @@ const FormCreateVisit = () => {
     defaultValues: {
       CustomerCode: '',
       CustomerName: '',
+      Tema:''
     },
   });
   const HandleSelectAdress=(adress)=>{
@@ -76,14 +77,16 @@ const FormCreateVisit = () => {
           GrupoVisita:'',
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
-          EsRegreso:'N'
+          EsRegreso:'N',
+          Titulo:FormData.Tema
         };        
         const VisitCreated = await SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
         if(VisitCreated!=null && VisitCreated.Resultado){
           dispatch(AddVisit({
             CardCode:CustomerSelect.customerSelect.CardCode,
             CardName:CustomerSelect.customerSelect.CardName,
-            IdRegistro:VisitCreated.DocNum
+            IdRegistro:VisitCreated.DocNum,
+            Titulo:FormData.Tema
           }));
           AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
         }else if(VisitCreated!=null && !VisitCreated.Resultado){
@@ -149,6 +152,21 @@ const FormCreateVisit = () => {
             />
           )}
           name="CustomerName"
+        />
+         <Controller
+          control={control}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Tema"
+              placeholderTextColor="#b3b2b7"
+              editable={true}
+            />
+          )}
+          name="Tema"
         />
         <View style={styles.ContainerMargin}>
         <Text style={styles.TextInformation} >{idAddressVisit.ShiptoCodeAddress+" / "+idAddressVisit.AddressName}</Text>

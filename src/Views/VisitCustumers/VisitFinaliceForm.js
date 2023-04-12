@@ -56,7 +56,7 @@ const FormFinaliceVisit = () => {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
           Contacto: FormData.Contact?FormData.Contact:'',
-          Titulo: FormData.Title?FormData.Title:'',                    
+          //Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
           isEndVisit:true,
@@ -114,7 +114,7 @@ const FormFinaliceVisit = () => {
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
 
-        <Controller
+        {/* <Controller
           control={control}
           rules={{
             required: false,
@@ -133,7 +133,7 @@ const FormFinaliceVisit = () => {
         />
         {errors.Title && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )}
+        )} */}
 
        
         <Controller
