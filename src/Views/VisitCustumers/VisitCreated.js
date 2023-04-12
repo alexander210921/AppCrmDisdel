@@ -30,7 +30,7 @@ import { generateUUID } from '../../lib/UUID';
 import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
-const StartNotification=async(userId=0,uuId="",dispatch)=>{     
+export const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
 try{
@@ -180,6 +180,9 @@ const VisitCreated = () => {
     }
   };
   const AlertMessage = () => {
+    if(!DrivingVisitDetail.isRouteInCourse){
+      return;
+    }
     AlertConditional(
       HandleStopVisit,
       function () {},
@@ -329,7 +332,7 @@ const VisitCreated = () => {
               selectionOptions={styles.selectOptionCard}
               elevation={20}
               flexS
-              style={styles.mainCardView}
+              style={!DrivingVisitDetail.isRouteInCourse? styles.mainCardView:styles.ButtonDisable}
               flex
               center
               onPress={HandleInitRoute}>
@@ -340,7 +343,7 @@ const VisitCreated = () => {
               selectionOptions={styles.selectOptionCard}
               elevation={20}
               flexS
-              style={styles.mainCardView2}
+              style={DrivingVisitDetail.isRouteInCourse? styles.mainCardView2:styles.ButtonDisable }
               flex
               center
               onPress={AlertMessage}>
@@ -457,5 +460,27 @@ const styles = StyleSheet.create({
   },
   chip:{
     margin:'1%'
+  },
+  ButtonDisable:{
+    backgroundColor:'#f2f2f2',
+    color:'#a9a9a9',
+    opacity:0.5,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    shadowColor: 'shadow',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 14,
+    paddingRight: 14,
+    marginTop: 9,
+    marginBottom: 9,
+    width: '90%',
+    height: 50,
   }
 });

@@ -22,6 +22,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
 import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
+import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import { StartNotification } from './VisitCreated';
 const FormFinaliceVisit = () => { 
   //ADD PHOTO END
   const navigation = useNavigation();
@@ -48,6 +50,20 @@ const FormFinaliceVisit = () => {
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const [loadFinishVisit,setLoadFinishVisit] = useState(false);
   const isEndVisit = useSelector(state=>state.Customer);
+  const User = useSelector(state => state.login.user);  
+  const [loadinitnewVisit,setLoadnewVisit] = useState(false);
+  const InitVisittoFisnish=async ()=>{
+    try{
+      setLoadnewVisit(true);
+      await StartNotification(User.EntityID,"",dispatch);
+      navigation.navigate("VisitCreated");
+    }catch(ex){
+      Alert.alert(""+ex);
+    }
+    finally{
+      setLoadnewVisit(false);
+    }    
+  }
   const submitForm =async FormData => {
     
     try {   
@@ -70,13 +86,14 @@ const FormFinaliceVisit = () => {
           isEndVisit:true
         }));
         dispatch(DeleteVisit(dataVisist.IdRegistro));
-        Alert.alert(StatusUpdateVisit.Mensaje);
+        //Alert.alert(StatusUpdateVisit.Mensaje);
         if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
-          navigation.navigate("MenuEndVisit");      
+          AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
         }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
           navigation.navigate("FormCreateRoute");
         }else{
-          navigation.navigate("MenuEndVisit");      
+          AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
+          //navigation.navigate("MenuEndVisit");      
         }
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
@@ -164,7 +181,7 @@ const FormFinaliceVisit = () => {
         label="Dar por finalizado"
         HandleClick={handleSubmit(submitForm)}></ButtonPrimary>          
         }               
-            
+        {loadinitnewVisit?<LoaderScreen message = "Llendo a su siguiente visita" color="black"></LoaderScreen> :null}   
         </View>
       </View>
     </ScrollView>
