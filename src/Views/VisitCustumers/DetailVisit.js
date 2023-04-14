@@ -35,6 +35,12 @@ import BackgroundService from 'react-native-background-actions';
 import Geolocation from '@react-native-community/geolocation';
 import FormCreateRoute from '../RouteVendors/CreateRoute';
 import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
+import { AsyncStorageGetData } from '../../lib/AsyncStorage';
+
+const googleMapsClient = require('react-native-google-maps-services').createClient({
+  key: 'AIzaSyBGzUb5aIQyMpPPaBNZz9CJXvuQDajqavs'
+});
+
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state => state.Customer);
@@ -85,6 +91,16 @@ const DetailVisit = () => {
       dispatch(LoadUpdateVisit(true));
       switch (typeOption) {
         case 1: {
+          
+          // const ValidateDistance =  googleMapsClient.distanceMatrix({
+          //   origins: ['Hornsby Station, NSW', 'Chatswood Station, NSW'],
+          //   destinations: ['Central Station, NSW', 'Parramatta Station, NSW'],
+          //   language: 'en',
+          //   units: 'metric',
+          //   region: 'au'
+          // },function(itme){console.log(itme)})
+          // console.log("validacion",googleMapsClient.distanceMatrix)         
+          // return;
           const GetVisit = await GetVisitByID(data.IdRegistro);
           if (
             GetVisit != null &&
@@ -108,6 +124,9 @@ const DetailVisit = () => {
           visit.longitude = 0;
           visit.UUIDGroup = isValidUUID;
           visit.isInitVisit = true;
+          if(data.EsRegreso =="Y"){
+            visit.Proceso="Finalizado"
+          }
           const resultUpdate = await FunctionUpdateVisit(
             visit,
             dispatch,
@@ -134,16 +153,16 @@ const DetailVisit = () => {
               await BackgroundService.stop();
               Geolocation.stopObserving();
             }
-            Alert.alert('Registro exitoso');
+           // Alert.alert('Registro exitoso');
             setIsUpdateVisitArrive(true);
             dispatch(SaveIsArriveOrNotTheVisit("N"));
             dispatch(SaveSelectVisitDetail({
               ...data,
-              isMarkerArrival:true
+              isMarkerArrival:true,              
             }));
             navigation.navigate("FormCreateRoute");
           } else if (resultUpdate != null && !resultUpdate.Resultado) {
-            Alert.alert(resultUpdate.Mensaje);
+            Alert.alert("Alerta",resultUpdate.Mensaje);
           }
           //navigation.navigate("FormFinaliceVisit");
           //FunctionUpdateAddressCoords();
@@ -247,7 +266,7 @@ const DetailVisit = () => {
         {isLoadUpadateVisit.loadUpdateVisit ? (
           <LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>
         ) : null}
-          {data.isMarkerArrival ?
+          {data.isMarkerArrival && (data.EsRegreso==null ||data.EsRegreso =="N"  ) ?
         <Button
         onPress={() => {
           HandleUpdateVisit(3);
@@ -264,14 +283,17 @@ const DetailVisit = () => {
         style={styles.button3}>
         <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
       </Button>
-        :null}        
+        :null}  
+        {!data.isMarkerArrival ?        
         <Button
-          onPress={() => {
-            HandleUpdateVisit(2);
-          }}
-          style={styles.button}>
-          <Text style={{fontSize: 9, color: 'white'}}> Eliminar Visita</Text>
-        </Button>
+        onPress={() => {
+          HandleUpdateVisit(2);
+        }}
+        style={styles.button}>
+        <Text style={{fontSize: 9, color: 'white'}}> Eliminar Visita</Text>
+      </Button>
+        :null}      
+       
         {data.isMarkerArrival  && !data.isMarkerMileague  ? (
           <View style={styles.chip}>
             <Chip

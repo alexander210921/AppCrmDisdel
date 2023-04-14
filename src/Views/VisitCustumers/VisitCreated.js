@@ -117,18 +117,20 @@ const VisitCreated = () => {
   const navigation = useNavigation();
   const [MileageDetail, setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
-  const [loadGetVisit,setLoadGetVisit] = useState(false);
+  const [loadGetVisit,setLoadGetVisit] = useState(false);  
   const SubmitSearch = async value => {
     try {
-      dispatch(LoadGeCustomer(true));
-      const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
-      if (customers.Respuesta.Resultado) {
-        dispatch(GeCustomersVendor(customers.Detalle));
-        navigation.navigate('SearchCustomer');
-      } else {
-        Alert.alert('No se encontraron registros');
-        dispatch(GeCustomersVendor([]));
-      }
+      if(value!=""){
+        dispatch(LoadGeCustomer(true));
+        const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
+        if (customers !=null &&  customers.Respuesta.Resultado) {
+          dispatch(GeCustomersVendor(customers.Detalle));
+          navigation.navigate('SearchCustomer');
+        } else {
+          Alert.alert('No se encontraron registros');
+          dispatch(GeCustomersVendor([]));
+        }
+      }     
     } catch (ex) {
       Alert.alert('' + ex);
     } finally {
@@ -236,6 +238,7 @@ const VisitCreated = () => {
     try{
       visit.isMarkerArrival = false;
       visit.isMarkerMileague = false;
+      visit.EsRegreso = "N";
       setLoadGetVisit(true);
       const GetVisit = await GetVisitByID(visit.IdRegistro);  
       const GetMileagueById = await GetMileagueByIdVisit(visit.IdRegistro);         
@@ -245,6 +248,9 @@ const VisitCreated = () => {
         Alert.alert("Ocurrió un error","Por favor intenta nuevamente");        
         return;
       }
+      if(GetVisit["<EsRegreso>k__BackingField"]!=null && GetVisit["<EsRegreso>k__BackingField"] =="Y" ){
+        visit.EsRegreso = "Y";
+      }            
       if(GetMileagueById!=null && GetMileagueById.EntityID>0){
         visit.isMarkerMileague = true;
       }   

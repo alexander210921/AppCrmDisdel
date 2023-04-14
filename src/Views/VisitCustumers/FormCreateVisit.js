@@ -21,7 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import SearchItem from '../../Components/SearchList/SearchList';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
-
+import { GeCustomersVendor } from '../../Api/Customers/ApiCustumer';
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
   const [AdressCustomer,setAdressCustomer]=useState(
@@ -63,6 +63,8 @@ const FormCreateVisit = () => {
   const goFormSearchCustomer=()=>{navigation.navigate("SearchCustomer")}
   const submitForm = async FormData => {
     try {
+      dispatch(GeCustomersVendor([]));
+    //  dispatch(GetCustomersVen);
       if(idAddressVisit.addressId==null){
         Alert.alert("Selecciona una dirección");
         return;
@@ -96,7 +98,7 @@ const FormCreateVisit = () => {
           }));
           AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
         }else if(VisitCreated!=null && !VisitCreated.Resultado){
-          Alert.alert(VisitCreated.Mensaje);
+          Alert.alert("Alerta",VisitCreated.Mensaje);
         }        
       } else {
         Alert.alert(coords.Message);

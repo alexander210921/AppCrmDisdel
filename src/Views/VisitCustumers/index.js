@@ -37,7 +37,7 @@ const VisitirCustomer = () => {
   return (
     <ScrollView style={styles.secondWrapper}>
       <View style={styles.WrapperSearchBar}>
-        <SearchBar onSubmit={SubmitSearch}></SearchBar>
+        <SearchBar focus={true} onSubmit={SubmitSearch}></SearchBar>
       </View>
 
       {Customer.loadCustomer ? (

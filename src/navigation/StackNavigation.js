@@ -128,8 +128,8 @@ export default function StackNavigation() {
         name="MenuEndVisit"
         component={MenuEndVisit}
         options={{
-          title: 'MenuEndVisit',
-          headerShown: false,
+          title: '',
+          headerShown: true,
         }}
       />
     </Stack.Navigator>

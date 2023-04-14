@@ -5,7 +5,7 @@ import {
   LoaderScreen
 } from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
-import {TextInput, StyleSheet, Alert,ScrollView} from 'react-native';
+import {TextInput, StyleSheet, Alert,ScrollView, BackHandler} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation';
@@ -21,7 +21,7 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
-import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
+import { AsyncStorageDeleteData, AsyncStorageSaveData } from '../../lib/AsyncStorage';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { StartNotification } from './VisitCreated';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
@@ -30,6 +30,8 @@ const FormFinaliceVisit = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   //const CoordsDestination = useSelector(state => state.login);
+  const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
+
   const {
     control,
     handleSubmit,
@@ -44,10 +46,10 @@ const FormFinaliceVisit = () => {
       NextHourDate: '',
       Bill: '',
       Comment: '',
+      Tema:dataVisist.Titulo ? dataVisist.Titulo:''
     },
   }); 
   const Rol = useSelector(state => state.rol.RolSelect);
-  const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const [loadFinishVisit,setLoadFinishVisit] = useState(false);
   const isEndVisit = useSelector(state=>state.Customer);
@@ -62,6 +64,11 @@ const FormFinaliceVisit = () => {
   const [loadinitnewVisit,setLoadnewVisit] = useState(false);
   const InitVisittoFisnish=async ()=>{
     try{
+      if(isEndVisit.RoutesInProgress.length ==1){
+        await AsyncStorageSaveData("AUTOMATIC_INIT_ROUTE","Y");
+        navigation.navigate("SearchCustomer");
+        return;
+      }
       setLoadnewVisit(true);
       await StartNotification(User.EntityID,"",dispatch);
       navigation.navigate("VisitCreated");
@@ -72,6 +79,33 @@ const FormFinaliceVisit = () => {
       setLoadnewVisit(false);
     }    
   }
+  const MenuToEndVisit=()=>{
+    Alert.alert(
+      "",
+      "¿Que desea hacer?",
+      [
+          {
+              text:"Ir a otra visita",
+              onPress:()=>{
+                InitVisittoFisnish();
+              }
+          },
+          {
+              text:"Ir a base",
+              onPress:()=>{
+                navigation.navigate("MenuEndVisit")
+              }
+          },
+          {
+            text:"Salir",
+            onPress:()=>{
+                navigation.navigate("Login")
+                BackHandler.exitApp();
+            }
+        }
+      ]
+  );
+  }
   const submitForm =async FormData => {
     
     try {   
@@ -80,7 +114,7 @@ const FormFinaliceVisit = () => {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
           Contacto: contactSelect?contactSelect:'',
-          //Titulo: FormData.Title?FormData.Title:'',                    
+          Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
           isEndVisit:true,
@@ -96,11 +130,12 @@ const FormFinaliceVisit = () => {
         dispatch(DeleteVisit(dataVisist.IdRegistro));
         //Alert.alert(StatusUpdateVisit.Mensaje);
         if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
-          AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
+          MenuToEndVisit();
+        //  AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
         }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
           navigation.navigate("FormCreateRoute");
         }else{
-          AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
+          MenuToEndVisit();
           //navigation.navigate("MenuEndVisit");      
         }
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
@@ -120,6 +155,25 @@ const FormFinaliceVisit = () => {
       <View>   
         <SearchableDropdownV2 items={ListContact} onItemSelected={(person)=>{ if(person) {setContactSelect(person.name)}}} ></SearchableDropdownV2>   
         <Text style={{margin:2}} >{contactSelect ? contactSelect:''}</Text>
+
+
+        <Controller
+          control={control}
+          rules={{
+            required: false,
+          }}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Tema"
+              placeholderTextColor="#b3b2b7"
+            />
+          )}
+          name="Tema"
+        />
 
        
         <Controller

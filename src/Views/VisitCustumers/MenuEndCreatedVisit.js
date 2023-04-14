@@ -1,5 +1,5 @@
 import {View, Text, Card, LoaderScreen} from 'react-native-ui-lib';
-import React, {useState} from 'react';
+import React, {useState , useEffect} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import StylesWrapper from '../../Styles/Wrapers';
 import stylesTitle from '../../Styles/Titles';
@@ -39,7 +39,12 @@ const MenuEndVisit = () => {
   const goToCreateMoreVisit = () => {
     navigation.navigate('VisitCreated');
   };
-  
+  useEffect(()=>{
+    async function getBase(){
+      await GetBasesUser();
+    }
+    getBase();
+  },[])
   const CreateAVisitBase = async () => {
     setIsLoadVisit(true);      
     try {
@@ -131,10 +136,10 @@ const MenuEndVisit = () => {
         </View>
         <View top style={styles.wrapperButtons}>
           <View left>
-            <Text style={stylesTitle.TitleMedium}> ¿Que desea hacer? </Text>
+            <Text style={stylesTitle.TitleMedium}> ¿Dónde quieres ir? </Text>
           </View>
         </View>
-        <Card
+        {/* <Card
           selected={false}
           selectionOptions={styles.selectOptionCard}
           elevation={10}
@@ -144,8 +149,8 @@ const MenuEndVisit = () => {
           center
           onPress={goToCreateMoreVisit}>
           <Text>Ir a otra visita</Text>
-        </Card>
-        <Card
+        </Card> */}
+        {/* <Card
           selected={false}
           selectionOptions={styles.selectOptionCard}
           elevation={10}
@@ -155,7 +160,7 @@ const MenuEndVisit = () => {
           center
           onPress={GetBasesUser}>
           <Text>Regresar a base</Text>
-        </Card>
+        </Card> */}
         <View style={styles.ContainerCardsBase} center>
           {isLoad ? (
             <LoaderScreen color="black" messague="Cargando..."></LoaderScreen>

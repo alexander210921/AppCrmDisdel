@@ -15,7 +15,7 @@ import {requestExternalWritePermission} from '../../lib/Permissions/Files';
 import {requestCameraPermission} from '../../lib/Permissions/Camera';
 import { useNavigation } from '@react-navigation/native';
 import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
-import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
+import { DeleteVisit, SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const visitSelected = useSelector(state => state.Customer.VisitDetailSelected);
@@ -138,8 +138,13 @@ const FormCreateRoute = () => {
           }));
           if(isEndMileague){
             navigation.navigate("VisitCreated");
-          }else{         
-            navigation.navigate("DetailVisit");
+          }else{
+            if(visitSelect.EsRegreso && visitSelect.EsRegreso=="Y" ){
+              navigation.navigate("VisitCreated");
+              dispatch(DeleteVisit(visitSelect.IdRegistro));
+            }else{
+              navigation.navigate("DetailVisit");  
+            }                     
           }
           
         }else if(statusCreateMileage!=null && !statusCreateMileage.Resultado){
