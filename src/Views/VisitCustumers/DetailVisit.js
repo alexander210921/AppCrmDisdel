@@ -103,9 +103,10 @@ const DetailVisit = () => {
             Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
             return;
           }
+          let isValidUUID = await AsyncStorageGetData("@uuid");
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
-          visit.UUIDGroup = DrivingVisitDetail.UUIDRoute;
+          visit.UUIDGroup = isValidUUID;
           visit.isInitVisit = true;
           const resultUpdate = await FunctionUpdateVisit(
             visit,
@@ -113,16 +114,14 @@ const DetailVisit = () => {
             navigation,
           );
           if (resultUpdate != null && resultUpdate.Resultado) {
-            await StopInitVisit(null, dispatch);
-            await BackgroundService.stop();
-            Geolocation.stopObserving();
+           
             try {
               const getCoords = await GetGeolocation();
               const coords = {
                 Latitud: getCoords.Data.coords.latitude,
                 Longitud: getCoords.Data.coords.longitude,
-                UUIRecorrido: DrivingVisitDetail.UUIDRoute
-                  ? DrivingVisitDetail.UUIDRoute
+                UUIRecorrido: isValidUUID
+                  ? isValidUUID
                   : '',
                 idUsuario: User.EntityID,
               };
@@ -131,6 +130,9 @@ const DetailVisit = () => {
                 FunctionSetCoordsDetail(coords);
               }
             } finally {
+              await StopInitVisit(null, dispatch);
+              await BackgroundService.stop();
+              Geolocation.stopObserving();
             }
             Alert.alert('Registro exitoso');
             setIsUpdateVisitArrive(true);
