@@ -19,20 +19,20 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import SearchItem from '../../Components/SearchList/SearchList';
+import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
+
 const FormCreateVisit = () => {
   const CustomerSelect = useSelector(state => state.Customer);
   const [AdressCustomer,setAdressCustomer]=useState(
     CustomerSelect.ListAdressCustomerSelect.map((adress)=>{
-      return{
-        label:adress.Nombre+" / "+adress.Direccion,
-        onPress:()=>{HandleSelectAdress(adress)}
-      }
+      return {name :adress.Nombre+" / "+adress.Direccion,id:adress.IdDireccion}
+        //onPress:()=>{HandleSelectAdress(adress)}
     })
   );
-
   const [ViewPanelAdress, SetViewPannelAdress] = useState(false);
   const [idAddressVisit,setIdAddressVisit]=useState({
-    addressId:0,
+    addressId:null,
     AddressName:'',
     ShiptoCodeAddress:''
   });
@@ -63,6 +63,10 @@ const FormCreateVisit = () => {
   const goFormSearchCustomer=()=>{navigation.navigate("SearchCustomer")}
   const submitForm = async FormData => {
     try {
+      if(idAddressVisit.addressId==null){
+        Alert.alert("Selecciona una dirección");
+        return;
+      } 
       dispatch(LoadSetRegisterVisit(true));
       const coords = await GetGeolocation();
       if (coords.Status) {
@@ -78,8 +82,10 @@ const FormCreateVisit = () => {
           DireccionDestino: '',
           ShipToCode:idAddressVisit!=null? idAddressVisit.AddressName:'',
           EsRegreso:'N',
-          Titulo:FormData.Tema
-        };        
+          Titulo:FormData.Tema,
+          validateAdress:true
+        };            
+                //Alert.alert();
         const VisitCreated = await SetVisitCustomer(data, dispatch,navigation,false,false,"SearchCustomer");
         if(VisitCreated!=null && VisitCreated.Resultado){
           dispatch(AddVisit({
@@ -108,6 +114,15 @@ const FormCreateVisit = () => {
   const HandleViewPanelAdress=()=>{
     SetViewPannelAdress(true);
   }
+  const SelectAdress=(item)=>{
+    console.log(item);
+    const data={
+      addressId:item.id,
+      AddressName:item.name,      
+      ShiptoCodeAddress:''
+    }
+    setIdAddressVisit(data);
+  }
 
 
   // async function openMap() {
@@ -120,7 +135,8 @@ const FormCreateVisit = () => {
   //   }
   // }
   return (
-    <ScrollView>
+    <ScrollView   keyboardShouldPersistTaps ="always"
+    >
       <View>
         <Controller
           control={control}
@@ -168,15 +184,18 @@ const FormCreateVisit = () => {
           )}
           name="Tema"
         />
-        <View style={styles.ContainerMargin}>
+        <View >
         <Text style={styles.TextInformation} >{idAddressVisit.ShiptoCodeAddress+" / "+idAddressVisit.AddressName}</Text>
           {/* <ButtonPrimary label=" Destino" HandleClick={openMap}></ButtonPrimary> */}
-          <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/>
+          {/* <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/> */}
+        </View>
+        <View accessible={true} accessibilityRole='button' >
+          <SearchableDropdownV2 items={AdressCustomer} onItemSelected={SelectAdress}></SearchableDropdownV2>
         </View>
         
 
         <View style={styles.ContainerMargin}>
-          <ActionSheet
+          {/* <ActionSheet
             visible={ViewPanelAdress}
             title={'Direcciones'}
             message={'Message goes here'}
@@ -186,7 +205,7 @@ const FormCreateVisit = () => {
             onDismiss={() => {
               SetViewPannelAdress(false);
             }}
-          />
+          /> */}
 
           {CustomerSelect.loadSetVisit ? (
             <LoaderScreen color="black" overlay></LoaderScreen>

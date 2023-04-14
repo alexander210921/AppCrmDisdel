@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,  
-  Text,  
+  Text,
   LoaderScreen
 } from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
@@ -24,6 +24,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { AsyncStorageDeleteData } from '../../lib/AsyncStorage';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { StartNotification } from './VisitCreated';
+import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
 const FormFinaliceVisit = () => { 
   //ADD PHOTO END
   const navigation = useNavigation();
@@ -50,6 +51,13 @@ const FormFinaliceVisit = () => {
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const [loadFinishVisit,setLoadFinishVisit] = useState(false);
   const isEndVisit = useSelector(state=>state.Customer);
+  const [contactSelect,setContactSelect] = useState("");
+  const [ListContact,setListContact]  = useState(isEndVisit.ListContactPerson.map((item,index)=>{
+    return{
+      name:item.Nombre+" / "+item.PrimerNombre+" "+item.SegundoNombre+" "+item.Apellido,
+      id:index
+      }
+  }));
   const User = useSelector(state => state.login.user);  
   const [loadinitnewVisit,setLoadnewVisit] = useState(false);
   const InitVisittoFisnish=async ()=>{
@@ -71,7 +79,7 @@ const FormFinaliceVisit = () => {
         const visit = {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
-          Contacto: FormData.Contact?FormData.Contact:'',
+          Contacto: contactSelect?contactSelect:'',
           //Titulo: FormData.Title?FormData.Title:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
@@ -109,48 +117,9 @@ const FormFinaliceVisit = () => {
 
   return (
     <ScrollView>
-      <View>      
-        <Controller
-          control={control}
-          rules={{
-            required: false,
-          }}
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Contacto"
-              placeholderTextColor="#b3b2b7"
-            />
-          )}
-          name="Contact"
-        />
-        {errors.Contact && (
-          <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )}
-
-        {/* <Controller
-          control={control}
-          rules={{
-            required: false,
-          }}
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Tema"
-              placeholderTextColor="#b3b2b7"
-            />
-          )}
-          name="Title"
-        />
-        {errors.Title && (
-          <Text style={styles.TextAlert}>Este campo es requerido</Text>
-        )} */}
+      <View>   
+        <SearchableDropdownV2 items={ListContact} onItemSelected={(person)=>{ if(person) {setContactSelect(person.name)}}} ></SearchableDropdownV2>   
+        <Text style={{margin:2}} >{contactSelect ? contactSelect:''}</Text>
 
        
         <Controller

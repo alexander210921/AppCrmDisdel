@@ -21,8 +21,10 @@ import {
   DeleteVisit,
   FunctionSetCoordsDetail,
   FunctionUpdateVisit,
+  GetContactPersonCardCode,
   GetVisitByID,
   LoadUpdateVisit,
+  SaveContactPerson,
   SaveIsArriveOrNotTheVisit,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
@@ -162,6 +164,12 @@ const DetailVisit = () => {
         }
         case 3: {
           const GetVisit = await GetVisitByID(data.IdRegistro);
+          const GetPersonContact = await GetContactPersonCardCode("SBO_DISDELSA_2013",data.CardCode);
+          if(GetPersonContact==null){
+            Alert.alert("ocurrió un error, intenta nuevamente");
+              return;
+          }
+          dispatch(SaveContactPerson(GetPersonContact));
           const isEndVisit = GetVisit['<EsRegreso>k__BackingField'];
           //dispatch(SaveIsArriveOrNotTheVisit(isEndVisit));
 

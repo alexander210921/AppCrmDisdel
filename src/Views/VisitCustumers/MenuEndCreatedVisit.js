@@ -11,6 +11,7 @@ import CardVisit from '../../Components/Cards/Card1';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
+import { StartNotification } from './VisitCreated';
 const MenuEndVisit = () => {
   let basesSelected=null;
   const User = useSelector(state => state.login.user);
@@ -65,9 +66,11 @@ const MenuEndVisit = () => {
               CardCode: dataVisitReturn.CardCode,
               CardName: dataVisitReturn.CardName,
               IdRegistro: statusCreateVisit.DocNum,
-              Comentario:dataVisitReturn.Comentario
+              Comentario:dataVisitReturn.Comentario,
+              EsRegreso:'Y'
             }),
           );
+          await StartNotification(User.EntityID,"",dispatch);
           navigation.navigate('VisitCreated');
         } else if (statusCreateVisit != null && !statusCreateVisit.Resultado) {
           Alert.alert(statusCreateVisit.Mensaje);

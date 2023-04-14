@@ -18,7 +18,8 @@ import {
   LOAD_CANCEL_VISITS_IN_COURSE,
   SAVE_VISIT_CREATED,
   ADD_VISIT_CREATED,
-  SAVE_IS_ARRIVE_OR_END_VISIT
+  SAVE_IS_ARRIVE_OR_END_VISIT,
+  SAVE_CONTACT_PERSON_CUSTOMER
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -115,7 +116,7 @@ export const FunctionGetAdressCustomer = (
 ) => {
   try {
     Axios.get(
-      'MyWsOneControlCenter/api/Socio/GetListaDirecciones/' +
+      'MyWsOneControlCenter/api/Socio/GetListaDireccionesCardCode/' +
         NombreDB +
         '/' +
         CardCode +
@@ -187,6 +188,15 @@ export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRe
 export async function GetVisitByID (idvisit){
   try{
     const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/Get/"+idvisit+"/");
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
+export async function GetContactPersonCardCode (NombreDB,CardCode){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetPContactoCardCode/"+NombreDB+"/"+CardCode);
     return data;
   }catch(ex){
     Alert.alert(""+ex);
@@ -339,4 +349,8 @@ export const AddVisit = idVisit => ({
 export const SaveIsArriveOrNotTheVisit=(status)=>({
   type:SAVE_IS_ARRIVE_OR_END_VISIT,
   payload:status
+});
+export const SaveContactPerson=(ListContactPerson)=>({
+  type:SAVE_CONTACT_PERSON_CUSTOMER,
+  payload:ListContactPerson
 });
