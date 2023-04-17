@@ -14,6 +14,7 @@ import { LoadGetVisitActuality,FunctionGetCurrentVisit, SetVisiActualityt } from
 import { StartNotification } from '../VisitCustumers/VisitCreated';
 import { Image } from 'react-native';
 import { FunctionGetMileageInit,SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
+import { GeCustomersVendor } from '../../Api/Customers/ApiCustumer';
 //import Geolocation from '@react-native-community/geolocation';
 const imagePath = require('../../Assets/Images/logoDisdel.png');
 
@@ -30,6 +31,7 @@ const HomeRouteVendors = () => {
   BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
     setSelectCard(!selectCard);
+    dispatch(GeCustomersVendor([]));
     navigation.navigate("SearchCustomer");    
   };
   const HandleInitRouteForHome =async()=>{

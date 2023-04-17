@@ -64,7 +64,7 @@ const FormFinaliceVisit = () => {
   const [loadinitnewVisit,setLoadnewVisit] = useState(false);
   const InitVisittoFisnish=async ()=>{
     try{
-      if(isEndVisit.RoutesInProgress.length ==1){
+      if(isEndVisit.RoutesInProgress.length ==1 || isEndVisit.RoutesInProgress.length ==0){
         await AsyncStorageSaveData("AUTOMATIC_INIT_ROUTE","Y");
         navigation.navigate("SearchCustomer");
         return;
