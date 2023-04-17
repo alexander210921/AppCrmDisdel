@@ -141,7 +141,7 @@ const DetailVisit = () => {
             CardCode:data.CardCode,
             IdDireccionVisita:data.IdDireccionVisita,
             Latitud: coords.Latitud,
-            Longitud:coords.Latitud
+            Longitud:coords.Longitud
           }
           const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
           if(isvalidDistance == null){

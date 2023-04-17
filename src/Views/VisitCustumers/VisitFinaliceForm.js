@@ -114,7 +114,7 @@ const FormFinaliceVisit = () => {
           IdRelacion: Rol[0]?.IdRelacion,
           IdRegistro: dataVisist.IdRegistro,
           Contacto: contactSelect?contactSelect:'',
-          Titulo: FormData.Title?FormData.Title:'',                    
+          Titulo: FormData.Tema?FormData.Tema:'',                    
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
           isEndVisit:true,
