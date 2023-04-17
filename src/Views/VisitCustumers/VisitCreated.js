@@ -151,13 +151,16 @@ const VisitCreated = () => {
       dispatch(LoadGetVisitActuality(true));     
 
         const dataMileagueInit = await FunctionGetMileageInit(
-              User.EntityID,
+          User.EntityID,
               0,
             );            
-        if(dataMileagueInit==null){
-          Alert.alert("Ocurrió un error","Vuelva a intentarlo nuevamente por favor");
-              return ;
-        }        
+     
+        // if(dataMileagueInit && dataMileagueInit.length==0){
+        //   navigation.navigate("FormCreateRoute");
+          
+        // }
+        //console.log(dataMileagueInit)
+               
      await StartNotification(User.EntityID,"",dispatch);   
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       dispatch(SaveIsArriveOrNotTheVisit("N"));
@@ -166,7 +169,7 @@ const VisitCreated = () => {
         ListRoutes.RoutesInProgress.length > 0
       ) {        
         try { 
-          if(dataMileagueInit.Id==0){
+          if(dataMileagueInit && dataMileagueInit.length==0){
             dispatch(SaveIsArriveOrNotTheVisit("Y"));
             navigation.navigate('FormCreateRoute');
           }                               

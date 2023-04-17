@@ -117,7 +117,7 @@ const FormCreateRoute = () => {
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
           AuxBase64Image:base64Image,
-          idVisita:visitSelect.IdRegistro,
+          idVisita:visitSelect && visitSelect.IdRegistro?visitSelect.IdRegistro:0 ,
           TipoKilometraje:isEndMileague
         };
 

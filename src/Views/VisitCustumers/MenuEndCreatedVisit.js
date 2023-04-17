@@ -12,6 +12,7 @@ import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from './VisitCreated';
+import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
 const MenuEndVisit = () => {
   let basesSelected=null;
   const User = useSelector(state => state.login.user);
@@ -23,6 +24,7 @@ const MenuEndVisit = () => {
   const [isLoad, setIsLoad] = useState(false);
   const [isLoadVisit, setIsLoadVisit] = useState(false);
   const [baseSelect, setBaseSelect] = useState(null);
+  BackHanlderMenuPrincipal(navigation);
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
     CardName: 'DISDEL, S.A.',

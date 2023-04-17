@@ -12,6 +12,7 @@ import {GeCustomersVendor} from '../../Api/Customers/ApiCustumer';
 import {StyleSheet, Dimensions} from 'react-native';
 import {ColorBackroundSecundary} from '../../Assets/Colors/Colors';
 import { FunctionGetAdressCustomer,LoadGetAdressCustomer } from '../../Api/Customers/ApiCustumer';
+import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -21,6 +22,7 @@ const VisitirCustomer = () => {
   const Customer = useSelector(state => state.Customer);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  BackHanlderMenuPrincipal(navigation);
   const SubmitSearch = value => {
     dispatch(LoadGeCustomer(true));
     GetCustumerVendor(Rol[0]?.IdRelacion, value, dispatch);

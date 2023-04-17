@@ -13,7 +13,7 @@ import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 import { LoadGetVisitActuality,FunctionGetCurrentVisit, SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from '../VisitCustumers/VisitCreated';
 import { Image } from 'react-native';
-
+import { FunctionGetMileageInit,SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 //import Geolocation from '@react-native-community/geolocation';
 const imagePath = require('../../Assets/Images/logoDisdel.png');
 
@@ -50,6 +50,21 @@ const HomeRouteVendors = () => {
       return;      
      }
      await StartNotification(User.EntityID,"",dispatch);
+
+     const dataMileagueInit = await FunctionGetMileageInit(
+      User.EntityID,
+       0,
+     );            
+
+ try { 
+  if(dataMileagueInit && dataMileagueInit.length==0){
+    dispatch(SaveIsArriveOrNotTheVisit("Y"));
+    navigation.navigate('FormCreateRoute');
+  }                               
+} finally {
+  dispatch(LoadGetVisitActuality(false));
+}
+
      Alert.alert("","Ruta Iniciada con éxito");
 
     }catch(ex){
