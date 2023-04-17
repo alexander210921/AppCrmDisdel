@@ -94,7 +94,8 @@ const FormCreateVisit = () => {
             CardCode:CustomerSelect.customerSelect.CardCode,
             CardName:CustomerSelect.customerSelect.CardName,
             IdRegistro:VisitCreated.DocNum,
-            Titulo:FormData.Tema
+            Titulo:FormData.Tema,
+            IdDireccionVisita:data.IdDireccionVisita
           }));
           AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
         }else if(VisitCreated!=null && !VisitCreated.Resultado){

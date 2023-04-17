@@ -194,6 +194,15 @@ export async function GetVisitByID (idvisit){
     return null;
   }
 }
+export async function ValidateDistanceIsValid (dataobject){
+  try{
+    const {data} = await Axios.post("MyWsOneVenta/api/OCRDExternoActividadVisita/ValidateDistanceVisit/",dataobject);
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
 export async function GetContactPersonCardCode (NombreDB,CardCode){
   try{
     const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetPContactoCardCode/"+NombreDB+"/"+CardCode);

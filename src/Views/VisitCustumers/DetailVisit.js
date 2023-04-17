@@ -26,6 +26,7 @@ import {
   LoadUpdateVisit,
   SaveContactPerson,
   SaveIsArriveOrNotTheVisit,
+  ValidateDistanceIsValid,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
@@ -101,6 +102,7 @@ const DetailVisit = () => {
           // },function(itme){console.log(itme)})
           // console.log("validacion",googleMapsClient.distanceMatrix)         
           // return;
+          
           const GetVisit = await GetVisitByID(data.IdRegistro);
           if (
             GetVisit != null &&
@@ -119,6 +121,37 @@ const DetailVisit = () => {
             Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
             return;
           }
+
+          const getCoords = await GetGeolocation();
+          const coords = {
+            Latitud: getCoords.Data.coords.latitude,
+            Longitud: getCoords.Data.coords.longitude,
+            UUIRecorrido: isValidUUID
+              ? isValidUUID
+              : '',
+            idUsuario: User.EntityID,
+          };
+          
+          if(!getCoords.Status){
+            Alert.alert("",getCoords.Message);
+            return;
+          }
+          const createObjectValidateDistance ={
+            NombreDB:"SBO_DISDELSA_2013",
+            CardCode:data.CardCode,
+            IdDireccionVisita:data.IdDireccionVisita,
+            Latitud: coords.Latitud,
+            Longitud:coords.Latitud
+          }
+          const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
+          if(isvalidDistance == null){
+            return;
+          }
+          if(!isvalidDistance.Resultado){
+            Alert.alert("",isvalidDistance.Mensaje)
+            return;
+          }
+
           let isValidUUID = await AsyncStorageGetData("@uuid");
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
@@ -135,15 +168,7 @@ const DetailVisit = () => {
           if (resultUpdate != null && resultUpdate.Resultado) {
            
             try {
-              const getCoords = await GetGeolocation();
-              const coords = {
-                Latitud: getCoords.Data.coords.latitude,
-                Longitud: getCoords.Data.coords.longitude,
-                UUIRecorrido: isValidUUID
-                  ? isValidUUID
-                  : '',
-                idUsuario: User.EntityID,
-              };
+          
               //console.log(coords.idUsuario,"El usuario");
               if (coords.Latitud && coords.Latitud > 0) {
                 FunctionSetCoordsDetail(coords);
@@ -272,7 +297,7 @@ const DetailVisit = () => {
           HandleUpdateVisit(3);
         }}
         style={styles.button1}>
-        <Text style={{fontSize: 9, color: 'white'}}> Finalizar </Text>
+        <Text style={{fontSize: 13, color: 'white'}}> Finalizar </Text>
       </Button>
         :null}       
         {!data.isMarkerArrival ?
@@ -281,7 +306,7 @@ const DetailVisit = () => {
           HandleUpdateVisit(1);
         }}
         style={styles.button3}>
-        <Text style={{fontSize: 9, color: 'white'}}> Llegando</Text>
+        <Text style={{fontSize: 13, color: 'white'}}> Llegando</Text>
       </Button>
         :null}  
         {!data.isMarkerArrival ?        
@@ -290,7 +315,7 @@ const DetailVisit = () => {
           HandleUpdateVisit(2);
         }}
         style={styles.button}>
-        <Text style={{fontSize: 9, color: 'white'}}> Eliminar Visita</Text>
+        <Text style={{fontSize: 13, color: 'white'}}> Eliminar Visita</Text>
       </Button>
         :null}      
        

@@ -40,3 +40,21 @@ export const ExitApp=()=>{
   ]);
     return () => backHandler.remove();
 }
+
+export const BackHanlderMenuPrincipal=(navigation)=>{    
+  if(Platform.OS === 'android'){        
+  const backAction = () => {    
+      if(navigation.isFocused()){
+        navigation.navigate("Home");
+          return () => backHandler.remove();
+      }
+      return false 
+      ;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+      );
+  }
+
+}

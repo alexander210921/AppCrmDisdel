@@ -30,6 +30,7 @@ import { generateUUID } from '../../lib/UUID';
 import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
+import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
 export const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
@@ -118,6 +119,7 @@ const VisitCreated = () => {
   const [MileageDetail, setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
   const [loadGetVisit,setLoadGetVisit] = useState(false);  
+  BackHanlderMenuPrincipal(Navigator);
   const SubmitSearch = async value => {
     try {
       if(value!=""){
@@ -254,6 +256,10 @@ const VisitCreated = () => {
       if(GetMileagueById!=null && GetMileagueById.EntityID>0){
         visit.isMarkerMileague = true;
       }   
+      if( GetMileagueById!=null && GetVisit["<IdDireccionVisita>k__BackingField"]!=null){
+        visit.IdDireccionVisita = GetVisit["<IdDireccionVisita>k__BackingField"];
+
+      }
       dispatch(SaveSelectVisitDetail(visit));
       Navigator.navigate('DetailVisit');
     }finally{
@@ -353,7 +359,7 @@ const VisitCreated = () => {
               flex
               center
               onPress={AlertMessage}>
-              <Text>Cancelar mi recorrido</Text>
+              <Text>Cancelar ubicación en segundo plano</Text>
             </Card>
 
             {ListRoutes.RoutesInProgress.map(route => {
