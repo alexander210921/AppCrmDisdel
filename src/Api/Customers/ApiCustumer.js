@@ -128,8 +128,8 @@ export const FunctionGetAdressCustomer = (
           navigation.navigate('FormCreateVisit');
         }
       })
-      .catch(() => {
-        Alert.alert('Ocurrió un error por favor vuelva a intentarlo');
+      .catch((e) => {
+        Alert.alert('Ocurrió un error por favor vuelva a intentarlo',""+e);
       })
       .finally(() => {
         dispatch(LoadGetAdressCustomer(false));
