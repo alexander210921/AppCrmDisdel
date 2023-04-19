@@ -95,7 +95,7 @@ const FormCreateVisit = () => {
             CardName:CustomerSelect.customerSelect.CardName,
             IdRegistro:VisitCreated.DocNum,
             Titulo:FormData.Tema,
-            IdDireccionVisita:data.IdDireccionVisita
+            IdDireccionVisita:idAddressVisit.addressId
           }));
           AlertConditional(goFormSearchCustomer,goVisitCreated,"Creado Exitosamente","¿Desea agregar otra visita?");
         }else if(VisitCreated!=null && !VisitCreated.Resultado){
@@ -118,7 +118,6 @@ const FormCreateVisit = () => {
     SetViewPannelAdress(true);
   }
   const SelectAdress=(item)=>{
-    console.log(item);
     const data={
       addressId:item.id,
       AddressName:item.name,      

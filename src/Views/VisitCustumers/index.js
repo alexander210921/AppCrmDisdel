@@ -24,6 +24,10 @@ const VisitirCustomer = () => {
   const dispatch = useDispatch();
   BackHanlderMenuPrincipal(navigation);
   const SubmitSearch = value => {
+    if(value ==null|| value ==""){
+      return;
+    }
+    value = value.trim();
     dispatch(LoadGeCustomer(true));
     GetCustumerVendor(Rol[0]?.IdRelacion, value, dispatch);
   };
