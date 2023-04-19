@@ -46,7 +46,7 @@ const CardCustomer = ({
               <Text
                 style={{
                   color: 'gray',
-                  fontSize: 8,
+                  fontSize: 12,
                 }}>
                 {subtitle}
               </Text>

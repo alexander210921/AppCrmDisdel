@@ -73,7 +73,7 @@ const CardVisit = ({
             </Text>
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 16,
                 color: 'gray',
                 fontWeight: 'bold',
                 textTransform: 'capitalize',
@@ -97,7 +97,7 @@ const CardVisit = ({
               <Text
                 style={{
                   color: 'gray',
-                  fontSize: 8,
+                  fontSize: 12,
                 }}>
                 {subtitle}
               </Text>
