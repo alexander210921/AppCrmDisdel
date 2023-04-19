@@ -121,7 +121,7 @@ const DetailVisit = () => {
             Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
             return;
           }
-
+          let isValidUUID = await AsyncStorageGetData("@uuid");
           const getCoords = await GetGeolocation();
           const coords = {
             Latitud: getCoords.Data.coords.latitude,
@@ -154,7 +154,7 @@ const DetailVisit = () => {
             }
           }          
 
-          let isValidUUID = await AsyncStorageGetData("@uuid");
+          
           visit.LatitudeDestino = 0;
           visit.longitude = 0;
           visit.UUIDGroup = isValidUUID;

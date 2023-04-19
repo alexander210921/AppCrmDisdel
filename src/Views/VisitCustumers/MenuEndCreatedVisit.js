@@ -13,8 +13,9 @@ import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Cu
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from './VisitCreated';
 import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
+let ClientDefault = null;
 const MenuEndVisit = () => {
-  let basesSelected=null;
+  let basesSelected=null;  
   const User = useSelector(state => state.login.user);
   const ListRoutes = useSelector(state => state.Customer);
   const Rol = useSelector(state => state.rol.RolSelect);
@@ -60,8 +61,8 @@ const MenuEndVisit = () => {
           Comentario:'YENDO A LA BASE: '+basesSelected['<NombreBase>k__BackingField']
         });
         const dataForBase={
-          CardCode: 'C46306293',
-          CardName: 'DISDEL, S.A.',
+          CardCode: ClientDefault ? ClientDefault.CardCode:'C46306293',
+          CardName:ClientDefault ? ClientDefault.CardName: 'DISDEL, S.A.',
           Comentario: 'YENDO A LA BASE: '+basesSelected['<NombreBase>k__BackingField'],
           IdRegistro: 0,
           Contacto: '',
@@ -120,7 +121,13 @@ const MenuEndVisit = () => {
       const bases = await GetBasesVendor(User.EntityID);
       //validar la compania
       const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,"SBO_DISDELSA_2013");            
+      console.log(CustomerDefault,"Lo que trajo el API")
       if(CustomerDefault?.CardCode){
+        ClientDefault = {
+          CardCode:CustomerDefault.CardCode,
+          CardName:CustomerDefault.CardName,
+        }
+        console.log(ClientDefault,"LLENANDO")
         setDataVisitReturn(
             {
                 ...dataVisitReturn,
