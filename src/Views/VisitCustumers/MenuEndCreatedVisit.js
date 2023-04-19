@@ -57,10 +57,23 @@ const MenuEndVisit = () => {
           basesSelected['<Descripcion>k__BackingField'] +
             ': ' +
             basesSelected['<NombreBase>k__BackingField'],
-          Comentario:'DE REGRESO A LA BASE: '+basesSelected['<NombreBase>k__BackingField']
+          Comentario:'YENDO A LA BASE: '+basesSelected['<NombreBase>k__BackingField']
         });
+        const dataForBase={
+          CardCode: 'C46306293',
+          CardName: 'DISDEL, S.A.',
+          Comentario: 'YENDO A LA BASE: '+basesSelected['<NombreBase>k__BackingField'],
+          IdRegistro: 0,
+          Contacto: '',
+          Longitud: 0,
+          Latitud: 0,
+          ShipToCode: '',
+          Kilometraje: 0,
+          IdRelacion: Rol[0]?.IdRelacion,
+          EsRegreso:'Y'
+        }
         const statusCreateVisit = await SetVisitCustomer(
-          dataVisitReturn,
+          dataForBase,
           dispatch,
           navigation,
           false,
@@ -73,7 +86,7 @@ const MenuEndVisit = () => {
               CardCode: dataVisitReturn.CardCode,
               CardName: dataVisitReturn.CardName,
               IdRegistro: statusCreateVisit.DocNum,
-              Comentario:dataVisitReturn.Comentario,
+              Comentario:dataForBase.Comentario,
               EsRegreso:'Y'
             }),
           );
@@ -178,8 +191,8 @@ const MenuEndVisit = () => {
                 data={base}
                 handleSelectCard={SelectBase}
                 principalColor="#F3BBB1"
-                subtitle={base['<NombreBase>k__BackingField']}
-                title={base['<Descripcion>k__BackingField']}></CardVisit>
+                subtitle={''}
+                title={base['<Descripcion>k__BackingField']+" / "+base['<NombreBase>k__BackingField']}></CardVisit>
             ))
           ) : null}
         </View>

@@ -64,7 +64,7 @@ const CardVisit = ({
           <View style={{marginLeft: 12}}>
             <Text
               style={{
-                fontSize: 13,
+                fontSize: 15,
                 color: 'black',
                 fontWeight: 'bold',
                 textTransform: 'capitalize',

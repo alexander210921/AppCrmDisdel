@@ -143,14 +143,16 @@ const DetailVisit = () => {
             Latitud: coords.Latitud,
             Longitud:coords.Longitud
           }
-          const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
-          if(isvalidDistance == null){
-            return;
-          }
-          if(!isvalidDistance.Resultado){
-            Alert.alert("",isvalidDistance.Mensaje)
-            return;
-          }
+          if(data.EsRegreso =="N"){
+            const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
+            if(isvalidDistance == null){
+              return;
+            }
+            if(!isvalidDistance.Resultado){
+              Alert.alert("",isvalidDistance.Mensaje)
+              return;
+            }
+          }          
 
           let isValidUUID = await AsyncStorageGetData("@uuid");
           visit.LatitudeDestino = 0;
