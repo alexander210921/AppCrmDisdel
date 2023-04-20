@@ -15,7 +15,8 @@ import { StartNotification } from '../VisitCustumers/VisitCreated';
 import { Image } from 'react-native';
 import { FunctionGetMileageInit,SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 import { GeCustomersVendor } from '../../Api/Customers/ApiCustumer';
-//import Geolocation from '@react-native-community/geolocation';
+import BackgroundService from 'react-native-background-actions';
+import { StopInitVisit } from '../../lib/Visits';
 const imagePath = require('../../Assets/Images/logoDisdel.png');
 
 const HomeRouteVendors = () => {
@@ -99,7 +100,13 @@ const HomeRouteVendors = () => {
   
  
   const User = useSelector(state => state.login.user);  
-  useEffect(()=>{    
+  useEffect(()=>{  
+    async function StopVisit(){
+      if(DrivingVisitDetail.isRouteInCourse &&!BackgroundService.isRunning()){     
+        await StopInitVisit(null,dispatch);
+      } 
+    } 
+    StopVisit();    
     if(!User){
       navigation.navigate("Login");
       return;

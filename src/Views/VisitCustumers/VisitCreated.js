@@ -198,14 +198,15 @@ const VisitCreated = () => {
     );
   };
    const HandleStopVisit = async () => {
-    try {      
-      if (!DrivingVisitDetail.isRouteInCourse) {
-        Alert.alert(
-          'Cancelacion de ruta',
-          'La ruta no ha sido iniciada para poder cancelar',
-        );
-        return;
-      }
+    try {    
+      
+      // if (!DrivingVisitDetail.isRouteInCourse) {
+      //   Alert.alert(
+      //     'Cancelacion de ruta',
+      //     'La ruta no ha sido iniciada para poder cancelar',
+      //   );
+      //   return;
+      // }
       dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
       Geolocation.stopObserving();
@@ -286,6 +287,9 @@ const VisitCreated = () => {
   //   StopGeolocation();
   // }, [ListRoutes.RoutesInProgress]);
   useEffect(() => {
+    if(DrivingVisitDetail.isRouteInCourse &&!BackgroundService.isRunning()){
+      HandleStopVisit();
+    }
     try {
       async function getMileague() {
         return await AsyncStorageGetData('@Mileague');
