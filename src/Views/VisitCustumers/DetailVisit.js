@@ -159,9 +159,9 @@ const DetailVisit = () => {
           visit.longitude = 0;
           visit.UUIDGroup = isValidUUID;
           visit.isInitVisit = true;
-          if(data.EsRegreso =="Y"){
-            visit.Proceso="Finalizado"
-          }
+          // if(data.EsRegreso =="Y"){
+          //   visit.Proceso="Finalizado"
+          // }
           const resultUpdate = await FunctionUpdateVisit(
             visit,
             dispatch,
@@ -211,6 +211,25 @@ const DetailVisit = () => {
           break;
         }
         case 3: {
+          if(data.EsRegreso =="Y"){
+            visit.Proceso="Finalizado"
+            const resultUpdate = await FunctionUpdateVisit(
+              visit,
+              dispatch,
+              navigation,
+            );
+            if(resultUpdate!=null && resultUpdate.Resultado){
+              dispatch(DeleteVisit(visit.IdRegistro));
+              navigation.navigate("VisitCreated");
+            }
+            if(resultUpdate==null){
+              return;
+            }
+          if(!resultUpdate.Resultado){
+            Alert.alert("",""+resultUpdate.Mensaje);
+          }
+            return;
+          }
           const GetVisit = await GetVisitByID(data.IdRegistro);
           const GetPersonContact = await GetContactPersonCardCode("SBO_DISDELSA_2013",data.CardCode);
           if(GetPersonContact==null){
@@ -293,7 +312,7 @@ const DetailVisit = () => {
         {isLoadUpadateVisit.loadUpdateVisit ? (
           <LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>
         ) : null}
-          {data.isMarkerArrival && (data.EsRegreso==null ||data.EsRegreso =="N"  ) ?
+          {data.isMarkerArrival  ?
         <Button
         onPress={() => {
           HandleUpdateVisit(3);

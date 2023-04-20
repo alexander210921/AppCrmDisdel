@@ -140,8 +140,9 @@ const FormCreateRoute = () => {
             navigation.navigate("VisitCreated");
           }else{
             if(visitSelect.EsRegreso && visitSelect.EsRegreso=="Y" ){
-              navigation.navigate("VisitCreated");
-              dispatch(DeleteVisit(visitSelect.IdRegistro));
+              //VisitCreated
+              navigation.navigate("DetailVisit");
+             // dispatch(DeleteVisit(visitSelect.IdRegistro));
             }else{
               navigation.navigate("DetailVisit");  
             }                     
