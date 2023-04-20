@@ -194,7 +194,7 @@ const VisitCreated = () => {
       HandleStopVisit,
       function () {},
       'Cancelar Recorrido',
-      '¿Está seguro de cancelar?, se perderá todo su recorrido',
+      '¿Está seguro de cancelar?',
     );
   };
    const HandleStopVisit = async () => {
@@ -215,7 +215,7 @@ const VisitCreated = () => {
         dispatch,
       );
       if (cancelStatus) {
-        Alert.alert('Cancelado correctamente');
+        //Alert.alert('Cancelado correctamente');
         return;
       }
     } finally {
