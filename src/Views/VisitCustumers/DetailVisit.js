@@ -123,6 +123,10 @@ const DetailVisit = () => {
           }
           let isValidUUID = await AsyncStorageGetData("@uuid");
           const getCoords = await GetGeolocation();
+          if(!getCoords.Status){
+            Alert.alert("Alerta",""+getCoords.Message);
+            return;
+          }
           const coords = {
             Latitud: getCoords.Data.coords.latitude,
             Longitud: getCoords.Data.coords.longitude,
@@ -132,10 +136,7 @@ const DetailVisit = () => {
             idUsuario: User.EntityID,
           };
           
-          if(!getCoords.Status){
-            Alert.alert("",getCoords.Message);
-            return;
-          }
+       
           const createObjectValidateDistance ={
             NombreDB:"SBO_DISDELSA_2013",
             CardCode:data.CardCode,
