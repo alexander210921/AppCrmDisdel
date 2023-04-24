@@ -156,7 +156,8 @@ const FormCreateRoute = () => {
         dispatch(LoadPostMileage(false));
       }
     }catch(ex){
-      Alert.alert(""+ex);
+      dispatch(LoadPostMileage(false));
+      Alert.alert(""+ex);      
     }finally{
       dispatch(LoadPostMileage(false));
     }

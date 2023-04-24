@@ -92,108 +92,102 @@ const DetailVisit = () => {
       dispatch(LoadUpdateVisit(true));
       switch (typeOption) {
         case 1: {
-          
-          // const ValidateDistance =  googleMapsClient.distanceMatrix({
-          //   origins: ['Hornsby Station, NSW', 'Chatswood Station, NSW'],
-          //   destinations: ['Central Station, NSW', 'Parramatta Station, NSW'],
-          //   language: 'en',
-          //   units: 'metric',
-          //   region: 'au'
-          // },function(itme){console.log(itme)})
-          // console.log("validacion",googleMapsClient.distanceMatrix)         
-          // return;
-          
-          const GetVisit = await GetVisitByID(data.IdRegistro);
-          if (
-            GetVisit != null &&
-            GetVisit['<isMarkerArrival>k__BackingField'] == true
-          ) {
-            Alert.alert(
-              'Ya se marcó la llegada',
-              'Esta visita ya tiene marcado un horario de llegada',
-            );
-            return;
-          } else if (GetVisit == null) {
-            Alert.alert('Ocurrió un error', 'Intenta nuevamente por favor');
-            return;
-          }
-          if (!DrivingVisitDetail.isRouteInCourse && typeOption == 1) {
-            Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
-            return;
-          }
-          let isValidUUID = await AsyncStorageGetData("@uuid");
-          const getCoords = await GetGeolocation();
-          if(!getCoords.Status){
-            Alert.alert("Alerta",""+getCoords.Message);
-            return;
-          }
-          const coords = {
-            Latitud: getCoords.Data.coords.latitude,
-            Longitud: getCoords.Data.coords.longitude,
-            UUIRecorrido: isValidUUID
-              ? isValidUUID
-              : '',
-            idUsuario: User.EntityID,
-          };
-          
-       
-          const createObjectValidateDistance ={
-            NombreDB:"SBO_DISDELSA_2013",
-            CardCode:data.CardCode,
-            IdDireccionVisita:data.IdDireccionVisita,
-            Latitud: coords.Latitud,
-            Longitud:coords.Longitud
-          }
-          if(data.EsRegreso =="N"){
-            const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
-            if(isvalidDistance == null){
+          try{
+            const GetVisit = await GetVisitByID(data.IdRegistro);
+            if (
+              GetVisit != null &&
+              GetVisit['<isMarkerArrival>k__BackingField'] == true
+            ) {
+              Alert.alert(
+                'Ya se marcó la llegada',
+                'Esta visita ya tiene marcado un horario de llegada',
+              );
+              return;
+            } else if (GetVisit == null) {
+              Alert.alert('Ocurrió un error', 'Intenta nuevamente por favor');
               return;
             }
-            if(!isvalidDistance.Resultado){
-              Alert.alert("",isvalidDistance.Mensaje)
+            if (!DrivingVisitDetail.isRouteInCourse && typeOption == 1) {
+              Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
               return;
             }
-          }          
-
-          
-          visit.LatitudeDestino = 0;
-          visit.longitude = 0;
-          visit.UUIDGroup = isValidUUID;
-          visit.isInitVisit = true;
-          // if(data.EsRegreso =="Y"){
-          //   visit.Proceso="Finalizado"
-          // }
-          const resultUpdate = await FunctionUpdateVisit(
-            visit,
-            dispatch,
-            navigation,
-          );
-          if (resultUpdate != null && resultUpdate.Resultado) {
-           
-            try {
-          
-              //console.log(coords.idUsuario,"El usuario");
-              if (coords.Latitud && coords.Latitud > 0) {
-                FunctionSetCoordsDetail(coords);
+            let isValidUUID = await AsyncStorageGetData("@uuid");
+            const getCoords = await GetGeolocation();
+            if(!getCoords.Status){
+              Alert.alert("Alerta",""+getCoords.Message);
+              return;
+            }
+            const coords = {
+              Latitud: getCoords.Data.coords.latitude,
+              Longitud: getCoords.Data.coords.longitude,
+              UUIRecorrido: isValidUUID
+                ? isValidUUID
+                : '',
+              idUsuario: User.EntityID,
+            };
+            
+         
+            const createObjectValidateDistance ={
+              NombreDB:"SBO_DISDELSA_2013",
+              CardCode:data.CardCode,
+              IdDireccionVisita:data.IdDireccionVisita,
+              Latitud: coords.Latitud,
+              Longitud:coords.Longitud
+            }
+            if(data.EsRegreso =="N"){
+              const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
+              if(isvalidDistance == null){
+                return;
               }
-            } finally {
-              await StopInitVisit(null, dispatch);
-              await BackgroundService.stop();
-              Geolocation.stopObserving();
+              if(!isvalidDistance.Resultado){
+                Alert.alert("",isvalidDistance.Mensaje)
+                return;
+              }
+            }          
+  
+            
+            visit.LatitudeDestino = 0;
+            visit.longitude = 0;
+            visit.UUIDGroup = isValidUUID;
+            visit.isInitVisit = true;
+            // if(data.EsRegreso =="Y"){
+            //   visit.Proceso="Finalizado"
+            // }
+            const resultUpdate = await FunctionUpdateVisit(
+              visit,
+              dispatch,
+              navigation,
+            );
+            if (resultUpdate != null && resultUpdate.Resultado) {
+             
+              try {
+            
+                //console.log(coords.idUsuario,"El usuario");
+                if (coords.Latitud && coords.Latitud > 0) {
+                  FunctionSetCoordsDetail(coords);
+                }
+              } finally {
+                await StopInitVisit(null, dispatch);
+                await BackgroundService.stop();
+                Geolocation.stopObserving();
+              }
+             // Alert.alert('Registro exitoso');
+              setIsUpdateVisitArrive(true);
+              dispatch(SaveIsArriveOrNotTheVisit("N"));
+              dispatch(SaveSelectVisitDetail({
+                ...data,
+                isMarkerArrival:true,              
+              }));
+              navigation.navigate("FormCreateRoute");
+            } else if (resultUpdate != null && !resultUpdate.Resultado) {
+              Alert.alert("Alerta",resultUpdate.Mensaje);
             }
-           // Alert.alert('Registro exitoso');
-            setIsUpdateVisitArrive(true);
-            dispatch(SaveIsArriveOrNotTheVisit("N"));
-            dispatch(SaveSelectVisitDetail({
-              ...data,
-              isMarkerArrival:true,              
-            }));
-            navigation.navigate("FormCreateRoute");
-          } else if (resultUpdate != null && !resultUpdate.Resultado) {
-            Alert.alert("Alerta",resultUpdate.Mensaje);
-          }
-          //navigation.navigate("FormFinaliceVisit");
-          //FunctionUpdateAddressCoords();
+          }catch(ex){
+            Alert.alert("Error",""+ex);
+            dispatch(LoadUpdateVisit(true));          
+          }finally{
+            dispatch(LoadUpdateVisit(true));          
+          }   
           break;
         }
         case 2: {
@@ -255,7 +249,8 @@ const DetailVisit = () => {
         }
       }
     } catch (ex) {
-      Alert.alert('Error: ' + ex);
+      dispatch(LoadUpdateVisit(true));
+      Alert.alert('Error: ' + ex);      
     } finally {
       dispatch(LoadUpdateVisit(false));
     }
