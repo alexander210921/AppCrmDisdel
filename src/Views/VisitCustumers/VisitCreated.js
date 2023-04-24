@@ -228,6 +228,25 @@ const VisitCreated = () => {
       Alert.alert('Cancelado correctamente');
     }
   };
+  const setMileagueInit=async()=>{
+    const dataMileagueInit = await FunctionGetMileageInit(
+      User.EntityID,
+      0,
+      ); 
+      if(dataMileagueInit==null){
+        Alert.alert("","Ocurrió un error al valirdar los datos, intente nuevamente");
+        return;
+      }
+      if(dataMileagueInit && dataMileagueInit.length>=1){
+        Alert.alert("Registro ya realizado","Usted ha iniciado el dia con: "+dataMileagueInit[0]["<Kilometraje>k__BackingField"]+" km");
+        return;
+      }
+      if(dataMileagueInit && dataMileagueInit.length==0){
+        dispatch(SaveIsArriveOrNotTheVisit("Y"));
+        navigation.navigate('FormCreateRoute');
+
+      }  
+  }
   const HandleCancelAlert = () => {};
   const ViewButtonsOption = () => {
     return <View flex style={styles.containerButton}></View>;
@@ -318,7 +337,9 @@ const VisitCreated = () => {
           navigation.navigate("MenuEndVisit");
         }}/>
       </View>
-      
+      <View style={styles.chip}>
+        <Chip label={'kilometraje inicial del día'} onPress={setMileagueInit}/>
+      </View>
       {ListRoutes.RoutesInProgress.length > 0 ? (
         <View>
           <Text style={styles.Title}>Mis visitas</Text>

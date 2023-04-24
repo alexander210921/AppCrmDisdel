@@ -32,7 +32,7 @@ export default function DrawerContent({ navigation }) {
       </Drawer.Section>
       <Drawer.Section>
         <Drawer.Item
-          label="Login"
+          label="Visitas"
           icon='home'
           active={active === 'Login'}
           onPress={() => onChangeScreen('Login')}        
