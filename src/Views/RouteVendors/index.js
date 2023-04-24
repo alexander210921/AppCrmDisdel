@@ -9,7 +9,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
 import { ScrollView } from 'react-native-gesture-handler';
-import { StartRealTimeCoords } from '../../lib/Permissions/Geolocation';
 import { LoadGetVisitActuality,FunctionGetCurrentVisit, SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from '../VisitCustumers/VisitCreated';
 import { Image } from 'react-native';
@@ -80,6 +79,9 @@ const HomeRouteVendors = () => {
   const HandleGoBases =()=>{
     navigation.navigate("MenuEndVisit");    
   }
+  const HandleGoGasoline =()=>{
+    navigation.navigate("MenuEndVisit");    
+  }
 
   const HandleGoToVisitCustumer=async()=>{
     try{
@@ -111,13 +113,7 @@ const HomeRouteVendors = () => {
       navigation.navigate("Login");
       return;
                  }
-    // if(listVisit.RoutesInProgress.length==0&&DrivingVisitDetail.IdWatchLocation!=null){
-    //   Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation)
-    // }
-    // else
-    // if(DrivingVisitDetail.isRouteInCourse && DrivingVisitDetail.IdWatchLocation == null) {            
-    //   StartRealTimeCoords(dispatch,DrivingVisitDetail.UUIDRoute,5,User.EntityID);
-    // }    
+    
   },[User])
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
@@ -139,8 +135,6 @@ const HomeRouteVendors = () => {
         </View>
       </View>
       <Card
-  //      selected={!selectCard}
-//        selectionOptions={styles.selectOptionCard}
         elevation={20}
         flexS
         style={styles.card}
@@ -150,8 +144,6 @@ const HomeRouteVendors = () => {
         <Text>Crear una nueva visita</Text>
       </Card>
       <Card
-        //selected={false}
-        //selectionOptions={styles.selectOptionCard}
         elevation={20}
         flexS
         style={styles.card2}
@@ -160,9 +152,7 @@ const HomeRouteVendors = () => {
         onPress={HandleGoToVisitCustumer}>
         <Text>Ver Visitas en curso</Text>
       </Card>
-      <Card
-       // selected={false}
-       // selectionOptions={styles.selectOptionCard}
+      <Card              
         elevation={20}
         flexS
         style={  DrivingVisitDetail.isRouteInCourse ? styles.ButtonDisable :styles.card3}
@@ -171,9 +161,7 @@ const HomeRouteVendors = () => {
         onPress={HandleInitRouteForHome}>
         <Text>Iniciar Ruta</Text>
       </Card>
-      <Card
-      //  selected={false}
-        //selectionOptions={styles.selectOptionCard}
+      <Card      
         containerStyle={{color:'black'}}
         elevation={20}
         flexS
@@ -182,6 +170,16 @@ const HomeRouteVendors = () => {
         center
         onPress={HandleGoBases}>
         <Text>Ir a bases</Text>
+      </Card>
+      <Card      
+        containerStyle={{color:'black'}}
+        elevation={20}
+        flexS
+        style={styles.card5}
+        flex
+        center
+        onPress={HandleGoGasoline}>
+        <Text>Ingreso de Gasolina</Text>
       </Card>
     </View>
     </ScrollView>
@@ -223,6 +221,13 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: '#F2D8CE',
+    color:'black'
+  },
+  card5: {
+    height: '17%', 
+    borderColor: 'black',
+    marginTop: '4%',
+    backgroundColor: 'gray',
     color:'black'
   },
   selectOptionCard: {

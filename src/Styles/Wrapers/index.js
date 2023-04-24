@@ -6,13 +6,13 @@ const StylesWrapper = StyleSheet.create({
   wraper: {
     padding:'5%',
     backgroundColor:ColorBackroundSecundary,    
-    height:windowHeight,
+    height:windowHeight-5,
   },
   secondWrapper: {
     padding:'5%',
     height:  windowHeight-10,
     backgroundColor:ColorBackroundSecundary,      
-    marginBottom:'2%',
+    marginBottom:'0%',
   },
 });
 

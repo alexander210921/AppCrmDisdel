@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, LoaderScreen, Button} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {Alert, StyleSheet, TextInput, Image, ScrollView, InteractionManager} from 'react-native';
+import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
 import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
 import {
   LoadPostMileage,
@@ -14,8 +14,7 @@ import {_base64ToArrayBuffer} from '../../lib/Converts/index';
 import {requestExternalWritePermission} from '../../lib/Permissions/Files';
 import {requestCameraPermission} from '../../lib/Permissions/Camera';
 import { useNavigation } from '@react-navigation/native';
-import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
-import { DeleteVisit, SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
+import {  SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
 const FormCreateRoute = () => {
   const dispatch = useDispatch();
   const visitSelected = useSelector(state => state.Customer.VisitDetailSelected);
@@ -23,7 +22,6 @@ const FormCreateRoute = () => {
   const Milaege = useSelector(state => state.Mileage);
   const isEndVisit = useSelector(state=>state.Customer);
   const navigation = useNavigation();
-  //init handle config permission to acces camera and storage
   const [filePath, setFilePath] = useState({});
   const [base64Image, setBase64Image] = useState('');  
   const visitSelect = useSelector(state => state.Customer.VisitDetailSelected);
@@ -123,15 +121,6 @@ const FormCreateRoute = () => {
 
         const statusCreateMileage = await SetMileage(data, dispatch);
         if(statusCreateMileage!=null && statusCreateMileage.Resultado){
-          if(false){
-            const dataMileague={
-              ...data,
-              ImageName:statusCreateMileage.MensajeAux,
-              EntityID :statusCreateMileage.DocNum,
-              DateCreatedMileague : new Date().toLocaleDateString(),
-            }
-            await AsyncStorageSaveDataJson("@Mileague",dataMileague);
-          }
           dispatch(SaveSelectVisitDetail({
             ...visitSelected,
             isMarkerMileague:true
@@ -208,21 +197,8 @@ const FormCreateRoute = () => {
               ) : null}
               <View style={styles.containerButton}>
                 <View style={{margin: '1%'}}>
-                  {/* <ButtonPrimary
-                    HandleClick={() => {
-                      captureImage('photo');
-                    }}
-                    label="Tomar Fotografía"
-                    Backcolor="#001835"></ButtonPrimary> */}
                 </View>
                 <Button color="white" style={styles.buttonAdress} label={'Elegir imagen de galería'} size={Button.sizes.small} backgroundColor={"#c6e2e9"} onPress={()=>{chooseFile('photo');}}/>
-                {/* <Button
-                                    
-                  HandleClick={() => {
-                    chooseFile('photo');
-                  }}
-                  label="Elegir desde galeria"
-                  Backcolor="#001835"></Button> */}
               </View>
               <View style={styles.containerButton}>
                 <ButtonPrimary
@@ -230,12 +206,6 @@ const FormCreateRoute = () => {
                   label="Grabar Kilometraje"
                   Backcolor="black"></ButtonPrimary>
               </View>
-              {/* <View style={styles.containerButton}>
-                <ButtonPrimary
-                  HandleClick={()=>{navigation.navigate(Milaege.idVisitCreated?.isEndVisit?"VisitCreated":"VisitCreated")}}
-                  label="Omitir"
-                  Backcolor="black"></ButtonPrimary>
-              </View> */}
             </>
           )}
         </View>
