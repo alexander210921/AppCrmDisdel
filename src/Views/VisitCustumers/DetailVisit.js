@@ -112,16 +112,17 @@ const DetailVisit = () => {
               return;
             }
             let isValidUUID = await AsyncStorageGetData("@uuid");
+            
+            const getCoords = await GetGeolocation();
+            if(!getCoords.Status){
+              Alert.alert("Alerta",""+getCoords.Message);
+              return;
+            }
             try{
               Geolocation.clearWatch(0);
               Geolocation.stopObserving();              
             }catch(ex){
               console.log(ex);
-            }
-            const getCoords = await GetGeolocation();
-            if(!getCoords.Status){
-              Alert.alert("Alerta",""+getCoords.Message);
-              return;
             }
             const coords = {
               Latitud: getCoords.Data.coords.latitude,
