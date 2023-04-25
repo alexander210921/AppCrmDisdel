@@ -112,6 +112,12 @@ const DetailVisit = () => {
               return;
             }
             let isValidUUID = await AsyncStorageGetData("@uuid");
+            try{
+              Geolocation.clearWatch(0);
+              Geolocation.stopObserving();              
+            }catch(ex){
+              console.log(ex);
+            }
             const getCoords = await GetGeolocation();
             if(!getCoords.Status){
               Alert.alert("Alerta",""+getCoords.Message);
@@ -169,7 +175,7 @@ const DetailVisit = () => {
               } finally {
                 await StopInitVisit(null, dispatch);
                 await BackgroundService.stop();
-                Geolocation.stopObserving();
+               // Geolocation.stopObserving();
               }
              // Alert.alert('Registro exitoso');
               setIsUpdateVisitArrive(true);
