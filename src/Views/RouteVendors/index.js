@@ -80,7 +80,7 @@ const HomeRouteVendors = () => {
     navigation.navigate("MenuEndVisit");    
   }
   const HandleGoGasoline =()=>{
-    navigation.navigate("MenuEndVisit");    
+    navigation.navigate("FormGasoline");    
   }
 
   const HandleGoToVisitCustumer=async()=>{

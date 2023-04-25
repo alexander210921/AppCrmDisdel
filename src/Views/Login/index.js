@@ -34,9 +34,13 @@ const ViewLogin = () => {
       userPassword: userData.UserPass,
     },
   });  
-    function onSubmit  (data) {     
-      dispatch(LoadGetUser(true));
-      LoginUser(userData.UserN, userData.UserPass, dispatch,navigation);
+    function onSubmit  (data) {    
+      try {
+        dispatch(LoadGetUser(true));
+        LoginUser(userData.UserN, userData.UserPass, dispatch,navigation);
+      }catch{
+        dispatch(LoadGetUser(false));  
+      }      
     };
     useEffect(() => {
       AsyncStorageGetData("@dataRoute").then(res=>{

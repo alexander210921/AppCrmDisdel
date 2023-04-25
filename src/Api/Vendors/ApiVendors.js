@@ -6,29 +6,8 @@ export const SetMileage =async (Object, dispatch) => {
   try {
     const {data} = await Axios.post('MyWsMobil/api/Mobil/AppIosAndroidRegistrarKilometraje/', Object)    
     return data;
-    
-    //   .then(response => {
-    //     Alert.alert(response.data.Mensaje);
-    //     if(response.data.Resultado){
-    //       const dataMileague={
-    //         ...data,
-    //         ImageName:response.data.MensajeAux,
-    //         EntityID :response.data.DocNum 
-    //       }
-    //       AsyncStorageSaveDataJson("@Mileague",dataMileague).finally(()=>{
-    //         navigation.navigate(NameViewRedirect);
-    //         dispatch(setIsInitOrEndMileage(isInitMileage));
-    //       });          
-    //     }
-    //   })
-    //   .catch(() => {
-    //     Alert.alert("Error: por favor intente nuevamente tomar la fotografía");
-    //   }).finally = () => {
-    //   dispatch(LoadPostMileage(false));
-    // };
   }catch(ex){
     Alert.alert(""+ex);
-   // console.log("error ve "+ex);
     return null;
   }
    finally {
@@ -44,7 +23,15 @@ export const GetBasesVendor=async(idUser)=>{
     return null;
   }
 }
-
+export const SetGasoline =async (Object) => {    
+  try {
+    const {data} = await Axios.post('MyWsMobil/api/RHUsuarioGasolina/', Object)    
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }   
+};
 export const LoadPostMileage = RequestStatus => ({
   type: LOAD_POST_MILEAGE,
   payload: RequestStatus,

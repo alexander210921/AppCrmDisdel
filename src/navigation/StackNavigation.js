@@ -14,6 +14,7 @@ import SelectCompany from '../Views/Company/SelectCompany';
 import SelectRol from '../Views/Rol/SelectRol';
 import FormFinaliceVisit from '../Views/VisitCustumers/VisitFinaliceForm';
 import MenuEndVisit from '../Views/VisitCustumers/MenuEndCreatedVisit';
+import FormGasoline from '../Views/Gasoline/IndexGasoline';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   return (
@@ -127,6 +128,14 @@ export default function StackNavigation() {
       <Stack.Screen
         name="MenuEndVisit"
         component={MenuEndVisit}
+        options={{
+          title: '',
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="FormGasoline"
+        component={FormGasoline}
         options={{
           title: '',
           headerShown: true,

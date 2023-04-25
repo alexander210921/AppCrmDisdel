@@ -24,7 +24,9 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
         dispatch(LoadGetUser(false));
       });
   } catch (ex) {
-    console.log(ex);
+    Alert.alert(""+ex);
+  }finally{
+    dispatch(LoadGetUser(false));
   } 
 };
 
