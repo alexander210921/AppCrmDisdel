@@ -120,7 +120,8 @@ const DetailVisit = () => {
             }
             try{
               Geolocation.clearWatch(0);
-              Geolocation.stopObserving();              
+              Geolocation.stopObserving();      
+              await BackgroundService.stop();        
             }catch(ex){
               console.log(ex);
             }
@@ -144,15 +145,15 @@ const DetailVisit = () => {
             if(data.EsRegreso =="N"){
               const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
               if(isvalidDistance == null){
+                dispatch(LoadUpdateVisit(true));
+                Alert.alert("Alerta","Error intente nuevamente");
                 return;
               }
               if(!isvalidDistance.Resultado){
                 Alert.alert("",isvalidDistance.Mensaje)
                 return;
               }
-            }          
-  
-            
+            }                        
             visit.LatitudeDestino = 0;
             visit.longitude = 0;
             visit.UUIDGroup = isValidUUID;
@@ -167,15 +168,13 @@ const DetailVisit = () => {
             );
             if (resultUpdate != null && resultUpdate.Resultado) {
              
-              try {
-            
-                //console.log(coords.idUsuario,"El usuario");
+              try {                            
                 if (coords.Latitud && coords.Latitud > 0) {
                   FunctionSetCoordsDetail(coords);
                 }
               } finally {
                 await StopInitVisit(null, dispatch);
-                await BackgroundService.stop();
+                // await BackgroundService.stop();
                // Geolocation.stopObserving();
               }
              // Alert.alert('Registro exitoso');
