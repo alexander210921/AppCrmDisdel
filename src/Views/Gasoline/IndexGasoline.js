@@ -28,15 +28,16 @@ const FormGasoline = () => {
   async function onSubmit(formData) {
     try {
       setLoadGasoline(true);
-      const coords = await GetGeolocation();
-      if (coords.Status) {
+     // const coords = await GetGeolocation();
+     //coords.Status
+      if (true) {
         const data = {
           idUsuario:User.EntityID,  
           idCompania: company[0]?.EntityID,
           Kilometraje: parseInt(formData.MileageActuality),
           Comentario: formData.commentary ? formData.commentary : '',
-          Latitud: coords.Data.coords.latitude,
-          Longitud: coords.Data.coords.longitude,
+          Latitud: 0,
+          Longitud: 0,
           CantidadGalon:parseInt(formData.QuantityGallon),
           Precio:formData.Price,
         };
@@ -51,7 +52,7 @@ const FormGasoline = () => {
           Alert.alert('' + statusCreateMileage.Mensaje);
         }
       } else {
-        Alert.alert(coords.Message);
+        //Alert.alert(coords.Message);
       }
     } catch (ex) {
       setLoadGasoline(false);

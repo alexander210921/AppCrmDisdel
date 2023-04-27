@@ -40,7 +40,7 @@ import {SaveSelectVisitDetail} from '../../Api/Customers/ApiCustumer';
 import {AsyncStorageGetData} from '../../lib/AsyncStorage';
 import RenderStaticMap from '../../Components/Map/MapStatic';
 import {SetActualityCoords} from '../../Api/User/ApiUser';
-import geolib from 'geolib';
+import {getDistance} from 'geolib';
 
 
 const DetailVisit = () => {
@@ -52,7 +52,7 @@ const DetailVisit = () => {
   const userCoords = useSelector(state => state.login);
   const [isUpdateVisitArrive, setIsUpdateVisitArrive] = useState(false);
   const [isDraggable, setIsDraggable] = useState(false);
-
+  const [distanceMts,setDistanceMts] = useState(null);
   const [dinfoRoute, setInfoRoute] = useState('');
   const [comentary, setComentary] = useState(
     data.Comentario ? data.Comentario : '',
@@ -111,25 +111,28 @@ const DetailVisit = () => {
 
   const handleMarkerPress = () => {
     
-    const acceptableRadius = 300; // meters
-    const distance = geolib.getDistance(
-      {
-        latitude: userCoords.coordsActuality.latitude,
-        longitude: userCoords.coordsActuality.longitude,
-      },
-      {
-        latitude: data.LatitudeArrival,
-        longitude: data.LongitudArrival,
-      },
-    );
-    if (distance <= acceptableRadius) {
+    const acceptableRadius = 800; // meters
+    // const distance = getDistance(
+    //   {
+    //     latitude: userCoords.coordsActuality.latitude,
+    //     longitude: userCoords.coordsActuality.longitude,
+    //   },
+    //   {
+    //     latitude: data.LatitudeArrival,
+    //     longitude: data.LongitudArrival,
+    //   },
+    // );
+    if(distanceMts==null){
+      return;
+    }
+    if (  distanceMts <= acceptableRadius) {
       setIsDraggable(true);
     } else {
       setIsDraggable(false);
       // Notify the user that they need to move closer to the destination.
       Alert.alert(
-        'Move closer to the destination',
-        `You are currently ${distance} meters away from the destination. Please move within ${acceptableRadius} meters to drag the marker.`,
+        'Acércate al destino',
+        `Actualmente se encuentra a ${distance} metros del destino. Muévase dentro de ${acceptableRadius} metros para arrastrar el marcador.`,
       );
     }
   };
@@ -144,9 +147,11 @@ const DetailVisit = () => {
           parseFloat(e.duration).toFixed(2) +
           ' minutos',
       );
+      setDistanceMts(e.distance * 1000);
       //console.log("La distancia para llegar a su destino es de: "+e.distance+" mts" +" y el tiempo promedio para llegar es de: "+e.duration+" minutos");
     }else {
       setInfoRoute("Ocurrió un problema al hacer el cálculo de medición");
+      setDistanceMts(null);
     }
   };
   const HandleUpdateVisit = async typeOption => {

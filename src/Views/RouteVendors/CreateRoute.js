@@ -106,14 +106,15 @@ const FormCreateRoute = () => {
         isEndMileague = true;
       }      
       dispatch(LoadPostMileage(true));
-      const coords = await GetGeolocation();
-      if (coords.Status) {
+     // const coords = await GetGeolocation();
+     //coords.Status
+      if (true) {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
           Kilometraje: parseInt(formData.milaege) ,
           Comentario: formData.commentary?formData.commentary:'',
-          Latitud: coords.Data.coords.latitude,
-          Longitud: coords.Data.coords.longitude,
+          Latitud: 0,
+          Longitud: 0,
           AuxBase64Image:base64Image,
           idVisita:visitSelect && visitSelect.IdRegistro?visitSelect.IdRegistro:0 ,
           TipoKilometraje:isEndMileague
@@ -141,7 +142,7 @@ const FormCreateRoute = () => {
           Alert.alert(""+statusCreateMileage.Mensaje);
         }
       } else {
-        Alert.alert(coords.Message);
+        //Alert.alert(coords.Message);
         dispatch(LoadPostMileage(false));
       }
     }catch(ex){

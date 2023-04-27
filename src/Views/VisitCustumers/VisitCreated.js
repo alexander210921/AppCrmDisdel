@@ -61,10 +61,7 @@ try{
     const { delay } = taskDataArguments; 
     await new Promise( async (resolve) => {
         for (let i = 0; BackgroundService.isRunning(); i++) {                        
-            const isValidateGPS = await GetGeolocation();
-            if(!isValidateGPS.Status){             
-              return;
-            }
+         
             const { coords } = await new Promise((resolve, reject) => {
               geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
             });            
@@ -169,7 +166,18 @@ const VisitCreated = () => {
           
         // }
         //console.log(dataMileagueInit)
-               
+      const isValidateGPS = await GetGeolocation();
+      if(!isValidateGPS.Status){             
+          return;
+      }
+
+      if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
+        dispatch(SetActualityCoords({
+          latitude:isValidateGPS.Data.coords.latitude,
+          longitude:isValidateGPS.Data.coords.longitude!=0
+        }));
+      } 
+
      await StartNotification(User.EntityID,"",dispatch);   
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       dispatch(SaveIsArriveOrNotTheVisit("N"));

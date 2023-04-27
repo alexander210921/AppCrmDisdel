@@ -70,13 +70,14 @@ const FormCreateVisit = () => {
         return;
       } 
       dispatch(LoadSetRegisterVisit(true));
-      const coords = await GetGeolocation();
-      if (coords.Status) {
+      //const coords = await GetGeolocation();
+      //coords.Status
+      if (true) {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
           CardCode: CustomerSelect.customerSelect.CardCode,  
-          Latitud: coords.Data.coords.latitude,
-          Longitud: coords.Data.coords.longitude,
+          Latitud: 0,
+          Longitud: 0,
           LatitudeDestino: CoordsDestination.coordsDestination.latitude,
           LongitudeDestino: CoordsDestination.coordsDestination.longitude,
           IdDireccionVisita:idAddressVisit.addressId,
@@ -102,7 +103,7 @@ const FormCreateVisit = () => {
           Alert.alert("Alerta",VisitCreated.Mensaje);
         }        
       } else {
-        Alert.alert(coords.Message);
+       // Alert.alert(coords.Message);
         dispatch(LoadSetRegisterVisit(false));
       }
     } catch {
