@@ -33,7 +33,7 @@ const FormGasoline = () => {
         const data = {
           idUsuario:User.EntityID,  
           idCompania: company[0]?.EntityID,
-          Kilometraje: parseInt(formData.milaege),
+          Kilometraje: parseInt(formData.MileageActuality),
           Comentario: formData.commentary ? formData.commentary : '',
           Latitud: coords.Data.coords.latitude,
           Longitud: coords.Data.coords.longitude,
@@ -41,6 +41,7 @@ const FormGasoline = () => {
           Precio:formData.Price,
         };
         const statusCreateMileage = await SetGasoline(data);
+        setLoadGasoline(false);
         if (statusCreateMileage != null && statusCreateMileage.Resultado) {
             navigation.navigate('Home');
         } else if (

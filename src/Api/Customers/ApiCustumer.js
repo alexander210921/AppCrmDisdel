@@ -80,6 +80,7 @@ export const SetVisitCustomer =async (
     return data;
 
   }catch(Exception){
+    dispatch(LoadSetRegisterVisit(false));
     Alert.alert(""+Exception);
     return null;
   }
@@ -197,6 +198,15 @@ export async function GetVisitByID (idvisit){
 export async function ValidateDistanceIsValid (dataobject){
   try{
     const {data} = await Axios.post("MyWsOneVenta/api/OCRDExternoActividadVisita/ValidateDistanceVisit/",dataobject);
+    return data;
+  }catch(ex){
+    Alert.alert(""+ex);
+    return null;
+  }
+}
+export async function GetAddressOfCurrentVisit (NombreDB,CardCode,idDireccion){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/GetAdressVisitById/"+NombreDB+"/"+CardCode+"/"+idDireccion);
     return data;
   }catch(ex){
     Alert.alert(""+ex);

@@ -128,20 +128,22 @@ const FormFinaliceVisit = () => {
           isEndVisit:true
         }));
         dispatch(DeleteVisit(dataVisist.IdRegistro));
+        MenuToEndVisit();   
         //Alert.alert(StatusUpdateVisit.Mensaje);
-        if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
-          MenuToEndVisit();
-        //  AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
-        }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
-          navigation.navigate("FormCreateRoute");
-        }else{
-          MenuToEndVisit();
-          //navigation.navigate("MenuEndVisit");      
-        }
+        // if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
+          
+        // //  AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
+        // }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
+        //   navigation.navigate("FormCreateRoute");
+        // }else{
+          
+        //   //navigation.navigate("MenuEndVisit");      
+        // }
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
+        return;
        }
-                            
+                    
     } catch(ex) {
       Alert.alert(""+ex);
       dispatch(LoadSetRegisterVisit(false));

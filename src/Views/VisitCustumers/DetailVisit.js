@@ -26,6 +26,7 @@ import {
   LoadUpdateVisit,
   SaveContactPerson,
   SaveIsArriveOrNotTheVisit,
+  SetIsInitDrivingVisit,
   ValidateDistanceIsValid,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
@@ -35,12 +36,12 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import BackgroundService from 'react-native-background-actions';
 import Geolocation from '@react-native-community/geolocation';
 import FormCreateRoute from '../RouteVendors/CreateRoute';
-import { SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
-import { AsyncStorageGetData } from '../../lib/AsyncStorage';
+import {SaveSelectVisitDetail} from '../../Api/Customers/ApiCustumer';
+import {AsyncStorageGetData} from '../../lib/AsyncStorage';
+import RenderStaticMap from '../../Components/Map/MapStatic';
+import {SetActualityCoords} from '../../Api/User/ApiUser';
+import geolib from 'geolib';
 
-const googleMapsClient = require('react-native-google-maps-services').createClient({
-  key: 'AIzaSyBGzUb5aIQyMpPPaBNZz9CJXvuQDajqavs'
-});
 
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
@@ -48,7 +49,11 @@ const DetailVisit = () => {
   const DrivingVisitDetail = useSelector(state => state.Mileage);
   const Rol = useSelector(state => state.rol.RolSelect);
   const User = useSelector(state => state.login.user);
+  const userCoords = useSelector(state => state.login);
   const [isUpdateVisitArrive, setIsUpdateVisitArrive] = useState(false);
+  const [isDraggable, setIsDraggable] = useState(false);
+
+  const [dinfoRoute, setInfoRoute] = useState('');
   const [comentary, setComentary] = useState(
     data.Comentario ? data.Comentario : '',
   );
@@ -62,7 +67,23 @@ const DetailVisit = () => {
     isEndVisit: false,
   });
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const ReloadLocation = async () => {
+    const getCoords = await GetGeolocation();
+    if (!getCoords.Status) {
+      Alert.alert('Alerta', '' + getCoords.Message);
+      return;
+    }
+    const coords = {
+      Latitud: getCoords.Data.coords.latitude,
+      Longitud: getCoords.Data.coords.longitude,
+  };
+    dispatch(
+      SetActualityCoords({
+        latitude: coords.Latitud,
+        longitude: coords.Longitud,
+      }),
+    );
+  };
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -87,12 +108,53 @@ const DetailVisit = () => {
       Alert.alert(statusUpdate.Mensaje);
     }
   };
+
+  const handleMarkerPress = () => {
+    
+    const acceptableRadius = 300; // meters
+    const distance = geolib.getDistance(
+      {
+        latitude: userCoords.coordsActuality.latitude,
+        longitude: userCoords.coordsActuality.longitude,
+      },
+      {
+        latitude: data.LatitudeArrival,
+        longitude: data.LongitudArrival,
+      },
+    );
+    if (distance <= acceptableRadius) {
+      setIsDraggable(true);
+    } else {
+      setIsDraggable(false);
+      // Notify the user that they need to move closer to the destination.
+      Alert.alert(
+        'Move closer to the destination',
+        `You are currently ${distance} meters away from the destination. Please move within ${acceptableRadius} meters to drag the marker.`,
+      );
+    }
+  };
+
+  const onReadyDataMapFunction = e => {
+    if (e) {
+      setInfoRoute(
+        'La distancia para llegar a su destino es de: ' +
+          e.distance * 1000 +
+          ' mts' +
+          ' y el tiempo promedio para llegar es de: ' +
+          parseFloat(e.duration).toFixed(2) +
+          ' minutos',
+      );
+      //console.log("La distancia para llegar a su destino es de: "+e.distance+" mts" +" y el tiempo promedio para llegar es de: "+e.duration+" minutos");
+    }else {
+      setInfoRoute("Ocurrió un problema al hacer el cálculo de medición");
+    }
+  };
   const HandleUpdateVisit = async typeOption => {
     try {
       dispatch(LoadUpdateVisit(true));
       switch (typeOption) {
         case 1: {
-          try{
+          try {
             const GetVisit = await GetVisitByID(data.IdRegistro);
             if (
               GetVisit != null &&
@@ -108,52 +170,53 @@ const DetailVisit = () => {
               return;
             }
             if (!DrivingVisitDetail.isRouteInCourse && typeOption == 1) {
-              Alert.alert('Inicie primero el viaje antes de marcar su Llegada ');
+              Alert.alert(
+                'Inicie primero el viaje antes de marcar su Llegada ',
+              );
               return;
             }
-            let isValidUUID = await AsyncStorageGetData("@uuid");
-            
+            let isValidUUID = await AsyncStorageGetData('@uuid');
+
             const getCoords = await GetGeolocation();
-            if(!getCoords.Status){
-              Alert.alert("Alerta",""+getCoords.Message);
+            if (!getCoords.Status) {
+              Alert.alert('Alerta', '' + getCoords.Message);
               return;
             }
-            try{
-              Geolocation.clearWatch(0);
-              Geolocation.stopObserving();      
-              await BackgroundService.stop();        
-            }catch(ex){
-              console.log(ex);
-            }
+
             const coords = {
               Latitud: getCoords.Data.coords.latitude,
               Longitud: getCoords.Data.coords.longitude,
-              UUIRecorrido: isValidUUID
-                ? isValidUUID
-                : '',
+              UUIRecorrido: isValidUUID ? isValidUUID : '',
               idUsuario: User.EntityID,
             };
-            
-         
-            const createObjectValidateDistance ={
-              NombreDB:"SBO_DISDELSA_2013",
-              CardCode:data.CardCode,
-              IdDireccionVisita:data.IdDireccionVisita,
+            dispatch(
+              SetActualityCoords({
+                latitude: coords.Latitud,
+                longitude: coords.Longitud,
+              }),
+            );
+
+            const createObjectValidateDistance = {
+              NombreDB: 'SBO_DISDELSA_2013',
+              CardCode: data.CardCode,
+              IdDireccionVisita: data.IdDireccionVisita,
               Latitud: coords.Latitud,
-              Longitud:coords.Longitud
-            }
-            if(data.EsRegreso =="N"){
-              const isvalidDistance = await ValidateDistanceIsValid(createObjectValidateDistance);
-              if(isvalidDistance == null){
+              Longitud: coords.Longitud,
+            };
+            if (data.EsRegreso == 'N') {
+              const isvalidDistance = await ValidateDistanceIsValid(
+                createObjectValidateDistance,
+              );
+              if (isvalidDistance == null) {
                 dispatch(LoadUpdateVisit(true));
-                Alert.alert("Alerta","Error intente nuevamente");
+                Alert.alert('Alerta', 'Error intente nuevamente');
                 return;
               }
-              if(!isvalidDistance.Resultado){
-                Alert.alert("",isvalidDistance.Mensaje)
+              if (!isvalidDistance.Resultado) {
+                Alert.alert('', isvalidDistance.Mensaje);
                 return;
               }
-            }                        
+            }
             visit.LatitudeDestino = 0;
             visit.longitude = 0;
             visit.UUIDGroup = isValidUUID;
@@ -167,33 +230,41 @@ const DetailVisit = () => {
               navigation,
             );
             if (resultUpdate != null && resultUpdate.Resultado) {
-             
-              try {                            
+              try {
                 if (coords.Latitud && coords.Latitud > 0) {
                   FunctionSetCoordsDetail(coords);
                 }
               } finally {
+                try {
+                  Geolocation.clearWatch(0);
+                  Geolocation.stopObserving();
+                } catch (ex) {
+                  console.log(ex);
+                }
+                await BackgroundService.stop();
                 await StopInitVisit(null, dispatch);
                 // await BackgroundService.stop();
-               // Geolocation.stopObserving();
+                // Geolocation.stopObserving();
               }
-             // Alert.alert('Registro exitoso');
+              // Alert.alert('Registro exitoso');
               setIsUpdateVisitArrive(true);
-              dispatch(SaveIsArriveOrNotTheVisit("N"));
-              dispatch(SaveSelectVisitDetail({
-                ...data,
-                isMarkerArrival:true,              
-              }));
-              navigation.navigate("FormCreateRoute");
+              dispatch(SaveIsArriveOrNotTheVisit('N'));
+              dispatch(
+                SaveSelectVisitDetail({
+                  ...data,
+                  isMarkerArrival: true,
+                }),
+              );
+              navigation.navigate('FormCreateRoute');
             } else if (resultUpdate != null && !resultUpdate.Resultado) {
-              Alert.alert("Alerta",resultUpdate.Mensaje);
+              Alert.alert('Alerta', resultUpdate.Mensaje);
             }
-          }catch(ex){
-            Alert.alert("Error",""+ex);
-            dispatch(LoadUpdateVisit(true));          
-          }finally{
-            dispatch(LoadUpdateVisit(true));          
-          }   
+          } catch (ex) {
+            Alert.alert('Error', '' + ex);
+            dispatch(LoadUpdateVisit(true));
+          } finally {
+            dispatch(LoadUpdateVisit(true));
+          }
           break;
         }
         case 2: {
@@ -212,30 +283,33 @@ const DetailVisit = () => {
           break;
         }
         case 3: {
-          if(data.EsRegreso =="Y"){
-            visit.Proceso="Finalizado"
+          if (data.EsRegreso == 'Y') {
+            visit.Proceso = 'Finalizado';
             const resultUpdate = await FunctionUpdateVisit(
               visit,
               dispatch,
               navigation,
             );
-            if(resultUpdate!=null && resultUpdate.Resultado){
+            if (resultUpdate != null && resultUpdate.Resultado) {
               dispatch(DeleteVisit(visit.IdRegistro));
-              navigation.navigate("VisitCreated");
+              navigation.navigate('VisitCreated');
             }
-            if(resultUpdate==null){
+            if (resultUpdate == null) {
               return;
             }
-          if(!resultUpdate.Resultado){
-            Alert.alert("",""+resultUpdate.Mensaje);
-          }
+            if (!resultUpdate.Resultado) {
+              Alert.alert('', '' + resultUpdate.Mensaje);
+            }
             return;
           }
           const GetVisit = await GetVisitByID(data.IdRegistro);
-          const GetPersonContact = await GetContactPersonCardCode("SBO_DISDELSA_2013",data.CardCode);
-          if(GetPersonContact==null){
-            Alert.alert("ocurrió un error, intenta nuevamente");
-              return;
+          const GetPersonContact = await GetContactPersonCardCode(
+            'SBO_DISDELSA_2013',
+            data.CardCode,
+          );
+          if (GetPersonContact == null) {
+            Alert.alert('ocurrió un error, intenta nuevamente');
+            return;
           }
           dispatch(SaveContactPerson(GetPersonContact));
           const isEndVisit = GetVisit['<EsRegreso>k__BackingField'];
@@ -256,7 +330,7 @@ const DetailVisit = () => {
       }
     } catch (ex) {
       dispatch(LoadUpdateVisit(true));
-      Alert.alert('Error: ' + ex);      
+      Alert.alert('Error: ' + ex);
     } finally {
       dispatch(LoadUpdateVisit(false));
     }
@@ -281,7 +355,7 @@ const DetailVisit = () => {
               }}
               activeOpacity={1}
               onPressOut={() => {
-               // toggleModal();
+                // toggleModal();
               }}>
               <View
                 style={{
@@ -314,41 +388,41 @@ const DetailVisit = () => {
         {isLoadUpadateVisit.loadUpdateVisit ? (
           <LoaderScreen color="black" message="Cargando" overlay></LoaderScreen>
         ) : null}
-          {data.isMarkerArrival  ?
-        <Button
-        onPress={() => {
-          HandleUpdateVisit(3);
-        }}
-        style={styles.button1}>
-        <Text style={{fontSize: 13, color: 'white'}}> Finalizar </Text>
-      </Button>
-        :null}       
-        {!data.isMarkerArrival ?
-        <Button
-        onPress={() => {
-          HandleUpdateVisit(1);
-        }}
-        style={styles.button3}>
-        <Text style={{fontSize: 13, color: 'white'}}> Llegando</Text>
-      </Button>
-        :null}  
-        {!data.isMarkerArrival ?        
-        <Button
-        onPress={() => {
-          HandleUpdateVisit(2);
-        }}
-        style={styles.button}>
-        <Text style={{fontSize: 13, color: 'white'}}> Eliminar Visita</Text>
-      </Button>
-        :null}      
-       
-        {data.isMarkerArrival  && !data.isMarkerMileague  ? (
+        {data.isMarkerArrival ? (
+          <Button
+            onPress={() => {
+              HandleUpdateVisit(3);
+            }}
+            style={styles.button1}>
+            <Text style={{fontSize: 13, color: 'white'}}> Finalizar </Text>
+          </Button>
+        ) : null}
+        {!data.isMarkerArrival ? (
+          <Button
+            onPress={() => {
+              HandleUpdateVisit(1);
+            }}
+            style={styles.button3}>
+            <Text style={{fontSize: 13, color: 'white'}}> Llegando</Text>
+          </Button>
+        ) : null}
+        {true ? (
+          <Button
+            onPress={() => {
+              HandleUpdateVisit(2);
+            }}
+            style={styles.button}>
+            <Text style={{fontSize: 13, color: 'white'}}> Eliminar Visita</Text>
+          </Button>
+        ) : null}
+
+        {data.isMarkerArrival && !data.isMarkerMileague ? (
           <View style={styles.chip}>
             <Chip
               label={'Kilometraje De Llegada'}
               onPress={() => {
-                dispatch(SaveIsArriveOrNotTheVisit("N"));
-                navigation.navigate("FormCreateRoute");
+                dispatch(SaveIsArriveOrNotTheVisit('N'));
+                navigation.navigate('FormCreateRoute');
                 //toggleModal();
               }}
             />
@@ -361,6 +435,40 @@ const DetailVisit = () => {
           </View>
           <View style={styles.cardinfo2}>
             <Text>{data.Comentario}</Text>
+          </View>
+          {userCoords.coordsActuality.latitude != 0 &&
+          userCoords.coordsActuality.longitude != 0 &&
+          data.LatitudeArrival != 0 &&
+          data.LongitudArrival != 0 ? (
+            <View >
+              <Text style={{color: 'gray', fontSize: 12}}>{dinfoRoute}</Text>
+              <Button
+                onPress={ () => {
+                   ReloadLocation();                  
+                }}
+                style={styles.button4}>
+                <Text style={{fontSize: 13, color: 'white'}}> Refrescar </Text>
+              </Button>
+            </View>
+          ) : null}
+          <View style={styles.containerMap}>
+            {userCoords.coordsActuality.latitude != 0 &&
+            userCoords.coordsActuality.longitude != 0 &&
+            data.LatitudeArrival != 0 &&
+            data.LongitudArrival != 0 ? (
+              <RenderStaticMap
+              MarkerPress={handleMarkerPress}
+              isDragable={isDraggable}
+                onReadyData={onReadyDataMapFunction}
+                coordsActuality={{
+                  latitude: userCoords.coordsActuality.latitude,
+                  longitude: userCoords.coordsActuality.longitude,
+                }}
+                coordsDestination={{
+                  latitude: data.LatitudeArrival,
+                  longitude: data.LongitudArrival,
+                }}></RenderStaticMap>
+            ) : null}
           </View>
         </View>
       </View>
@@ -401,6 +509,17 @@ const styles = StyleSheet.create({
     margin: '1%',
   },
   chip: {
+    margin: '1%',
+  },
+  containerMap: {
+    width: '100%',
+    height: '100%',
+    margin: '5%',
+  },
+  button4: {
+    width: 40,
+    backgroundColor: '#252850',
+    color: '#fefefe',
     margin: '1%',
   },
 });

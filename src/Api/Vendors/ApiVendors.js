@@ -23,9 +23,9 @@ export const GetBasesVendor=async(idUser)=>{
     return null;
   }
 }
-export const SetGasoline =async (Object) => {    
+export const SetGasoline =async (Object) => {     
   try {
-    const {data} = await Axios.post('MyWsMobil/api/RHUsuarioGasolina/', Object)    
+    const {data} = await Axios.post('MyWsRRHH/api/RHUsuarioGasolina/', Object)    
     return data;
   }catch(ex){
     Alert.alert(""+ex);

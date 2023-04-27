@@ -9,7 +9,8 @@ import {
   SaveSelectVisitDetail,
   AsyncFunctionSetCoordsDetail,
   SaveUUIDRoute,
-  GetVisitByID
+  GetVisitByID,
+  GetAddressOfCurrentVisit
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import {AsyncStorageDeleteData, AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
@@ -31,6 +32,7 @@ import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
 import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
+import { SetActualityCoords } from '../../Api/User/ApiUser';
 export const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
@@ -73,6 +75,12 @@ try{
                 UUIRecorrido:uuId,
                 idUsuario:userId
               } 
+              if(coords.latitude!=0  && coords.longitude ){
+                dispatch(SetActualityCoords({
+                  latitude:coords.latitude,
+                  longitude:coords.longitude
+                }));
+              }              
               if(data.Latitud && data.Latitud>0){
                const resultR= await AsyncFunctionSetCoordsDetail(data);                               
               }
@@ -103,6 +111,7 @@ try{
   };
   try{
     await BackgroundService.start(veryIntensiveTask2, options);  
+    //BackgroundService.addListener("expiration");
   }catch(exeption){
     console.log("ocurrió un error ",exeption)
   }
@@ -209,12 +218,14 @@ const VisitCreated = () => {
       // }
       dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
-      Geolocation.stopObserving();
+      
       //await AsyncStorageDeleteData("@uuid");      
       const cancelStatus = await StopInitVisit(
         null,
         dispatch,
       );
+      Geolocation.clearWatch(0);
+      Geolocation.stopObserving();
       if (cancelStatus) {
         //Alert.alert('Cancelado correctamente');
         return;
@@ -264,6 +275,8 @@ const VisitCreated = () => {
       visit.isMarkerArrival = false;
       visit.isMarkerMileague = false;
       visit.EsRegreso = "N";
+      visit.LatitudeArrival=0;
+      visit.LongitudArrival=0;
       setLoadGetVisit(true);
       const GetVisit = await GetVisitByID(visit.IdRegistro);  
       const GetMileagueById = await GetMileagueByIdVisit(visit.IdRegistro);         
@@ -281,6 +294,15 @@ const VisitCreated = () => {
       }   
       if( GetMileagueById!=null && GetVisit["<IdDireccionVisita>k__BackingField"]!=null){
         visit.IdDireccionVisita = GetVisit["<IdDireccionVisita>k__BackingField"];
+        const getInfoAddress =await GetAddressOfCurrentVisit("SBO_DISDELSA_2013",visit.CardCode,visit.IdDireccionVisita);
+        if(getInfoAddress!=null){
+          if(getInfoAddress["<longitudDestino>k__BackingField"]){
+            visit.LongitudArrival = getInfoAddress["<longitudDestino>k__BackingField"];
+          }
+          if(getInfoAddress["<latitudDestino>k__BackingField"]){
+            visit.LatitudeArrival=getInfoAddress["<latitudDestino>k__BackingField"];
+          }                              
+        }
 
       }
       dispatch(SaveSelectVisitDetail(visit));

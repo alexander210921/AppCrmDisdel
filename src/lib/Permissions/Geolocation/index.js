@@ -50,7 +50,7 @@ export const GetGeolocation = async () => {
     Geolocation.requestAuthorization();
     const getCurrentPositionResult = () =>
       new Promise((resolve, error) =>
-        Geolocation.getCurrentPosition(resolve, error),
+        Geolocation.getCurrentPosition(resolve, error,{enableHighAccuracy:true,distanceFilter:0,maximumAge:0}),
       );
     try {
       const Data = await getCurrentPositionResult();

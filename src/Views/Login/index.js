@@ -39,7 +39,7 @@ const ViewLogin = () => {
         dispatch(LoadGetUser(true));
         LoginUser(userData.UserN, userData.UserPass, dispatch,navigation);
       }catch{
-        dispatch(LoadGetUser(false));  
+        //dispatch(LoadGetUser(false));  
       }      
     };
     useEffect(() => {
