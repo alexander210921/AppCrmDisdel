@@ -167,17 +167,18 @@ const VisitCreated = () => {
         // }
         //console.log(dataMileagueInit)
       const isValidateGPS = await GetGeolocation();
-      if(!isValidateGPS.Status){             
+      if(!isValidateGPS.Status){   
+        Alert.alert("","Enciende tu GPS para continuar");          
           return;
       }
 
       if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
         dispatch(SetActualityCoords({
           latitude:isValidateGPS.Data.coords.latitude,
-          longitude:isValidateGPS.Data.coords.longitude!=0
+          longitude:isValidateGPS.Data.coords.longitude
         }));
       } 
-
+    /// register first point ubication 
      await StartNotification(User.EntityID,"",dispatch);   
       //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       dispatch(SaveIsArriveOrNotTheVisit("N"));

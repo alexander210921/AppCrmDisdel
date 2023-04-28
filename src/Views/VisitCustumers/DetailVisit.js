@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -40,7 +40,9 @@ import {SaveSelectVisitDetail} from '../../Api/Customers/ApiCustumer';
 import {AsyncStorageGetData} from '../../lib/AsyncStorage';
 import RenderStaticMap from '../../Components/Map/MapStatic';
 import {SetActualityCoords} from '../../Api/User/ApiUser';
-import {getDistance} from 'geolib';
+// import {getPreciseDistance} from 'geolib';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+//const proj4 = require('proj4');
 
 
 const DetailVisit = () => {
@@ -53,7 +55,9 @@ const DetailVisit = () => {
   const [isUpdateVisitArrive, setIsUpdateVisitArrive] = useState(false);
   const [isDraggable, setIsDraggable] = useState(false);
   const [distanceMts,setDistanceMts] = useState(null);
+  const [distanceExactMts,setDistanceExactMts] = useState(null);
   const [dinfoRoute, setInfoRoute] = useState('');
+  const [ModeNavigate,setModeNavigate] = useState("DRIVING");
   const [comentary, setComentary] = useState(
     data.Comentario ? data.Comentario : '',
   );
@@ -67,6 +71,9 @@ const DetailVisit = () => {
     isEndVisit: false,
   });
   const [isModalVisible, setModalVisible] = useState(false);
+  const HandleChangeModeNavigation=(mode)=>{
+    setModeNavigate(mode);
+  }
   const ReloadLocation = async () => {
     const getCoords = await GetGeolocation();
     if (!getCoords.Status) {
@@ -108,31 +115,31 @@ const DetailVisit = () => {
       Alert.alert(statusUpdate.Mensaje);
     }
   };
-
-  const handleMarkerPress = () => {
+  useEffect(()=>{
+    setDistanceExactMts(distanceMts);
+  },[distanceMts])
+  const handleMarkerPress = () => {    
+    const acceptableRadius = 500; // meters 
+//     const distancePrecise = getPreciseDistance({latitude:userCoords.coordsActuality.latitude,longitude:userCoords.coordsActuality.longitude},{latitude:data.LatitudeArrival,longitude:data.LongitudArrival},1); 
+//     //const utmA = proj4(proj4.defs('EPSG:4326'), proj4.defs('EPSG:32618'), [userCoords.coordsActuality.longitude, userCoords.coordsActuality.latitude]);
+//     //const utmB = proj4(proj4.defs('EPSG:4326'), proj4.defs('EPSG:32618'), [data.LongitudArrival,data.LatitudeArrival]);
     
-    const acceptableRadius = 800; // meters
-    // const distance = getDistance(
-    //   {
-    //     latitude: userCoords.coordsActuality.latitude,
-    //     longitude: userCoords.coordsActuality.longitude,
-    //   },
-    //   {
-    //     latitude: data.LatitudeArrival,
-    //     longitude: data.LongitudArrival,
-    //   },
-    // );
-    if(distanceMts==null){
-      return;
-    }
-    if (  distanceMts <= acceptableRadius) {
+// // Cálculo de la distancia euclidiana entre los puntos
+//     //const distance = Math.sqrt(Math.pow(utmB[0] - utmA[0], 2) + Math.pow(utmB[1] - utmA[1], 2));
+//     setDistanceExactMts(distancePrecise);
+   //setDistanceMts(distancePrecise);
+    // if(!distanceMts){
+    //   return;
+    // }
+    //Alert.alert(""+distanceTest+" mts");
+    if (distanceExactMts < acceptableRadius ) {
       setIsDraggable(true);
     } else {
       setIsDraggable(false);
       // Notify the user that they need to move closer to the destination.
       Alert.alert(
         'Acércate al destino',
-        `Actualmente se encuentra a ${distance} metros del destino. Muévase dentro de ${acceptableRadius} metros para arrastrar el marcador.`,
+        `Actualmente se encuentra a ${distanceExactMts} metros del destino. Muévase dentro de ${acceptableRadius} metros para arrastrar el marcador y precisar su ubicación.`,
       );
     }
   };
@@ -142,7 +149,7 @@ const DetailVisit = () => {
       setInfoRoute(
         'La distancia para llegar a su destino es de: ' +
           e.distance * 1000 +
-          ' mts' +
+          ' mts'+
           ' y el tiempo promedio para llegar es de: ' +
           parseFloat(e.duration).toFixed(2) +
           ' minutos',
@@ -180,48 +187,53 @@ const DetailVisit = () => {
               );
               return;
             }
-            let isValidUUID = await AsyncStorageGetData('@uuid');
-
-            const getCoords = await GetGeolocation();
-            if (!getCoords.Status) {
-              Alert.alert('Alerta', '' + getCoords.Message);
+            const distancePermited = 300;
+            if((distanceExactMts!=null || distanceExactMts!=0)  &&  distanceExactMts<=distancePermited){
+              Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+distancePermited+" mts");
               return;
             }
+            let isValidUUID = await AsyncStorageGetData('@uuid');
+
+            // const getCoords = await GetGeolocation();
+            // if (!getCoords.Status) {
+            //   Alert.alert('Alerta', '' + getCoords.Message);
+            //   return;
+            // }
 
             const coords = {
-              Latitud: getCoords.Data.coords.latitude,
-              Longitud: getCoords.Data.coords.longitude,
+              Latitud: userCoords.coordsActuality.latitude,
+              Longitud: userCoords.coordsActuality.longitude,
               UUIRecorrido: isValidUUID ? isValidUUID : '',
               idUsuario: User.EntityID,
             };
-            dispatch(
-              SetActualityCoords({
-                latitude: coords.Latitud,
-                longitude: coords.Longitud,
-              }),
-            );
+            // dispatch(
+            //   SetActualityCoords({
+            //     latitude: coords.Latitud,
+            //     longitude: coords.Longitud,
+            //   }),
+            // );
 
-            const createObjectValidateDistance = {
-              NombreDB: 'SBO_DISDELSA_2013',
-              CardCode: data.CardCode,
-              IdDireccionVisita: data.IdDireccionVisita,
-              Latitud: coords.Latitud,
-              Longitud: coords.Longitud,
-            };
-            if (data.EsRegreso == 'N') {
-              const isvalidDistance = await ValidateDistanceIsValid(
-                createObjectValidateDistance,
-              );
-              if (isvalidDistance == null) {
-                dispatch(LoadUpdateVisit(true));
-                Alert.alert('Alerta', 'Error intente nuevamente');
-                return;
-              }
-              if (!isvalidDistance.Resultado) {
-                Alert.alert('', isvalidDistance.Mensaje);
-                return;
-              }
-            }
+            // const createObjectValidateDistance = {
+            //   NombreDB: 'SBO_DISDELSA_2013',
+            //   CardCode: data.CardCode,
+            //   IdDireccionVisita: data.IdDireccionVisita,
+            //   Latitud: coords.Latitud,
+            //   Longitud: coords.Longitud,
+            // };
+            // if (data.EsRegreso == 'N') {
+            //   // const isvalidDistance = await ValidateDistanceIsValid(
+            //   //   createObjectValidateDistance,
+            //   // );
+            //   // if (isvalidDistance == null) {
+            //   //   dispatch(LoadUpdateVisit(true));
+            //   //   Alert.alert('Alerta', 'Error intente nuevamente');
+            //   //   return;
+            //   // }
+            //   // if (!isvalidDistance.Resultado) {
+            //   //   Alert.alert('', isvalidDistance.Mensaje);
+            //   //   return;
+            //   // }
+            // }
             visit.LatitudeDestino = 0;
             visit.longitude = 0;
             visit.UUIDGroup = isValidUUID;
@@ -236,7 +248,7 @@ const DetailVisit = () => {
             );
             if (resultUpdate != null && resultUpdate.Resultado) {
               try {
-                if (coords.Latitud && coords.Latitud > 0) {
+                if (coords.Latitud!=0 && coords.Latitud !=0) {
                   FunctionSetCoordsDetail(coords);
                 }
               } finally {
@@ -444,9 +456,18 @@ const DetailVisit = () => {
           {userCoords.coordsActuality.latitude != 0 &&
           userCoords.coordsActuality.longitude != 0 &&
           data.LatitudeArrival != 0 &&
-          data.LongitudArrival != 0 ? (
+          data.LongitudArrival != 0  && !data.isMarkerArrival ? (
             <View >
               <Text style={{color: 'gray', fontSize: 12}}>{dinfoRoute}</Text>
+              <View  row>
+                <Icon onPress={()=>{
+                  HandleChangeModeNavigation("DRIVING");
+                }} style={ styles.iconStyle} name="car" size={30} color="black" />
+                <Icon onPress={()=>{
+                  HandleChangeModeNavigation("WALKING");
+                }} style={ styles.iconStyle}  name="walking" size={30} color="black" />                
+              </View>              
+              <Text style={{color: 'gray', fontSize: 13,fontWeight:800}}> Modo de navegación {ModeNavigate} Activado</Text>
               <Button
                 onPress={ () => {
                    ReloadLocation();                  
@@ -456,25 +477,28 @@ const DetailVisit = () => {
               </Button>
             </View>
           ) : null}
-          <View style={styles.containerMap}>
-            {userCoords.coordsActuality.latitude != 0 &&
-            userCoords.coordsActuality.longitude != 0 &&
-            data.LatitudeArrival != 0 &&
-            data.LongitudArrival != 0 ? (
-              <RenderStaticMap
-              MarkerPress={handleMarkerPress}
-              isDragable={isDraggable}
-                onReadyData={onReadyDataMapFunction}
-                coordsActuality={{
-                  latitude: userCoords.coordsActuality.latitude,
-                  longitude: userCoords.coordsActuality.longitude,
-                }}
-                coordsDestination={{
-                  latitude: data.LatitudeArrival,
-                  longitude: data.LongitudArrival,
-                }}></RenderStaticMap>
-            ) : null}
-          </View>
+          {!data.isMarkerArrival ?
+              <View style={styles.containerMap}>
+              {userCoords.coordsActuality.latitude != 0 &&
+              userCoords.coordsActuality.longitude != 0 &&
+              data.LatitudeArrival != 0 &&
+              data.LongitudArrival != 0 ? (
+                <RenderStaticMap
+                mode={ModeNavigate}
+                MarkerPress={handleMarkerPress}
+                isDragable={isDraggable}
+                  onReadyData={onReadyDataMapFunction}
+                  coordsActuality={{
+                    latitude: userCoords.coordsActuality.latitude,
+                    longitude: userCoords.coordsActuality.longitude,
+                  }}
+                  coordsDestination={{
+                    latitude: data.LatitudeArrival,
+                    longitude: data.LongitudArrival,
+                  }}></RenderStaticMap>
+              ) : null}
+            </View>
+          :null}        
         </View>
       </View>
     </ScrollView>
@@ -527,4 +551,15 @@ const styles = StyleSheet.create({
     color: '#fefefe',
     margin: '1%',
   },
+  TextBold:{
+    fontWeight:800,
+    color:'black'    
+  },
+  TextAlert:{
+    fontWeight:800,
+    color:'red'  
+  },
+  iconStyle:{
+    padding:10
+  }
 });

@@ -3,8 +3,10 @@ import {StyleSheet, View,Text} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 import {API_KEY_GOOGLE_MAPS} from "@env";
 import {useState}from'react'
-const RenderStaticMap = ({coordsActuality,coordsDestination,hasMarker=false,onReadyData,MarkerPress=function(){},isDragable=false}) => {
-
+import { SetActualityCoords } from '../../Api/User/ApiUser';
+import { useDispatch } from 'react-redux';
+const RenderStaticMap = ({coordsActuality,coordsDestination,hasMarker=false,onReadyData,MarkerPress=function(){},isDragable=false,mode="DRIVING"}) => {
+const dispatch = useDispatch();
 const LOCATION_ACTUALITY = {
   ...coordsActuality,
   latitudeDelta: 0.015,
@@ -15,25 +17,27 @@ const LOCATION_DESTINATION={
   latitudeDelta: 0.015,
   longitudeDelta: 0.0121,
 }
-// console.log("Actual",LOCATION_ACTUALITY);
-// console.log("Destino",LOCATION_DESTINATION);
   return (
     <View style={styles.container}>
       {/* <Text>{dinfoRoute}</Text> */}
       <MapView style={styles.map} initialRegion={LOCATION_ACTUALITY}>
         <MapViewDirections
+          resetOnChange={true}
           origin={LOCATION_ACTUALITY}
           destination={LOCATION_DESTINATION}
           apikey={API_KEY_GOOGLE_MAPS}
           strokeWidth={3}
+          mode={mode}
           onReady={(result)=>{
-            
             onReadyData(result);
-            //setInfoRoute("La distancia para llegar a su destino es de: "+result.distance+" mts" +" y el tiempo promedio para llegar es de: "+result.duration+" minutos");
           }}
-          
           strokeColor="red"></MapViewDirections>
-          <Marker draggable={isDragable} onPress={MarkerPress} title='Usted está acá' coordinate={LOCATION_ACTUALITY} />
+          <Marker onDragEnd={(data)=>{
+            dispatch(SetActualityCoords({
+              latitude:data.nativeEvent.coordinate.latitude,
+              longitude:data.nativeEvent.coordinate.longitude
+            }));
+          }} draggable={isDragable} onPress={MarkerPress} title='Usted está acá' coordinate={LOCATION_ACTUALITY} />
           <Marker pinColor="green" description='Destino' title='Destino' coordinate={LOCATION_DESTINATION} />
       </MapView>
     </View>
