@@ -50,13 +50,14 @@ export const GetGeolocation = async () => {
     Geolocation.requestAuthorization();
     const getCurrentPositionResult = () =>
       new Promise((resolve, error) =>
-        Geolocation.getCurrentPosition(resolve, error,{enableHighAccuracy:true,distanceFilter:0,maximumAge:100}),
+        Geolocation.getCurrentPosition(resolve, error,{enableHighAccuracy:true,maximumAge:10000}),
       );
     try {
       const Data = await getCurrentPositionResult();
       return {Status: true, Data,Message:'Datos obtenidos correctamente'};
-    } catch (error) {      
-      return {Status: false, Message: 'Active su GPS por favor'};
+    } catch (error) {       
+      console.log(error)     ;
+      return {Status: false, Message: ""+error?.message};
     }
   } else {
     return {Status: false, Message: 'No se tiene el acceso al GPS'};

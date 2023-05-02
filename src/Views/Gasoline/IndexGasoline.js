@@ -33,7 +33,7 @@ const FormGasoline = () => {
       if (true) {
         const data = {
           idUsuario:User.EntityID,  
-          idCompania: company[0]?.EntityID,
+          idCompania: company?.EntityID,
           Kilometraje: parseInt(formData.MileageActuality),
           Comentario: formData.commentary ? formData.commentary : '',
           Latitud: 0,

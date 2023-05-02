@@ -33,6 +33,7 @@ import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
 import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
 import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
 import { SetActualityCoords } from '../../Api/User/ApiUser';
+
 export const StartNotification=async(userId=0,uuId="",dispatch)=>{     
 const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 const veryIntensiveTask2 = async (taskDataArguments) => {
@@ -177,7 +178,8 @@ const VisitCreated = () => {
         //console.log(dataMileagueInit)
       const isValidateGPS = await GetGeolocation();
       if(!isValidateGPS.Status){   
-        Alert.alert("","Enciende tu GPS para continuar");          
+        Alert.alert("Intente nuevamente",isValidateGPS.Message); 
+          dispatch(LoadGetVisitActuality(false));              
           return;
       }
 
