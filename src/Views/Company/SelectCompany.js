@@ -7,6 +7,7 @@ import StylesWrapper from "../../Styles/Wrapers";
 import { SetUserDefaultCompany } from "../../Api/User/ApiUser";
 import { useNavigation } from "@react-navigation/native";
 import { GetUserRol } from "../../Api/User/ApiUser";
+import { AsyncStorageSaveDataJson } from "../../lib/AsyncStorage";
 const SelectCompany=()=>{
     const company = useSelector(state=>state.company);
     const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const SelectCompany=()=>{
         //console.log(user);
         dispatch(SetUserDefaultCompany(company));
         GetUserRol(user.EntityID,company.EntityID,navigation,dispatch);
+        AsyncStorageSaveDataJson("@Company",company);          
     }   
     return (
             <ScrollView style={StylesWrapper.secondWrapper}>
@@ -29,7 +31,7 @@ const SelectCompany=()=>{
                 company.Company.map((comp,index)=>(
                     <CardVisit key={index} handleSelectCard={()=>{
                         selectCompanyDefault(comp);
-                    }} title={comp.NombreCompania} principalColor="red" >
+                    }} title={comp.NombreCompania} principalColor="#BEBEBE" >
 
                     </CardVisit>  
                 ))

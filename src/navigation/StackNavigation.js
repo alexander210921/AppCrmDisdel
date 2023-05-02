@@ -15,8 +15,12 @@ import SelectRol from '../Views/Rol/SelectRol';
 import FormFinaliceVisit from '../Views/VisitCustumers/VisitFinaliceForm';
 import MenuEndVisit from '../Views/VisitCustumers/MenuEndCreatedVisit';
 import FormGasoline from '../Views/Gasoline/IndexGasoline';
+import Icon from 'react-native-vector-icons/Entypo';
+import { useNavigation } from '@react-navigation/native';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
+  const navigation = useNavigation();
+  //navigation.
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -31,8 +35,17 @@ export default function StackNavigation() {
         name="Home"
         component={HomeRouteVendors}
         options={{
-          title: 'Home',
-          headerShown: false,
+          title: '',
+          headerShown: true,          
+          headerLeft: () => (
+            <Icon
+              name="menu"
+              size={25} 
+              color="gray"
+              onPress={()=>{navigation.openDrawer()}}
+              style={{ marginLeft: 20 }}
+            />
+          ),
         }}
       />
       <Stack.Screen
@@ -106,7 +119,7 @@ export default function StackNavigation() {
         component={SelectCompany}
         options={{
           title: 'SelectCompany',
-          headerShown: false,
+          headerShown: true,
         }}
       />
       <Stack.Screen

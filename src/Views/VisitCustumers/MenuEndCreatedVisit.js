@@ -13,6 +13,8 @@ import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Cu
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from './VisitCreated';
 import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
+import { GetGeolocation } from '../../lib/Permissions/Geolocation';
+import { SetActualityCoords } from '../../Api/User/ApiUser';
 let ClientDefault = null;
 const MenuEndVisit = () => {
   let basesSelected=null;  
@@ -25,6 +27,7 @@ const MenuEndVisit = () => {
   const [isLoad, setIsLoad] = useState(false);
   const [isLoadVisit, setIsLoadVisit] = useState(false);
   const [baseSelect, setBaseSelect] = useState(null);
+  const company = useSelector(state=>state.company.CompanySelected);
   BackHanlderMenuPrincipal(navigation);
   const [dataVisitReturn, setDataVisitReturn] = useState({
     CardCode: 'C46306293',
@@ -84,14 +87,26 @@ const MenuEndVisit = () => {
         if (statusCreateVisit != null && statusCreateVisit.Resultado) {
           dispatch(
             AddVisit({
-              CardCode: dataVisitReturn.CardCode,
-              CardName: dataVisitReturn.CardName,
+              CardCode: dataForBase.CardCode,
+              CardName: dataForBase.CardName,
               IdRegistro: statusCreateVisit.DocNum,
               Comentario:dataForBase.Comentario,
               EsRegreso:'Y'
             }),
           );
+          const isValidateGPS = await GetGeolocation();
+          if(!isValidateGPS.Status){   
+            Alert.alert("","Enciende tu GPS para continuar");          
+              return;
+          }          
+          if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
+            dispatch(SetActualityCoords({
+              latitude:isValidateGPS.Data.coords.latitude,
+              longitude:isValidateGPS.Data.coords.longitude
+            }));
+          } 
           await StartNotification(User.EntityID,"",dispatch);
+          ClientDefault=null;
           navigation.navigate('VisitCreated');
         } else if (statusCreateVisit != null && !statusCreateVisit.Resultado) {
           Alert.alert(statusCreateVisit.Mensaje);
@@ -120,7 +135,7 @@ const MenuEndVisit = () => {
       setIsLoad(true);
       const bases = await GetBasesVendor(User.EntityID);
       //validar la compania
-      const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,"SBO_DISDELSA_2013");            
+      const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,company.NombreDB);            
       console.log(CustomerDefault,"Lo que trajo el API")
       if(CustomerDefault?.CardCode){
         ClientDefault = {

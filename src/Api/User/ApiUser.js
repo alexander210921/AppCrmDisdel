@@ -1,7 +1,7 @@
 import {GET_USER, LOAD_GET_USER,GET_USER_COMPANY,GET_USER_ROLES,SET_DEFAULT_COMPANY,SET_DEFAULT_ROL,LOGOUT_USER,SET_COORDS_ACTUALITY,SET_COORDS_DESTINATION} from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
-import { AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
+import { AsyncStorageGetData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
   const UserData = {
     NameUser: NameUser,
@@ -9,10 +9,19 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
   };
   try {
     Axios.post('MyWsMobil/api/Mobil/ValidarLogin/', UserData)
-      .then(response => {
+      .then(async response => {
         if (response.data.Resultado) {                    
-          GetLoginUser(response.data.DocEntry,navigation,dispatch);
-          GetUserCompany(response.data.DocEntry,navigation,dispatch);
+          GetLoginUser(response.data.DocEntry,navigation,dispatch);   
+          // let company = await AsyncStorageGetData("@Company");       
+          // if(company!=null){
+          //   company = JSON.parse(company);
+          //   console.log(company);
+          //   dispatch(SetUserDefaultCompany(company));
+          //   GetUserRol(response.data.DocEntry,company.EntityID,navigation,dispatch);
+          // }else{
+            
+          // } 
+          GetUserCompany(response.data.DocEntry,navigation,dispatch);         
           AsyncStorageSaveDataJson("@User",{ NameUser,PasswordUser});  
         } else {
           Alert.alert('Usuario incorrecto');
@@ -54,18 +63,19 @@ export const GetLoginUser = (UserId,navigation,dispatch) => {
 
 
 
-export const GetUserCompany =(UserId,navigation,dispatch)=>{
+export  const GetUserCompany  =(UserId,navigation,dispatch)=>{
   try {
     Axios.get('MyWsMobil/api/Mobil/GetUserCompania/'+UserId+"/")
-      .then(response => {
+      .then( response => {
         if(response.data.length==1){
-           dispatch(SetUserDefaultCompany(response.data));
+           dispatch(SetUserDefaultCompany(response.data[0]));
            dispatch(SetUserCompany(response.data));
            GetUserRol(UserId,response.data[0].EntityID,navigation,dispatch);
-           AsyncStorageSaveDataJson("@Company",response.data);  
+           AsyncStorageSaveDataJson("@Company",response.data[0]);  
            //navigation.navigate("Home");
         }else if(response.data.length>1){
           dispatch(SetUserCompany(response.data));
+          //await AsyncStorageSaveDataJson("@Company");
           navigation.navigate("SelectCompany");
           //Alert.alert("seleccione la compañia");
         }else{

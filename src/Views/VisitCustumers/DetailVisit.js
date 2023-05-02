@@ -58,6 +58,7 @@ const DetailVisit = () => {
   const [distanceExactMts,setDistanceExactMts] = useState(null);
   const [dinfoRoute, setInfoRoute] = useState('');
   const [ModeNavigate,setModeNavigate] = useState("DRIVING");
+  const company = useSelector(state=>state.company.CompanySelected);
   const [comentary, setComentary] = useState(
     data.Comentario ? data.Comentario : '',
   );
@@ -188,10 +189,13 @@ const DetailVisit = () => {
               return;
             }
             const distancePermited = 300;
-            if((distanceExactMts!=null || distanceExactMts!=0)  &&  distanceExactMts<=distancePermited){
-              Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+distancePermited+" mts");
-              return;
-            }
+            //Alert.alert(""+distanceExactMts);
+            if(data.EsRegreso == 'N'){
+              if((distanceExactMts!=null )  &&  distanceExactMts>distancePermited){
+                Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+distancePermited+" mts");
+                return;
+              }  
+            }                 
             let isValidUUID = await AsyncStorageGetData('@uuid');
 
             // const getCoords = await GetGeolocation();
@@ -321,7 +325,7 @@ const DetailVisit = () => {
           }
           const GetVisit = await GetVisitByID(data.IdRegistro);
           const GetPersonContact = await GetContactPersonCardCode(
-            'SBO_DISDELSA_2013',
+            company.NombreDB,
             data.CardCode,
           );
           if (GetPersonContact == null) {
@@ -456,7 +460,7 @@ const DetailVisit = () => {
           {userCoords.coordsActuality.latitude != 0 &&
           userCoords.coordsActuality.longitude != 0 &&
           data.LatitudeArrival != 0 &&
-          data.LongitudArrival != 0  && !data.isMarkerArrival ? (
+          data.LongitudArrival != 0  && !data.isMarkerArrival && DrivingVisitDetail.isRouteInCourse ? (
             <View >
               <Text style={{color: 'gray', fontSize: 12}}>{dinfoRoute}</Text>
               <View  row>
@@ -482,7 +486,7 @@ const DetailVisit = () => {
               {userCoords.coordsActuality.latitude != 0 &&
               userCoords.coordsActuality.longitude != 0 &&
               data.LatitudeArrival != 0 &&
-              data.LongitudArrival != 0 ? (
+              data.LongitudArrival != 0  && DrivingVisitDetail.isRouteInCourse? (
                 <RenderStaticMap
                 mode={ModeNavigate}
                 MarkerPress={handleMarkerPress}

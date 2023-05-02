@@ -61,9 +61,9 @@ try{
     const { delay } = taskDataArguments; 
     await new Promise( async (resolve) => {
         for (let i = 0; BackgroundService.isRunning(); i++) {                        
-         
+            let currentPosition = null;
             const { coords } = await new Promise((resolve, reject) => {
-              geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
+              currentPosition =  geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
             });            
             try{
               const data = {
@@ -83,6 +83,14 @@ try{
               }
             }catch(ex){
               console.log(ex,"Al insertar ocurrió un error")
+            }finally{
+              try{
+                if(currentPosition!=null){
+                 // geolocation.clearWatch(currentPosition);
+                }
+              }finally{
+                currentPosition=null;
+              }              
             }
             await BackgroundService.updateNotification({taskDesc: 'Marcando ubicación, Excelente Viaje '+i}); 
             await sleep(delay);  
@@ -124,6 +132,7 @@ const VisitCreated = () => {
   const navigation = useNavigation();
   const [MileageDetail, setMileagueDetail] = useState(null);
   const User = useSelector(state => state.login.user);  
+  const company = useSelector(state=>state.company.CompanySelected);
   const [loadGetVisit,setLoadGetVisit] = useState(false);  
   BackHanlderMenuPrincipal(Navigator);
   const SubmitSearch = async value => {
@@ -192,7 +201,7 @@ const VisitCreated = () => {
             navigation.navigate('FormCreateRoute');
           }                               
         } finally {
-          dispatch(LoadGetVisitActuality(false));
+          //dispatch(LoadGetVisitActuality(false));
         }
       } else {
         Alert.alert(
@@ -200,8 +209,9 @@ const VisitCreated = () => {
           'Cree primero sus visitas antes de poder iniciar su captura de localización ',
         );
       }
-    } finally {
       dispatch(LoadGetVisitActuality(false));
+    } finally {
+     // dispatch(LoadGetVisitActuality(false));
     }
   };
   const AlertMessage = () => {
@@ -303,7 +313,7 @@ const VisitCreated = () => {
       }   
       if( GetMileagueById!=null && GetVisit["<IdDireccionVisita>k__BackingField"]!=null){
         visit.IdDireccionVisita = GetVisit["<IdDireccionVisita>k__BackingField"];
-        const getInfoAddress =await GetAddressOfCurrentVisit("SBO_DISDELSA_2013",visit.CardCode,visit.IdDireccionVisita);
+        const getInfoAddress =await GetAddressOfCurrentVisit(company.NombreDB,visit.CardCode,visit.IdDireccionVisita);
         if(getInfoAddress!=null){
           if(getInfoAddress["<longitudDestino>k__BackingField"]){
             visit.LongitudArrival = getInfoAddress["<longitudDestino>k__BackingField"];
@@ -371,7 +381,7 @@ const VisitCreated = () => {
       <View style={styles.chip}>
         <Chip label={'kilometraje inicial del día'} onPress={setMileagueInit}/>
       </View>
-      {ListRoutes.RoutesInProgress.length > 0 ? (
+      {ListRoutes.RoutesInProgress.length > 0 || DrivingVisitDetail.isRouteInCourse ? (
         <View>
           <Text style={styles.Title}>Mis visitas</Text>
           {loadGetVisit? <LoaderScreen message="Obteniendo visita..." color="black"></LoaderScreen> :null}

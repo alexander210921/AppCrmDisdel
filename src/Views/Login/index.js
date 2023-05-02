@@ -14,12 +14,14 @@ import { Dimensions,Alert } from 'react-native';
 import { ColorBackroundSecundary } from '../../Assets/Colors/Colors';
 import { AsyncStorageDeleteData, AsyncStorageGetData } from '../../lib/AsyncStorage';
 import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
+import { BackHanlder } from '../../lib/ExitApp';
 const windowHeight = Dimensions.get('window').height;
 
 const ViewLogin = () => { 
   const navigation = useNavigation();
   const User = useSelector(state => state.login);
   const dispatch = useDispatch();
+  BackHanlder(navigation,dispatch);  
   const [userData,setUserData] = useState({
     UserN:'',
     UserPass:''
@@ -42,6 +44,12 @@ const ViewLogin = () => {
         //dispatch(LoadGetUser(false));  
       }      
     };
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        gestureEnabled: false,
+        edgeWidth: 0, // Desactivar el gesto de deslizar para abrir el menú
+      });
+    }, [navigation]);
     useEffect(() => {
       AsyncStorageGetData("@dataRoute").then(res=>{
         try{
@@ -79,7 +87,7 @@ const ViewLogin = () => {
     
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
-    <View style={StylesWrapper.wraper} flex>
+    <View style={styles.WrapperForHiddenPanelLeft} flex>
       <View style={{height: 100}} bottom>
         <LoginHeader></LoginHeader>
       </View>
@@ -177,4 +185,9 @@ const styles = StyleSheet.create({
     backgroundColor:ColorBackroundSecundary,      
     marginBottom:'2%',
   },
+  WrapperForHiddenPanelLeft:{
+    ...StylesWrapper.wraper,
+    // flex: 1,
+    // paddingHorizontal: 5,  
+  }
 });

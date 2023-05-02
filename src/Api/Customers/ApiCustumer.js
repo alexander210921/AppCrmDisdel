@@ -104,7 +104,7 @@ export  const FunctionGetCurrentVisit =async (
     return null;
   }
    finally {
-    dispatch(LoadGetVisitActuality(false));
+    //dispatch(LoadGetVisitActuality(false));
   }
 };
 
