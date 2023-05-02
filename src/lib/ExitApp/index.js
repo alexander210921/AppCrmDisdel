@@ -11,8 +11,8 @@ export const BackHanlder=(navigation,dispatch)=>{
               style: "cancel"
             },
             { text: "Si", onPress: () => {
-              BackHandler.exitApp();
-              dispatch(LogOutUser())
+              dispatch(LogOutUser());
+              BackHandler.exitApp();              
             } }
           ]);
             return () => backHandler.remove();
@@ -36,7 +36,10 @@ export const ExitApp=()=>{
       onPress: () => null,
       style: "cancel"
     },
-    { text: "Si", onPress: () => BackHandler.exitApp() }
+    { text: "Si", onPress: () => {
+      dispatch(LogOutUser());
+      BackHandler.exitApp();
+    } }
   ]);
     return () => backHandler.remove();
 }
