@@ -31,7 +31,7 @@ const HomeRouteVendors = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigator = useNavigation();  
   const company = useSelector(state=>state.company.CompanySelected);
-  const pastelColors = ['#E5D8CF', '#B7DDE8', '#E8D9B9', '#C4D7CF','#CED3F2'];
+  const pastelColors = ['#E5D8CF', '#B7DDE8', '#E8D9B9', '#C4D7CF','#CED3F2','#f2f2f2'];
   const dispatch = useDispatch();
   BackHanlder(navigation,dispatch);
   const HandleMarkerSelectCard = () => {
@@ -46,6 +46,10 @@ const HomeRouteVendors = () => {
       Alert.alert('La ruta ya ha sido iniciada');
       return;
     }
+    if(listVisit.loadGetCurrentVisit){
+      Alert.alert("","Se está cargando el proceso, por favor espere");      
+      return;
+    }
     try{
       dispatch(LoadGetVisitActuality(true));      
      const visits = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
@@ -58,7 +62,7 @@ const HomeRouteVendors = () => {
      }
      const isValidateGPS = await GetGeolocation();
      if(!isValidateGPS.Status){   
-       Alert.alert("","Enciende tu GPS para continuar");          
+       Alert.alert("Intente nuevamente",isValidateGPS.Message);          
          return;
      }
      if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
@@ -73,7 +77,7 @@ const HomeRouteVendors = () => {
       User.EntityID,
        0,
      );            
-
+     dispatch(LoadGetVisitActuality(false));
  try { 
   if(dataMileagueInit && dataMileagueInit.length==0){
     dispatch(SaveIsArriveOrNotTheVisit("Y"));
@@ -151,6 +155,7 @@ const HomeRouteVendors = () => {
       
     <ScrollView >
     <View  style={styles.WrapperCustomer}>
+  
       <View style={{width:'100%',height:'25%'}} right>
         {User?.ImagePath? 
           <PhotoProfile image={User.ImagePath}></PhotoProfile>
@@ -159,7 +164,7 @@ const HomeRouteVendors = () => {
         <Image style={{width:'25%',height:'25%'}} source={ company?.EntityID==1009? imagePathLyG:imagePath} ></Image>
       </View>
       {listVisit.loadGetCurrentVisit?
-      <LoaderScreen color="black" message="Cargando proceso..." ></LoaderScreen>:null
+      <LoaderScreen color="black" message="" ></LoaderScreen>:null
       }
       
    
@@ -216,7 +221,7 @@ const HomeRouteVendors = () => {
         <PastelCard onPress={HandleGoToVisitCustumer} nameIcon='progress-download' title='Ver visitas en curso' color={pastelColors[1]} />
       </View>
       <View style={styles.row}>
-        <PastelCard onPress={HandleInitRouteForHome} nameIcon='map-marker-plus' title='Iniciar Ruta' color={pastelColors[2]} />
+        <PastelCard onPress={HandleInitRouteForHome} nameIcon='map-marker-plus' title='Iniciar Ruta' color={DrivingVisitDetail.isRouteInCourse || listVisit.loadGetCurrentVisit?pastelColors[5]:pastelColors[2]} />
         <PastelCard onPress={HandleGoGasoline} nameIcon='gas-station' title='Gasolina' color={pastelColors[3]} />
       </View>
       <View style={styles.row}>

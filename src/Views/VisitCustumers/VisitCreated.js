@@ -164,6 +164,10 @@ const VisitCreated = () => {
         Alert.alert('La ruta ya ha sido iniciada');
         return;
       }
+      if(ListRoutes.loadGetCurrentVisit){
+        Alert.alert("","Se está cargando el proceso, por favor espere");
+        return;
+      }
       dispatch(LoadGetVisitActuality(true));     
 
         const dataMileagueInit = await FunctionGetMileageInit(
@@ -415,7 +419,7 @@ const VisitCreated = () => {
               selectionOptions={styles.selectOptionCard}
               elevation={20}
               flexS
-              style={!DrivingVisitDetail.isRouteInCourse? styles.mainCardView:styles.ButtonDisable}
+              style={!DrivingVisitDetail.isRouteInCourse && !ListRoutes.loadGetCurrentVisit? styles.mainCardView:styles.ButtonDisable}
               flex
               center
               onPress={HandleInitRoute}>
