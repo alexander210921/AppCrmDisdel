@@ -33,6 +33,10 @@ const initialState = {
           coordsActuality:{
             latitude:0,
             longitude:0
+          },         
+          coordsDestination:{
+            latitude:0,
+            longitude:0
           }
         } 
       case SET_COORDS_ACTUALITY:

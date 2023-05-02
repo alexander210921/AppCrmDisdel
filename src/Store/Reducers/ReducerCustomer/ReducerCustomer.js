@@ -49,7 +49,9 @@ const initialState = {
           ListAdressCustomerSelect:[],
           loadGetAdress:false,
           VisitDetailSelected:null,
-          loadUpdateVisit:false
+          loadUpdateVisit:false,
+          VisitArriveOrEnd:null,
+          ListContactPerson:[]  
         }     
       case SET_VISIT_ACTUALITY:
         return{
