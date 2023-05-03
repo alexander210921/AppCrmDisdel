@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import {
   View,  
   Text,
@@ -8,30 +8,20 @@ import {useForm, Controller} from 'react-hook-form';
 import {TextInput, StyleSheet, Alert,ScrollView, BackHandler} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {
   LoadSetRegisterVisit,
   FunctionUpdateVisit,
   SaveVisitCreated,
-  SaveIdWatch,
-  SetIsInitDrivingVisit,
-  SaveUUIDRoute,
-  FunctionSetCoordsDetail,
   DeleteVisit
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import Geolocation from '@react-native-community/geolocation';
-import { AsyncStorageDeleteData, AsyncStorageSaveData } from '../../lib/AsyncStorage';
-import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import {  AsyncStorageSaveData } from '../../lib/AsyncStorage';
 import { StartNotification } from './VisitCreated';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
 const FormFinaliceVisit = () => { 
-  //ADD PHOTO END
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  //const CoordsDestination = useSelector(state => state.login);
   const dataVisist = useSelector(state => state.Customer.VisitDetailSelected);
-
   const {
     control,
     handleSubmit,
@@ -118,7 +108,6 @@ const FormFinaliceVisit = () => {
           Proceso: 'Finalizado',      
           UUIDGroup:DrivingVisitDetail.UUIDRoute,
           isEndVisit:true,
-          // Minuta: FormData.Bill?FormData.Bill:'',
           Comentario: FormData.Comment?FormData.Comment:'',  
         };
        const StatusUpdateVisit = await  FunctionUpdateVisit(visit,dispatch,navigation,"FormCreateRoute");
@@ -129,16 +118,6 @@ const FormFinaliceVisit = () => {
         }));
         dispatch(DeleteVisit(dataVisist.IdRegistro));
         MenuToEndVisit();   
-        //Alert.alert(StatusUpdateVisit.Mensaje);
-        // if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="N"){
-          
-        // //  AlertConditional(InitVisittoFisnish,function(){navigation.navigate("MenuEndVisit");},"¿Desea ir a otra visita?","");                
-        // }else if(isEndVisit.VisitArriveOrEnd && isEndVisit.VisitArriveOrEnd=="Y"){
-        //   navigation.navigate("FormCreateRoute");
-        // }else{
-          
-        //   //navigation.navigate("MenuEndVisit");      
-        // }
        }else if(StatusUpdateVisit!=null && !StatusUpdateVisit.Resultado){
         Alert.alert(StatusUpdateVisit.Mensaje);
         return;
@@ -157,8 +136,6 @@ const FormFinaliceVisit = () => {
       <View>   
         <SearchableDropdownV2 items={ListContact} onItemSelected={(person)=>{ if(person) {setContactSelect(person.name)}}} ></SearchableDropdownV2>   
         <Text style={{margin:2}} >{contactSelect ? contactSelect:''}</Text>
-
-
         <Controller
           control={control}
           rules={{
@@ -176,8 +153,6 @@ const FormFinaliceVisit = () => {
           )}
           name="Tema"
         />
-
-       
         <Controller
           control={control}
           rules={{

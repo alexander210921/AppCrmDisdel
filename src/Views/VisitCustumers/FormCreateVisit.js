@@ -16,7 +16,6 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
-import SearchItem from '../../Components/SearchList/SearchList';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
 import { GeCustomersVendor } from '../../Api/Customers/ApiCustumer';
 const FormCreateVisit = () => {
@@ -24,7 +23,6 @@ const FormCreateVisit = () => {
   const [AdressCustomer,setAdressCustomer]=useState(
     CustomerSelect.ListAdressCustomerSelect.map((adress)=>{
       return {name :adress.Nombre+" / "+adress.Direccion,id:adress.IdDireccion}
-        //onPress:()=>{HandleSelectAdress(adress)}
     })
   );
   const [ViewPanelAdress, SetViewPannelAdress] = useState(false);
@@ -47,14 +45,7 @@ const FormCreateVisit = () => {
       Tema:''
     },
   });
-  const HandleSelectAdress=(adress)=>{
-    const address={
-      addressId:adress.IdDireccion,
-      AddressName:adress.Direccion,
-      ShiptoCodeAddress:adress.Nombre
-    }
-    setIdAddressVisit(address);
-  }
+
   const Rol = useSelector(state => state.rol.RolSelect);
   const goVisitCreated=()=>{navigation.navigate("VisitCreated")}
   const goFormSearchCustomer=()=>{navigation.navigate("SearchCustomer")}
@@ -69,7 +60,6 @@ const FormCreateVisit = () => {
       dispatch(LoadSetRegisterVisit(true));
       //const coords = await GetGeolocation();
       //coords.Status
-      if (true) {
         const data = {
           IdRelacion: Rol[0]?.IdRelacion,
           CardCode: CustomerSelect.customerSelect.CardCode,  
@@ -99,10 +89,7 @@ const FormCreateVisit = () => {
         }else if(VisitCreated!=null && !VisitCreated.Resultado){
           Alert.alert("Alerta",VisitCreated.Mensaje);
         }        
-      } else {
-       // Alert.alert(coords.Message);
-        dispatch(LoadSetRegisterVisit(false));
-      }
+      
     } catch {
       Alert.alert('Ocurrió un error, intente nuevamente');
       dispatch(LoadSetRegisterVisit(false));
@@ -110,11 +97,6 @@ const FormCreateVisit = () => {
       dispatch(LoadSetRegisterVisit(false));
     }
   };
-
-
-  const HandleViewPanelAdress=()=>{
-    SetViewPannelAdress(true);
-  }
   const SelectAdress=(item)=>{
     const data={
       addressId:item.id,
@@ -124,16 +106,6 @@ const FormCreateVisit = () => {
     setIdAddressVisit(data);
   }
 
-
-  // async function openMap() {
-  //   const coords = await GetGeolocation();
-  //   if (coords.Status) {
-  //     dispatch(SetActualityCoords(coords.Data.coords));
-  //     navigation.navigate('ViewMap');
-  //   } else {
-  //     Alert.alert(coords.Message);
-  //   }
-  // }
   return (
     <View style={{flex:1}} >
       <View style={{height:'100%'}}>
@@ -193,7 +165,6 @@ const FormCreateVisit = () => {
           <SearchableDropdownV2 placeHolder='Busca la dirección' items={AdressCustomer} onItemSelected={SelectAdress}></SearchableDropdownV2>
         </View>
         
-
         <View style={styles.ContainerMargin}>        
           {CustomerSelect.loadSetVisit ? (
             <LoaderScreen color="black" overlay></LoaderScreen>

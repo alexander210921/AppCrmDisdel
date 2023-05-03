@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
-import {Text, View, LoaderScreen, Button, Card,Chip} from 'react-native-ui-lib';
+import {Text, View, LoaderScreen, Card,Chip} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,7 +13,7 @@ import {
   GetAddressOfCurrentVisit
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import {AsyncStorageDeleteData, AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
+import { AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
 import {StartInitVisit, StopInitVisit} from '../../lib/Visits/index';
@@ -174,12 +174,6 @@ const VisitCreated = () => {
           User.EntityID,
               0,
             );            
-     
-        // if(dataMileagueInit && dataMileagueInit.length==0){
-        //   navigation.navigate("FormCreateRoute");
-          
-        // }
-        //console.log(dataMileagueInit)
       const isValidateGPS = await GetGeolocation();
       if(!isValidateGPS.Status){   
         Alert.alert("Intente nuevamente",isValidateGPS.Message); 
@@ -193,9 +187,7 @@ const VisitCreated = () => {
           longitude:isValidateGPS.Data.coords.longitude
         }));
       } 
-    /// register first point ubication 
      await StartNotification(User.EntityID,"",dispatch);   
-      //const data = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,false,Navigator);
       dispatch(SaveIsArriveOrNotTheVisit("N"));
       if (
         ListRoutes.RoutesInProgress != null &&
@@ -233,18 +225,8 @@ const VisitCreated = () => {
   };
    const HandleStopVisit = async () => {
     try {    
-      
-      // if (!DrivingVisitDetail.isRouteInCourse) {
-      //   Alert.alert(
-      //     'Cancelacion de ruta',
-      //     'La ruta no ha sido iniciada para poder cancelar',
-      //   );
-      //   return;
-      // }
       dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
-      
-      //await AsyncStorageDeleteData("@uuid");      
       const cancelStatus = await StopInitVisit(
         null,
         dispatch,
@@ -252,7 +234,6 @@ const VisitCreated = () => {
       Geolocation.clearWatch(0);
       Geolocation.stopObserving();
       if (cancelStatus) {
-        //Alert.alert('Cancelado correctamente');
         return;
       }
     } finally {
@@ -336,22 +317,6 @@ const VisitCreated = () => {
       setLoadGetVisit(false);  
     }   
   };
-  // const StopGeolocation=()=>{
-  //   if (
-  //     ListRoutes.RoutesInProgress.length == 0 && !returnBase
-  //   ) {
-  //     Geolocation.clearWatch(DrivingVisitDetail.IdWatchLocation);
-
-  //     dispatch(SaveIdWatch(null));
-  //     dispatch(SetIsInitDrivingVisit(false));
-  //     dispatch(SaveUUIDRoute(''));
-  //     AsyncStorageDeleteData('@dataRoute').finally(() => {
-  //     });
-  //   }
-  // }
-  // useEffect(() => {
-  //   StopGeolocation();
-  // }, [ListRoutes.RoutesInProgress]);
   useEffect(() => {
     if(DrivingVisitDetail.isRouteInCourse &&!BackgroundService.isRunning()){
       HandleStopVisit();
@@ -374,12 +339,6 @@ const VisitCreated = () => {
     <View style={{flex:1}}>
     <ScrollView contentContainerStyle={{paddingBottom: 20}}  style={StylesWrapper.secondWrapper}>
       <SearchBar onSubmit={SubmitSearch}></SearchBar>
-      {/* <View style={styles.chip}>
-        <Chip  label={'kilometraje Inicial'} onPress={() => console.log('pressed')}/>
-      </View >
-      <View style={styles.chip}>
-        <Chip label={'kilometraje Final'} onPress={() => console.log('pressed')}/>
-      </View> */}
       <View style={styles.chip}>
         <Chip label={'Bases'} onPress={()=>{
           navigation.navigate("MenuEndVisit");
@@ -394,20 +353,12 @@ const VisitCreated = () => {
           {loadGetVisit? <LoaderScreen message="Obteniendo visita..." color="black"></LoaderScreen> :null}
           <ViewButtonsOption></ViewButtonsOption>
           {DrivingVisitDetail.isRouteInCourse ? (
-            // <LoaderScreen
-            //   color="black"
-            //   message="Procesando Ubicación"></LoaderScreen>
             <Text>Se está capturando su ubicación actual</Text>
           ) : (
             <Text>
               Cuando esté listo para salir presione el botón "Iniciar Ruta"
             </Text>
           )}
-          {/* {MileageDetail ? (
-            <Text style={styles.title1}>
-              kilometraje Inicial: {MileageDetail.Kilometraje}
-            </Text>
-          ) : null} */}
           <Text>{ErrorConnection}</Text>
           <View flex center>
             {ListRoutes.loadGetCurrentVisit ? (
@@ -437,7 +388,6 @@ const VisitCreated = () => {
               onPress={AlertMessage}>
               <Text>Cancelar ubicación en segundo plano</Text>
             </Card>
-
             {ListRoutes.RoutesInProgress.map(route => {
               return (
                 <CardVisit
@@ -456,7 +406,6 @@ const VisitCreated = () => {
         <View>
           <Text style={styles.Title}>No hay visitas creadas aún</Text>
           <Text style={styles.title1}>Cree primero su visita </Text>
-
           <ViewButtonsOption></ViewButtonsOption>
         </View>
       )}

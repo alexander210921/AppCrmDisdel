@@ -3,16 +3,14 @@ import {View, Text, LoaderScreen, Button} from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
 import {Alert, StyleSheet, TextInput, Image, ScrollView} from 'react-native';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation/index';
 import {
   LoadPostMileage,
   SetMileage,  
 } from '../../Api/Vendors/ApiVendors';
 import {useDispatch, useSelector} from 'react-redux';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary} from 'react-native-image-picker';
 import {_base64ToArrayBuffer} from '../../lib/Converts/index';
-import {requestExternalWritePermission} from '../../lib/Permissions/Files';
-import {requestCameraPermission} from '../../lib/Permissions/Camera';
+
 import { useNavigation } from '@react-navigation/native';
 import {  SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
 const FormCreateRoute = () => {
@@ -25,41 +23,6 @@ const FormCreateRoute = () => {
   const [filePath, setFilePath] = useState({});
   const [base64Image, setBase64Image] = useState('');  
   const visitSelect = useSelector(state => state.Customer.VisitDetailSelected);
-  const captureImage = async type => {
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 4,
-      videoQuality: 'low',
-      durationLimit: 30, //Video max duration in seconds
-      saveToPhotos: true,
-      base64: true,
-      includeBase64: true,
-    };
-    let isCameraPermitted = await requestCameraPermission();
-    let isStoragePermitted = await requestExternalWritePermission();
-    if (isCameraPermitted && isStoragePermitted) {
-      launchCamera(options, response => {
-        if (response.didCancel) {
-          return;
-        } else if (response.errorCode == 'camera_unavailable') {
-          Alert.alert('Camera not available on device');
-          return;
-        } else if (response.errorCode == 'permission') {
-          Alert.alert('Permission not satisfied');
-          return;
-        } else if (response.errorCode == 'others') {
-          Alert.alert(response.errorMessage);
-          return;
-        }
-
-        setFilePath(response.assets[0]);
-        setBase64Image(response.assets[0].base64);
-      });
-    }
-  };
-
   const chooseFile = type => {
     let options = {
       mediaType: type,

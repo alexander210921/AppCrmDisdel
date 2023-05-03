@@ -11,7 +11,6 @@ import {
   View,
   Button,
   LoaderScreen,
-  TextArea,
   Chip,
 } from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
@@ -37,11 +36,7 @@ import {SaveSelectVisitDetail} from '../../Api/Customers/ApiCustumer';
 import {AsyncStorageGetData} from '../../lib/AsyncStorage';
 import RenderStaticMap from '../../Components/Map/MapStatic';
 import {SetActualityCoords} from '../../Api/User/ApiUser';
-// import {getPreciseDistance} from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-//const proj4 = require('proj4');
-
-
 const DetailVisit = () => {
   const data = useSelector(state => state.Customer.VisitDetailSelected);
   const isLoadUpadateVisit = useSelector(state => state.Customer);
@@ -194,13 +189,6 @@ const DetailVisit = () => {
               }
             }
             let isValidUUID = await AsyncStorageGetData('@uuid');
-
-            // const getCoords = await GetGeolocation();
-            // if (!getCoords.Status) {
-            //   Alert.alert('Alerta', '' + getCoords.Message);
-            //   return;
-            // }
-
             const coords = {
               Latitud: userCoords.coordsActuality.latitude,
               Longitud: userCoords.coordsActuality.longitude,
@@ -213,28 +201,7 @@ const DetailVisit = () => {
             //     longitude: coords.Longitud,
             //   }),
             // );
-
-            // const createObjectValidateDistance = {
-            //   NombreDB: 'SBO_DISDELSA_2013',
-            //   CardCode: data.CardCode,
-            //   IdDireccionVisita: data.IdDireccionVisita,
-            //   Latitud: coords.Latitud,
-            //   Longitud: coords.Longitud,
-            // };
-            // if (data.EsRegreso == 'N') {
-            //   // const isvalidDistance = await ValidateDistanceIsValid(
-            //   //   createObjectValidateDistance,
-            //   // );
-            //   // if (isvalidDistance == null) {
-            //   //   dispatch(LoadUpdateVisit(true));
-            //   //   Alert.alert('Alerta', 'Error intente nuevamente');
-            //   //   return;
-            //   // }
-            //   // if (!isvalidDistance.Resultado) {
-            //   //   Alert.alert('', isvalidDistance.Mensaje);
-            //   //   return;
-            //   // }
-            // }
+          
             visit.LatitudeDestino = 0;
             visit.longitude = 0;
             visit.UUIDGroup = isValidUUID;
@@ -261,10 +228,7 @@ const DetailVisit = () => {
                 }
                 await BackgroundService.stop();
                 await StopInitVisit(null, dispatch);
-                // await BackgroundService.stop();
-                // Geolocation.stopObserving();
               }
-              // Alert.alert('Registro exitoso');
               setIsUpdateVisitArrive(true);
               dispatch(SaveIsArriveOrNotTheVisit('N'));
               dispatch(
@@ -353,7 +317,6 @@ const DetailVisit = () => {
       dispatch(LoadUpdateVisit(false));
     }
   };
-  const OpenModal = () => {};
   return (
     <ScrollView style={StylesWrapper.secondWrapper}>
       <View style={StylesWrapper.wraper}>
@@ -441,7 +404,6 @@ const DetailVisit = () => {
               onPress={() => {
                 dispatch(SaveIsArriveOrNotTheVisit('N'));
                 navigation.navigate('FormCreateRoute');
-                //toggleModal();
               }}
             />
           </View>

@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {LoadGetUser} from '../../Api/User/ApiUser';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Dimensions,Alert } from 'react-native';
+import { Dimensions } from 'react-native';
 import { ColorBackroundSecundary } from '../../Assets/Colors/Colors';
 import { AsyncStorageDeleteData, AsyncStorageGetData } from '../../lib/AsyncStorage';
 import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
@@ -187,7 +187,5 @@ const styles = StyleSheet.create({
   },
   WrapperForHiddenPanelLeft:{
     ...StylesWrapper.wraper,
-    // flex: 1,
-    // paddingHorizontal: 5,  
   }
 });

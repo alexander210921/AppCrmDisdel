@@ -1,4 +1,4 @@
-import {View, Text, Card, LoaderScreen} from 'react-native-ui-lib';
+import {View, Text,  LoaderScreen} from 'react-native-ui-lib';
 import React, {useState , useEffect} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
 import StylesWrapper from '../../Styles/Wrapers';
@@ -19,7 +19,6 @@ let ClientDefault = null;
 const MenuEndVisit = () => {
   let basesSelected=null;  
   const User = useSelector(state => state.login.user);
-  const ListRoutes = useSelector(state => state.Customer);
   const Rol = useSelector(state => state.rol.RolSelect);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -42,9 +41,7 @@ const MenuEndVisit = () => {
     IdRelacion: Rol[0]?.IdRelacion,
     EsRegreso:'Y'
   });
-  const goToCreateMoreVisit = () => {
-    navigation.navigate('VisitCreated');
-  };
+
   useEffect(()=>{
     async function getBase(){
       await GetBasesUser();
@@ -176,28 +173,6 @@ const MenuEndVisit = () => {
             <Text style={stylesTitle.TitleMedium}> ¿Dónde quieres ir? </Text>
           </View>
         </View>
-        {/* <Card
-          selected={false}
-          selectionOptions={styles.selectOptionCard}
-          elevation={10}
-          flexS
-          style={styles.card}
-          flex
-          center
-          onPress={goToCreateMoreVisit}>
-          <Text>Ir a otra visita</Text>
-        </Card> */}
-        {/* <Card
-          selected={false}
-          selectionOptions={styles.selectOptionCard}
-          elevation={10}
-          flexS
-          style={styles.card2}
-          flex
-          center
-          onPress={GetBasesUser}>
-          <Text>Regresar a base</Text>
-        </Card> */}
         <View style={styles.ContainerCardsBase} center>
           {isLoad ? (
             <LoaderScreen color="black" messague="Cargando..."></LoaderScreen>
