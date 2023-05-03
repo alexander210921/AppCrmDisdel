@@ -1,66 +1,29 @@
-// import {React} from "react";
-// import { Text, View } from 'react-native';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-
-// function HomeScreen() {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <Text>Home!</Text>
-//       </View>
-//     );
-//   }
-  
-//   function SettingsScreen() {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <Text>Settings!</Text>
-//       </View>
-//     );
-//   }
-
-
-// export const NavigationContainerFunction=()=>{
-//     const Tab = createBottomTabNavigator();
-//     return (
-//         <NavigationContainer>
-//             <Tab.Navigator>
-//                 <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarBadge: 3 }} />
-//                 <Tab.Screen name="Settings" component={SettingsScreen} />
-//             </Tab.Navigator>
-//         </NavigationContainer>
-//     )
-// }
 import * as React from 'react';
-import { Button, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {Button, Text, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 function DetailsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Details!</Text>
     </View>
   );
 }
 
-function HomeScreen({ navigation }) {
+function HomeScreen({navigation}) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Home screen</Text>
-      <Button
-        title="Go to Details"
-       // onPress={() => navigation.navigate('Details')}
-      />
+      <Button title="Go to Details" />
     </View>
   );
 }
 
-function SettingsScreen({ navigation }) {
+function SettingsScreen({navigation}) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Settings screen</Text>
       <Button
         title="Go to Details"
@@ -94,10 +57,10 @@ function SettingsStackScreen() {
 
 const Tab = createBottomTabNavigator();
 
-export  function NavigationContainerFunction() {
+export function NavigationContainerFunction() {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Navigator screenOptions={{headerShown: false}}>
         <Tab.Screen name="Home" component={HomeStackScreen} />
         <Tab.Screen name="Settings" component={SettingsStackScreen} />
       </Tab.Navigator>

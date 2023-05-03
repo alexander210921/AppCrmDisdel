@@ -5,7 +5,6 @@ import {
   TextInput,
   View 
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 const InputDesing1=({placeholder="",secureTextEntry = false,changeInput,valueInput,blur})=>{
   const HandleChange=()=>{
     changeInput();

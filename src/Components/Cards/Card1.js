@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableWithoutFeedback, Text,TouchableHighlight} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {View, StyleSheet, TouchableWithoutFeedback, Text} from 'react-native';
 import {Button} from 'react-native-ui-lib';
 const CardVisit = ({
   principalColor = 'rgba(249,214,125,255)',
@@ -50,9 +49,7 @@ const CardVisit = ({
   const HandlePressButton = () => {
     handleSelectCard(data);
   };
-  const HandlePressButtonIcon = () => {
-    FunctionInit(data);
-  };
+
   return (
     <TouchableWithoutFeedback>
       <View style={styles.mainCardView}>

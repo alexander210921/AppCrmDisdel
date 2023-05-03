@@ -20,7 +20,6 @@ import { useNavigation } from '@react-navigation/native';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   const navigation = useNavigation();
-  //navigation.
   return (
     <Stack.Navigator>
       <Stack.Screen

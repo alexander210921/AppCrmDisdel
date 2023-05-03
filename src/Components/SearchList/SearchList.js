@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import {Keyboard,View,ScrollView,KeyboardAvoidingView} from 'react-native';
+import {View,ScrollView,KeyboardAvoidingView} from 'react-native';
 const SearchItem = ({items, onSelect}) => {
-  const [selectedValue, setSelectedValue] = useState(null);
   const [searchableItems, setSearchableItems] = useState([]);
   useEffect(() => {
     setSearchableItems(items);
