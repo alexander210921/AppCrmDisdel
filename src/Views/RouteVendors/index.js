@@ -3,12 +3,12 @@ import {View, Card,LoaderScreen,Text} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import {SafeAreaView, StyleSheet,TouchableOpacity} from 'react-native';
 import stylesTitle from '../../Styles/Titles';
-import {Alert} from 'react-native';
+import {Alert,ScrollView} from 'react-native';
 import PhotoProfile from '../../Components/Header/HeaderAvatar';
 import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { BackHanlder } from '../../lib/ExitApp';
-import { ScrollView } from 'react-native-gesture-handler';
+//import { ScrollView } from 'react-native-gesture-handler';
 import { LoadGetVisitActuality,FunctionGetCurrentVisit, SetVisiActualityt } from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from '../VisitCustumers/VisitCreated';
 import { Image } from 'react-native';
@@ -154,71 +154,24 @@ const HomeRouteVendors = () => {
   };
 
   return (
-    <SafeAreaView style={{flex:1,backgroundColor:'#fff'}}>
       
-    <ScrollView >
+    
+      
     <View  style={styles.WrapperCustomer}>
-  
-      <View style={{width:'100%',height:'25%'}} right>
-        {User?.ImagePath? 
-          <PhotoProfile image={User.ImagePath}></PhotoProfile>
-          :null
-        }
-        <Image style={{width:'25%',height:'25%'}} source={ company?.EntityID==1009? imagePathLyG:imagePath} ></Image>
-      </View>
+      <View style={{height:'100%'}}>
+    <ScrollView contentContainerStyle={{paddingBottom: 50}}  >
+
       {listVisit.loadGetCurrentVisit || loadGetVisit ?
-      <LoaderScreen color="black" message="" ></LoaderScreen>:null
+      <LoaderScreen style={{height:'4%',}} color="black" message="" ></LoaderScreen>:   <View style={{borderColor:'black',height:'10%',position:'relative',width:'100%'}}  right>
+      {/* {User?.ImagePath? 
+        <PhotoProfile image={User.ImagePath}></PhotoProfile>
+        :null
+      } */}
+      <Image style={{width:'100%',height:'100%',left:'30%'}} resizeMode="center"  source={ company?.EntityID==1009? imagePathLyG:imagePath} ></Image>
+    </View>
       }
-      
-   
-      {/* <Card
-        elevation={20}
-        flexS
-        style={styles.card}
-        flex
-        center 
-        onPress={HandleMarkerSelectCard}>
-        <Text>Crear una nueva visita</Text>
-      </Card>
-      <Card
-        elevation={20}
-        flexS
-        style={styles.card2}
-        flex
-        center
-        onPress={HandleGoToVisitCustumer}>
-        <Text>Ver Visitas en curso</Text>
-      </Card>
-      <Card              
-        elevation={20}
-        flexS
-        style={  DrivingVisitDetail.isRouteInCourse ? styles.ButtonDisable :styles.card3}
-        flex
-        center
-        onPress={HandleInitRouteForHome}>
-        <Text>Iniciar Ruta</Text>
-      </Card>
-      <Card      
-        containerStyle={{color:'black'}}
-        elevation={20}
-        flexS
-        style={styles.card4}
-        flex
-        center
-        onPress={HandleGoBases}>
-        <Text>Ir a bases</Text>
-      </Card>
-      <Card      
-        containerStyle={{color:'black'}}
-        elevation={20}
-        flexS
-        style={styles.card5}
-        flex
-        center
-        onPress={HandleGoGasoline}>
-        <Text>Ingreso de Gasolina</Text>
-      </Card> */}
-        <View style={styles.container}>
+           
+        <View style={styles.container}>                              
       <View style={styles.row}>
         <PastelCard onPress={HandleMarkerSelectCard} nameIcon='bag-personal' title='Crear nueva visita' color={pastelColors[0]} />
         <PastelCard onPress={HandleGoToVisitCustumer} nameIcon='progress-download' title='Ver visitas en curso' color={pastelColors[1]} />
@@ -231,10 +184,10 @@ const HomeRouteVendors = () => {
         <PastelCard onPress={HandleGoBases} nameIcon='warehouse' title='Ir a base' color={pastelColors[4]} />        
       </View>
     </View>
-
-    </View>
     </ScrollView>
-    </SafeAreaView>
+    </View>
+    </View>
+    
   );
 };
 export default HomeRouteVendors;
@@ -294,7 +247,9 @@ const styles = StyleSheet.create({
   },
   WrapperCustomer:{
     ...StylesWrapper.wraper,
-    marginBottom:'3%'
+    //marginBottom:'3%',
+    flex:1,
+    //height:'100%'
   },
   container: {
     flex: 1,

@@ -371,7 +371,8 @@ const VisitCreated = () => {
     await StartInitVisit(ListRoutes, DrivingVisitDetail, dispatch,User.EntityID);
   }
   return (
-    <ScrollView style={StylesWrapper.secondWrapper}>
+    <View style={{flex:1}}>
+    <ScrollView contentContainerStyle={{paddingBottom: 20}}  style={StylesWrapper.secondWrapper}>
       <SearchBar onSubmit={SubmitSearch}></SearchBar>
       {/* <View style={styles.chip}>
         <Chip  label={'kilometraje Inicial'} onPress={() => console.log('pressed')}/>
@@ -460,6 +461,7 @@ const VisitCreated = () => {
         </View>
       )}
     </ScrollView>
+    </View>
   );
 };
 export default React.memo(VisitCreated);

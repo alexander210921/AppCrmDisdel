@@ -32,6 +32,7 @@ const CardVisit = ({
       marginTop: 9,
       marginBottom: 9,
       width: '90%',
+      
     
     },
     subCardView: {

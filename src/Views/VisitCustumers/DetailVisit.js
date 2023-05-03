@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  TextInput,
   TouchableOpacity,
   Modal,
 } from 'react-native';
@@ -25,9 +24,7 @@ import {
   GetVisitByID,
   LoadUpdateVisit,
   SaveContactPerson,
-  SaveIsArriveOrNotTheVisit,
-  SetIsInitDrivingVisit,
-  ValidateDistanceIsValid,
+  SaveIsArriveOrNotTheVisit, 
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
@@ -119,12 +116,12 @@ const DetailVisit = () => {
   useEffect(()=>{
     setDistanceExactMts(distanceMts);
   },[distanceMts])
-  const handleMarkerPress = () => {    
-    const acceptableRadius = 500; // meters 
-//     const distancePrecise = getPreciseDistance({latitude:userCoords.coordsActuality.latitude,longitude:userCoords.coordsActuality.longitude},{latitude:data.LatitudeArrival,longitude:data.LongitudArrival},1); 
+  const handleMarkerPress = () => {
+    const acceptableRadius = 500; // meters
+//     const distancePrecise = getPreciseDistance({latitude:userCoords.coordsActuality.latitude,longitude:userCoords.coordsActuality.longitude},{latitude:data.LatitudeArrival,longitude:data.LongitudArrival},1);
 //     //const utmA = proj4(proj4.defs('EPSG:4326'), proj4.defs('EPSG:32618'), [userCoords.coordsActuality.longitude, userCoords.coordsActuality.latitude]);
 //     //const utmB = proj4(proj4.defs('EPSG:4326'), proj4.defs('EPSG:32618'), [data.LongitudArrival,data.LatitudeArrival]);
-    
+
 // // Cálculo de la distancia euclidiana entre los puntos
 //     //const distance = Math.sqrt(Math.pow(utmB[0] - utmA[0], 2) + Math.pow(utmB[1] - utmA[1], 2));
 //     setDistanceExactMts(distancePrecise);
@@ -168,20 +165,20 @@ const DetailVisit = () => {
       switch (typeOption) {
         case 1: {
           try {
-            const GetVisit = await GetVisitByID(data.IdRegistro);
-            if (
-              GetVisit != null &&
-              GetVisit['<isMarkerArrival>k__BackingField'] == true
-            ) {
-              Alert.alert(
-                'Ya se marcó la llegada',
-                'Esta visita ya tiene marcado un horario de llegada',
-              );
-              return;
-            } else if (GetVisit == null) {
-              Alert.alert('Ocurrió un error', 'Intenta nuevamente por favor');
-              return;
-            }
+            // const GetVisit = await GetVisitByID(data.IdRegistro);
+            // if (
+            //   GetVisit != null &&
+            //   GetVisit['<isMarkerArrival>k__BackingField'] == true
+            // ) {
+            //   Alert.alert(
+            //     'Ya se marcó la llegada',
+            //     'Esta visita ya tiene marcado un horario de llegada',
+            //   );
+            //   return;
+            // } else if (GetVisit == null) {
+            //   Alert.alert('Ocurrió un error', 'Intenta nuevamente por favor');
+            //   return;
+            // }
             if (!DrivingVisitDetail.isRouteInCourse && typeOption == 1) {
               Alert.alert(
                 'Inicie primero el viaje antes de marcar su Llegada ',
@@ -194,8 +191,8 @@ const DetailVisit = () => {
               if((distanceExactMts!=null )  &&  distanceExactMts>distancePermited){
                 Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+distancePermited+" mts");
                 return;
-              }  
-            }                 
+              }
+            }
             let isValidUUID = await AsyncStorageGetData('@uuid');
 
             // const getCoords = await GetGeolocation();
@@ -278,7 +275,7 @@ const DetailVisit = () => {
               );
               navigation.navigate('FormCreateRoute');
             } else if (resultUpdate != null && !resultUpdate.Resultado) {
-              Alert.alert('Alerta', resultUpdate.Mensaje);
+              Alert.alert('Intente nuevamente', resultUpdate.Mensaje);
             }
           } catch (ex) {
             Alert.alert('Error', '' + ex);
@@ -469,12 +466,12 @@ const DetailVisit = () => {
                 }} style={ styles.iconStyle} name="car" size={30} color="black" />
                 <Icon onPress={()=>{
                   HandleChangeModeNavigation("WALKING");
-                }} style={ styles.iconStyle}  name="walking" size={30} color="black" />                
-              </View>              
+                }} style={ styles.iconStyle}  name="walking" size={30} color="black" />
+              </View>
               <Text style={{color: 'gray', fontSize: 13,fontWeight:800}}> Modo de navegación {ModeNavigate} Activado</Text>
               <Button
                 onPress={ () => {
-                   ReloadLocation();                  
+                   ReloadLocation();
                 }}
                 style={styles.button4}>
                 <Text style={{fontSize: 13, color: 'white'}}> Refrescar </Text>
@@ -502,7 +499,7 @@ const DetailVisit = () => {
                   }}></RenderStaticMap>
               ) : null}
             </View>
-          :null}        
+          :null}
         </View>
       </View>
     </ScrollView>
@@ -557,11 +554,11 @@ const styles = StyleSheet.create({
   },
   TextBold:{
     fontWeight:800,
-    color:'black'    
+    color:'black'
   },
   TextAlert:{
     fontWeight:800,
-    color:'red'  
+    color:'red'
   },
   iconStyle:{
     padding:10
