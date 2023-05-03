@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-const SearchableDropdownV2 = ({ items, onItemSelected }) => {
+const SearchableDropdownV2 = ({ items, onItemSelected,placeHolder="Buscar" }) => {
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState(items);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -37,7 +37,7 @@ const SearchableDropdownV2 = ({ items, onItemSelected }) => {
         <TextInput
           ref={inputRef}
           style={styles.input}
-          placeholder="Buscar"
+          placeholder={placeHolder}
           value={searchText}
           onChangeText={handleSearch}
           placeholderTextColor={"#b3b2b7"}

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, TextInput, ScrollView, Alert} from 'react-native';
+import {StyleSheet, TextInput, ScrollView} from 'react-native';
 import {View} from 'react-native-ui-lib';
 import {ColorBackround} from '../../Assets/Colors/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';

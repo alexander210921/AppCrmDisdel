@@ -3,15 +3,12 @@ import {
   View,  
   Text,
   LoaderScreen,
-  ActionSheet,
-  Button
+  
 } from 'react-native-ui-lib';
 import {useForm, Controller} from 'react-hook-form';
-import {TextInput, StyleSheet, Alert} from 'react-native';
+import {TextInput, StyleSheet, Alert,ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary';
-import {ScrollView} from 'react-native-gesture-handler';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import {
   AddVisit,
   LoadSetRegisterVisit,
@@ -138,7 +135,9 @@ const FormCreateVisit = () => {
   //   }
   // }
   return (
-    <ScrollView   keyboardShouldPersistTaps ="always"
+    <View style={{flex:1}} >
+      <View style={{height:'100%'}}>
+    <ScrollView contentContainerStyle={{paddingBottom: 20}} keyboardShouldPersistTaps ="always"
     >
       <View>
         <Controller
@@ -188,28 +187,14 @@ const FormCreateVisit = () => {
           name="Tema"
         />
         <View >
-        <Text style={styles.TextInformation} >{idAddressVisit.ShiptoCodeAddress+" / "+idAddressVisit.AddressName}</Text>
-          {/* <ButtonPrimary label=" Destino" HandleClick={openMap}></ButtonPrimary> */}
-          {/* <Button color="white" style={styles.buttonAdress} label={'Seleccionar Dirección'} size={Button.sizes.small} backgroundColor={"#f1c28b"} onPress={HandleViewPanelAdress}/> */}
+        <Text style={styles.TextInformation} >{idAddressVisit.ShiptoCodeAddress+" / "+idAddressVisit.AddressName}</Text>                    
         </View>
         <View accessible={true} accessibilityRole='button' >
-          <SearchableDropdownV2 items={AdressCustomer} onItemSelected={SelectAdress}></SearchableDropdownV2>
+          <SearchableDropdownV2 placeHolder='Busca la dirección' items={AdressCustomer} onItemSelected={SelectAdress}></SearchableDropdownV2>
         </View>
         
 
-        <View style={styles.ContainerMargin}>
-          {/* <ActionSheet
-            visible={ViewPanelAdress}
-            title={'Direcciones'}
-            message={'Message goes here'}
-            cancelButtonIndex={3}
-            destructiveButtonIndex={0}
-            options={AdressCustomer}
-            onDismiss={() => {
-              SetViewPannelAdress(false);
-            }}
-          /> */}
-
+        <View style={styles.ContainerMargin}>        
           {CustomerSelect.loadSetVisit ? (
             <LoaderScreen color="black" overlay></LoaderScreen>
           ) : (
@@ -220,6 +205,8 @@ const FormCreateVisit = () => {
         </View>
       </View>
     </ScrollView>
+    </View>
+    </View>
   );
 };
 export default FormCreateVisit;
