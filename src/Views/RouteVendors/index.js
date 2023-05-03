@@ -31,6 +31,7 @@ const HomeRouteVendors = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigator = useNavigation();  
   const company = useSelector(state=>state.company.CompanySelected);
+  const [loadGetVisit,setLoadGetVisit]=useState(false);
   const pastelColors = ['#E5D8CF', '#B7DDE8', '#E8D9B9', '#C4D7CF','#CED3F2','#f2f2f2'];
   const dispatch = useDispatch();
   BackHanlder(navigation,dispatch);
@@ -105,7 +106,8 @@ const HomeRouteVendors = () => {
 
   const HandleGoToVisitCustumer=async()=>{
     try{
-      dispatch(LoadGetVisitActuality(true));      
+      //dispatch(LoadGetVisitActuality(true));
+      setLoadGetVisit(true);
      const visits = await FunctionGetCurrentVisit(Rol[0].IdRelacion,dispatch,true,navigator);
      if(visits!=null && visits.length > 0){
       dispatch(SetVisiActualityt(visits));                      
@@ -115,7 +117,8 @@ const HomeRouteVendors = () => {
     }catch(ex){
       Alert.alert(""+ex);
     } finally{
-      dispatch(LoadGetVisitActuality(false)); 
+      //dispatch(LoadGetVisitActuality(false)); 
+      setLoadGetVisit(false);
       navigation.navigate("VisitCreated");
     }
   }
@@ -163,7 +166,7 @@ const HomeRouteVendors = () => {
         }
         <Image style={{width:'25%',height:'25%'}} source={ company?.EntityID==1009? imagePathLyG:imagePath} ></Image>
       </View>
-      {listVisit.loadGetCurrentVisit?
+      {listVisit.loadGetCurrentVisit || loadGetVisit ?
       <LoaderScreen color="black" message="" ></LoaderScreen>:null
       }
       
