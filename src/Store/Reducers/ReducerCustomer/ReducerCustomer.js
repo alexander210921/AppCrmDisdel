@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED,SAVE_IS_ARRIVE_OR_END_VISIT,SAVE_CONTACT_PERSON_CUSTOMER} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED,SAVE_IS_ARRIVE_OR_END_VISIT,SAVE_CONTACT_PERSON_CUSTOMER,LOAD_REFRESH_LOCATION} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -12,7 +12,9 @@ const initialState = {
     VisitDetailSelected:null,
     loadUpdateVisit:false,
     VisitArriveOrEnd:null,
-    ListContactPerson:[]   
+    ListContactPerson:[],
+    LoadRefreshLocation:false
+       
 };
     
   export default  function  (state = initialState, action) {
@@ -51,7 +53,8 @@ const initialState = {
           VisitDetailSelected:null,
           loadUpdateVisit:false,
           VisitArriveOrEnd:null,
-          ListContactPerson:[]  
+          ListContactPerson:[],
+          LoadRefreshLocation:false  
         }     
       case SET_VISIT_ACTUALITY:
         return{
@@ -109,7 +112,12 @@ const initialState = {
         return {
           ...state,
           ListContactPerson:action.payload
-        }       
+        }
+      case LOAD_REFRESH_LOCATION:
+        return{
+          ...state,
+          LoadRefreshLocation:action.payload
+        }         
       default:
         return state;
     }

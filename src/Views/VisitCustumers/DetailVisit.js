@@ -17,10 +17,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import StylesWrapper from '../../Styles/Wrapers';
 import {
   DeleteVisit,
+  DistanceValidation,
   FunctionSetCoordsDetail,
   FunctionUpdateVisit,
   GetContactPersonCardCode,
   GetVisitByID,
+  LoadRefreshLocation,
   LoadUpdateVisit,
   SaveContactPerson,
   SaveIsArriveOrNotTheVisit, 
@@ -68,21 +70,31 @@ const DetailVisit = () => {
     setModeNavigate(mode);
   }
   const ReloadLocation = async () => {
-    const getCoords = await GetGeolocation();
-    if (!getCoords.Status) {
-      Alert.alert('Alerta', '' + getCoords.Message);
-      return;
+    try{
+      if(isLoadUpadateVisit.LoadRefreshLocation){
+        Alert.alert("","Se está trabajando para obtener su ubicación actual, espere por favor");
+        return;
+      }
+      dispatch(LoadRefreshLocation(true));
+      const getCoords = await GetGeolocation();
+      if (!getCoords.Status) {
+        Alert.alert('Alerta', '' + getCoords.Message);
+        dispatch(LoadRefreshLocation(false));
+        return;
+      }
+      const coords = {
+        Latitud: getCoords.Data.coords.latitude,
+        Longitud: getCoords.Data.coords.longitude,
+    };
+      dispatch(
+        SetActualityCoords({
+          latitude: coords.Latitud,
+          longitude: coords.Longitud,
+        }),
+      );
+    }finally{
+      dispatch(LoadRefreshLocation(false));
     }
-    const coords = {
-      Latitud: getCoords.Data.coords.latitude,
-      Longitud: getCoords.Data.coords.longitude,
-  };
-    dispatch(
-      SetActualityCoords({
-        latitude: coords.Latitud,
-        longitude: coords.Longitud,
-      }),
-    );
   };
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -158,33 +170,24 @@ const DetailVisit = () => {
     try {
       dispatch(LoadUpdateVisit(true));
       switch (typeOption) {
-        case 1: {
-          try {
-            // const GetVisit = await GetVisitByID(data.IdRegistro);
-            // if (
-            //   GetVisit != null &&
-            //   GetVisit['<isMarkerArrival>k__BackingField'] == true
-            // ) {
-            //   Alert.alert(
-            //     'Ya se marcó la llegada',
-            //     'Esta visita ya tiene marcado un horario de llegada',
-            //   );
-            //   return;
-            // } else if (GetVisit == null) {
-            //   Alert.alert('Ocurrió un error', 'Intenta nuevamente por favor');
-            //   return;
-            // }
+        case 1: {          
+          try {         
             if (!DrivingVisitDetail.isRouteInCourse && typeOption == 1) {
               Alert.alert(
                 'Inicie primero el viaje antes de marcar su Llegada ',
               );
               return;
             }
-            const distancePermited = 300;
+            let DefaultDistance = 300; //mts
+          const distance = await DistanceValidation();
+          if(distance!=null &&distance["<validationDistance>k__BackingField"]!=null){
+            DefaultDistance = distance["<validationDistance>k__BackingField"];
+          }
+            //const distancePermited = 300;
             //Alert.alert(""+distanceExactMts);
             if(data.EsRegreso == 'N'){
-              if((distanceExactMts!=null )  &&  distanceExactMts>distancePermited){
-                Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+distancePermited+" mts");
+              if((distanceExactMts!=null )  &&  distanceExactMts>DefaultDistance){
+                Alert.alert("Fuera de rango","Se encuentra a "+distanceExactMts +" mts de su destino, debe de estar en un rango de "+DefaultDistance+" mts");
                 return;
               }
             }
@@ -435,7 +438,7 @@ const DetailVisit = () => {
                 onPress={ () => {
                    ReloadLocation();
                 }}
-                style={styles.button4}>
+                style={ isLoadUpadateVisit.LoadRefreshLocation?styles.ButtonDisbledStyle :styles.button4}>
                 <Text style={{fontSize: 13, color: 'white'}}> Refrescar </Text>
               </Button>
             </View>
@@ -524,5 +527,11 @@ const styles = StyleSheet.create({
   },
   iconStyle:{
     padding:10
+  },
+  ButtonDisbledStyle:{
+    width: 40,
+    backgroundColor: '#f2f2f2',
+    color: '#a9a9a9',
+    margin: '1%',
   }
 });

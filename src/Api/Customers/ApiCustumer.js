@@ -19,7 +19,8 @@ import {
   SAVE_VISIT_CREATED,
   ADD_VISIT_CREATED,
   SAVE_IS_ARRIVE_OR_END_VISIT,
-  SAVE_CONTACT_PERSON_CUSTOMER
+  SAVE_CONTACT_PERSON_CUSTOMER,
+  LOAD_REFRESH_LOCATION
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -231,6 +232,15 @@ export async function GetMileagueByIdVisit (idvisit){
     return null;
   }
 }
+export async function DistanceValidation(){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/DistanceValid/");
+    return data;
+  }catch(ex){
+    //Alert.alert(""+ex);
+    return null;
+  }
+}
 export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
   try{
     const {data} = await Axios.get("MyWsOneVenta/api/OCRDExternoActividadVisita/GetKilometrajeInicio/"+IdUsuario+"/"+TypeMileage+"/");
@@ -372,4 +382,9 @@ export const SaveIsArriveOrNotTheVisit=(status)=>({
 export const SaveContactPerson=(ListContactPerson)=>({
   type:SAVE_CONTACT_PERSON_CUSTOMER,
   payload:ListContactPerson
+});
+
+export const LoadRefreshLocation=(Status)=>({
+  type:LOAD_REFRESH_LOCATION,
+  payload:Status
 });
