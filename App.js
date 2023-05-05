@@ -1,14 +1,11 @@
 import React, {useEffect} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
-import {Dimensions} from 'react-native';
-import {ColorBackround,ColorBackroundSecundary} from './src/Assets/Colors/Colors';
+import { ScrollView, StyleSheet, View} from 'react-native';
+import {ColorBackroundSecundary} from './src/Assets/Colors/Colors';
 import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation/Navigation';
 import {Provider} from 'react-redux';
 import store1 from './src/Store/Store';
 import {requestLocationPermission} from './src/lib/Permissions/Geolocation/index';
-
-const windowHeight = Dimensions.get('window').height;
 function App() {  
   useEffect(() => {
     async function ValidateAccesGPS() {      
@@ -18,17 +15,17 @@ function App() {
   }, []); 
   return (
     <Provider store={store1}>
-      <SafeAreaView style={styles.WrapperApp}>
+      <View style={{flex:1}}>
+      <View style={styles.WrapperLogin}>
         <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.WrapperApp}>
-          <View style={styles.WrapperLogin}>
+          contentContainerStyle={{flexGrow:1}}
+          >
             <NavigationContainer>
               <Navigation></Navigation>
             </NavigationContainer>
-          </View>
         </ScrollView>
-      </SafeAreaView>
+        </View>
+        </View>
     </Provider>
   );
 }
@@ -38,7 +35,7 @@ const styles = StyleSheet.create({
   },
   WrapperLogin: {
     backgroundColor: ColorBackroundSecundary,
-    height: windowHeight,
+    height: '100%',
   },
 });
 
