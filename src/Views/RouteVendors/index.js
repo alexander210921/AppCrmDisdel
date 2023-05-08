@@ -25,6 +25,7 @@ import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 const imagePath = require('../../Assets/Images/logoDisdel.png');
 const imagePathLyG = require('../../Assets/Images/logoLyG.png');
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { GetListProductByCompany, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
 
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
@@ -35,6 +36,7 @@ const HomeRouteVendors = () => {
   const navigator = useNavigation();
   const company = useSelector(state => state.company.CompanySelected);
   const [loadGetVisit, setLoadGetVisit] = useState(false);
+  const [loadGetProduct,setLoadGetProduct] = useState(false);
   const pastelColors = [
     '#E5D8CF',
     '#B7DDE8',
@@ -111,9 +113,22 @@ const HomeRouteVendors = () => {
       dispatch(LoadGetVisitActuality(false));
     }
   };
-
   const HandleGoBases = () => {
     navigation.navigate('MenuEndVisit');
+  };
+  const HandleGetProduct =async () => {  
+    try{
+      setLoadGetProduct(true);
+   const ListProduct =  await GetListProductByCompany(company?.NombreDB);
+   if(ListProduct==null||ListProduct?.length==0 ){
+    Alert.alert("","No se encontraron productos");
+    return;
+   }
+   dispatch(SaveProductsByCompany(ListProduct));   
+    }finally{
+      setLoadGetProduct(false);
+    }  
+    
   };
   const HandleGoGasoline = () => {
     navigation.navigate('FormGasoline');
@@ -181,7 +196,7 @@ const HomeRouteVendors = () => {
     <View style={styles.WrapperCustomer}>
       <View style={{height: '100%'}}>
         <ScrollView contentContainerStyle={{paddingBottom: 50}}>
-          {listVisit.loadGetCurrentVisit || loadGetVisit ? (
+          {listVisit.loadGetCurrentVisit || loadGetVisit || loadGetProduct ? (
             <LoaderScreen
               style={{height: '4%'}}
               color="black"
@@ -246,7 +261,7 @@ const HomeRouteVendors = () => {
                 color={pastelColors[4]}
               />
               <PastelCard
-                onPress={HandleGoBases}
+                onPress={HandleGetProduct}
                 nameIcon="cart"
                 title="Productos"
                 color={pastelColors[6]}

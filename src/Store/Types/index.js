@@ -3,3 +3,4 @@ export *from './TypesCompany/TypesCompany'
 export *from "./TypesRoles/TypesRoles"
 export *from "./TypesMileage/TypesMileage"
 export *from "./TypesCustomer/TypesCustomer"
+export *from './TypesProduct/TypesProduct'

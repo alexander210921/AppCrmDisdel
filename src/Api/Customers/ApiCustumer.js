@@ -24,7 +24,6 @@ import {
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
-import {AsyncStorageDeleteData} from '../../lib/AsyncStorage';
 //import { SaveIdWatch, SaveUUIDRoute,SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
 export const GetCustumerVendor = (IdRelatoin, SearchTerm, dispatch) => {
   try {
