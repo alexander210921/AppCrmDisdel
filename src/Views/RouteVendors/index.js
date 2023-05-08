@@ -42,6 +42,7 @@ const HomeRouteVendors = () => {
     '#C4D7CF',
     '#CED3F2',
     '#f2f2f2',
+    "#b5ead7"
   ];
   const dispatch = useDispatch();
   BackHanlder(navigation, dispatch);
@@ -243,6 +244,12 @@ const HomeRouteVendors = () => {
                 nameIcon="warehouse"
                 title="Ir a base"
                 color={pastelColors[4]}
+              />
+              <PastelCard
+                onPress={HandleGoBases}
+                nameIcon="cart"
+                title="Productos"
+                color={pastelColors[6]}
               />
             </View>
           </View>
