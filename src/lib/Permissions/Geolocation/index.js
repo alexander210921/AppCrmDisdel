@@ -1,8 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {PermissionsAndroid, Alert,Platform} from 'react-native';
 import { SaveIdWatch,FunctionSetCoordsDetail } from '../../../Api/Customers/ApiCustumer';
-import { check, PERMISSIONS, request } from 'react-native-permissions';
-
 export async function requestLocationPermission() {
   let PermissionIsOk = false;
   try {
@@ -114,35 +112,3 @@ export const getLocationInBackground = async () => {
 
   const location = await locationPromise;
 };
-export async function requestBackgroundLocationPermission() {
-  let permission;
-  if (Platform.OS === 'ios') {
-    permission = PERMISSIONS.IOS.LOCATION_ALWAYS;
-  } else if (Platform.OS === 'android') {
-    permission = PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION;
-  }
-
-  try {
-    const result = await check(permission);
-    if (result === 'granted') {
-      console.log('Permiso de ubicación en segundo plano ya concedido');
-      return true;
-    }
-    if (result === 'blocked') {
-      console.log('Permiso de ubicación en segundo plano anteriormente bloqueado');
-      return false;
-    }
-    if (result === 'denied') {
-      const status = await request(permission);
-      if (status === 'granted') {
-        console.log('Permiso de ubicación en segundo plano co  ncedido');
-        return true;
-      }
-      console.log('Permiso de ubicación en segundo plano denegado');
-      return false;
-    }
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-}

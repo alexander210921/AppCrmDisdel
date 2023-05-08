@@ -1,7 +1,6 @@
-import {  toByteArray } from 'react-native-quick-base64';
 import RNFetchBlob from 'rn-fetch-blob';
 export function _base64ToArrayBuffer(base64) {    
-   return  toByteArray(base64);
+   return  null;
 }
 export async function sendFileToServer(fileUri) {  
  try{

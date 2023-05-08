@@ -9,7 +9,6 @@ import {
 } from '../../Api/Vendors/ApiVendors';
 import {useDispatch, useSelector} from 'react-redux';
 import { launchImageLibrary} from 'react-native-image-picker';
-import {_base64ToArrayBuffer} from '../../lib/Converts/index';
 
 import { useNavigation } from '@react-navigation/native';
 import {  SaveSelectVisitDetail } from '../../Api/Customers/ApiCustumer';
