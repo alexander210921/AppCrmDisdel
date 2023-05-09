@@ -15,6 +15,7 @@ import SelectRol from '../Views/Rol/SelectRol';
 import FormFinaliceVisit from '../Views/VisitCustumers/VisitFinaliceForm';
 import MenuEndVisit from '../Views/VisitCustumers/MenuEndCreatedVisit';
 import FormGasoline from '../Views/Gasoline/IndexGasoline';
+import ListProductHome from '../Views/Product/ListProduct';
 import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 export default function StackNavigation() {
@@ -151,6 +152,14 @@ export default function StackNavigation() {
         options={{
           title: '',
           headerShown: true,
+        }}
+      />
+       <Stack.Screen
+        name="ListProductHome"
+        component={ListProductHome}
+        options={{
+          title: '',
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

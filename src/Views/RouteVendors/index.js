@@ -37,6 +37,7 @@ const HomeRouteVendors = () => {
   const company = useSelector(state => state.company.CompanySelected);
   const [loadGetVisit, setLoadGetVisit] = useState(false);
   const [loadGetProduct,setLoadGetProduct] = useState(false);
+  const ListProducts = useSelector(state=>state.Product.ListProductCompany);    
   const pastelColors = [
     '#E5D8CF',
     '#B7DDE8',
@@ -117,15 +118,18 @@ const HomeRouteVendors = () => {
     navigation.navigate('MenuEndVisit');
   };
   const HandleGetProduct =async () => {  
-    try{
-      setLoadGetProduct(true);
-   const ListProduct =  await GetListProductByCompany(company?.NombreDB);
-   if(ListProduct==null||ListProduct?.length==0 ){
-    Alert.alert("","No se encontraron productos");
-    return;
-   }
-   dispatch(SaveProductsByCompany(ListProduct));   
-    }finally{
+    try {
+      if (ListProducts && ListProducts.length == 0) {
+        setLoadGetProduct(true);
+        const ListProduct = await GetListProductByCompany(company?.NombreDB);
+        if (ListProduct == null || ListProduct?.length == 0) {
+          Alert.alert('', 'No se encontraron productos');
+          return;
+        }
+        dispatch(SaveProductsByCompany(ListProduct));
+      }      
+      navigation.navigate('ListProductHome');
+    } finally {
       setLoadGetProduct(false);
     }  
     
