@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 const ListProductHome = () => {
   const ListProducts = useSelector(state => state.Product.ListProductCompany);
   return (
-    <ScrollView>
+    <ScrollView style={styles.BackroundColor}>
       <View flex>
         {ListProducts ? (
           <ListProduct ListData={ListProducts}></ListProduct>
@@ -18,7 +18,7 @@ const ListProductHome = () => {
 export default ListProductHome;
 
 const styles = StyleSheet.create({
-  InputStyle: {
-    color: '#a2a3a5',
+  BackroundColor: {
+    backgroundColor: '#f5f4f0',
   },
 });
