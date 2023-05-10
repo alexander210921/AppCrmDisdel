@@ -112,6 +112,7 @@ const ListProduct = ({ListData}) => {
           <TextInput
             style={styles.input}
             placeholder={'Buscar Producto'}
+            autoFocus={true}
             //value={searchText}
             onChangeText={handleSearch}
             onBlur={onSearch}
