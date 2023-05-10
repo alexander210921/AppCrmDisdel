@@ -10,7 +10,7 @@ import {
 import {StyleSheet, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {PageControl, Colors, View} from 'react-native-ui-lib';
-const ListProduct = ({ListData}) => {
+const ListProduct = ({ListData, scrollToTop}) => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
@@ -148,6 +148,9 @@ const ListProduct = ({ListData}) => {
               <TouchableOpacity
                 onPress={() => {
                   setCurrentPage(currentPage - 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
                 }}
                 disabled={currentPage === 1}>
                 <Icon
@@ -162,6 +165,9 @@ const ListProduct = ({ListData}) => {
               <TouchableOpacity
                 onPress={() => {
                   setCurrentPage(currentPage + 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
                 }}
                 disabled={
                   currentPage === Math.ceil(QuantityItems / todosPerPage)
