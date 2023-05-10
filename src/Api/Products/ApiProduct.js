@@ -1,4 +1,4 @@
-import { GET_PRODUCTS_BY_COMPANY } from '../../Store/Types';
+import { GET_PRODUCTS_BY_COMPANY,SAVE_PRODUCT_FOR_VIEW } from '../../Store/Types';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native'
 export async function GetListProductByCompany (NombreDB=""){
@@ -13,4 +13,9 @@ export async function GetListProductByCompany (NombreDB=""){
   export const SaveProductsByCompany = data => ({
     type: GET_PRODUCTS_BY_COMPANY,
     payload: data,
+  });
+
+  export const SaveProductSelectForView = product => ({
+    type: SAVE_PRODUCT_FOR_VIEW,
+    payload: product,
   });
