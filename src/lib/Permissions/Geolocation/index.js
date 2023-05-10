@@ -104,11 +104,4 @@ export const StartRealTimeCoords=async(dispatch,uuid='',distanceFilter=5,IdUsuar
   }
    
 }
-export const getLocationInBackground = async () => {
-  const locationOptions = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000,distanceFilter:0 };
-  const locationPromise = new Promise((resolve, reject) => {
-    Geolocation.getCurrentPosition(resolve, reject, locationOptions);
-  });
 
-  const location = await locationPromise;
-};
