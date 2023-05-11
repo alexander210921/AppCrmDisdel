@@ -44,13 +44,13 @@ const ViewLogin = () => {
         //dispatch(LoadGetUser(false));  
       }      
     };
-    React.useLayoutEffect(() => {
-      navigation.setOptions({
-        gestureEnabled: false,
-        edgeWidth: 0, // Desactivar el gesto de deslizar para abrir el menú
-      });
-    }, [navigation]);
-    React.useLayoutEffect(() => {
+    // React.useLayoutEffect(() => {
+    //   navigation.setOptions({
+    //     gestureEnabled: false,
+    //     edgeWidth: 0, // Desactivar el gesto de deslizar para abrir el menú
+    //   });
+    // }, [navigation]);
+    useEffect(() => {
       AsyncStorageGetData("@dataRoute").then(res=>{
         try{
           if(res!=null){

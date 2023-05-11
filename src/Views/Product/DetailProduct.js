@@ -155,8 +155,16 @@ const DetailProduct = () => {
       </View>
       <View style={{marginTop: '5%', marginBottom: '1%'}}>
         <TouchableOpacity style={styles.buyButton}>
-          <Text style={styles.buyButtonText}>Comprar</Text>
-          
+            <View style={{display:'flex',flexDirection:'row'}}>
+            <Text style={styles.buyButtonText}>Comprar</Text>
+          <Icon
+                name={'shopping-outline'}
+                size={20}
+                color="#FF8000"
+                style={styles.icon}
+              />
+            </View>
+         
         </TouchableOpacity>
         {/* </View> */}
         
