@@ -10,7 +10,10 @@ import {
 import {StyleSheet, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {PageControl, Colors, View} from 'react-native-ui-lib';
-const ListProduct = ({ListData, scrollToTop}) => {
+import { SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+const ListProduct = ({ListData, scrollToTop,viewButtonControls=true}) => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
@@ -21,6 +24,8 @@ const ListProduct = ({ListData, scrollToTop}) => {
   const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
   const [quantity, setQuantity] = useState(1);
   const [QuantityItems, setQuantityItems] = useState(0);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const currentTodos = useMemo(() => {
     return filteredItems.length > 0
       ? filteredItems.slice(indexOfFirstTodo, indexOfLastTodo)
@@ -65,7 +70,12 @@ const ListProduct = ({ListData, scrollToTop}) => {
     item,
   }) => {
     return (
-      <View style={styles.containerCard}>
+      <TouchableOpacity onPress={()=>{        
+        dispatch(SaveProductSelectForView(item));        
+        navigation.navigate("DetailProduct");
+        
+      }} style={styles.containerCard} >
+      {/* <View style={styles.containerCard}> */}
         <Icon name={nameIcon} size={30} color="#9089dd" style={styles.icon} />
 
         <Image
@@ -81,7 +91,8 @@ const ListProduct = ({ListData, scrollToTop}) => {
         <Text style={{color: 'gray'}}>{item.IdProducto}</Text>
         <Text style={styles.description}>{item.Descripcion}</Text>
         <Text style={styles.price}>Q. {item.PrecioDeLista}</Text>
-        <View style={styles.quantityContainer}>
+        {viewButtonControls ? 
+          <View style={styles.quantityContainer}>
           <TouchableOpacity
             onPress={() => handleQuantityChange(quantity - 1)}
             disabled={quantity === 1}>
@@ -99,10 +110,14 @@ const ListProduct = ({ListData, scrollToTop}) => {
             <Text style={[styles.quantityButton, {marginLeft: 10}]}>{'+'}</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
+        :null}
+        {viewButtonControls ? 
+          <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
           <Text style={styles.addButtonText}>Agregar al carrito</Text>
         </TouchableOpacity>
-      </View>
+        :null}        
+      {/* </View> */}
+      </TouchableOpacity>
     );
   };
   return (
