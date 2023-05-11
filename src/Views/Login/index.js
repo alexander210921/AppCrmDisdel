@@ -50,7 +50,7 @@ const ViewLogin = () => {
         edgeWidth: 0, // Desactivar el gesto de deslizar para abrir el menú
       });
     }, [navigation]);
-    useEffect(() => {
+    React.useLayoutEffect(() => {
       AsyncStorageGetData("@dataRoute").then(res=>{
         try{
           if(res!=null){
@@ -78,6 +78,8 @@ const ViewLogin = () => {
           }); 
           control._defaultValues.userName = userInfo.NameUser;
           control._defaultValues.userPassword = userInfo.PasswordUser;
+          dispatch(LoadGetUser(true));
+          LoginUser(userInfo.NameUser, userInfo.PasswordUser, dispatch,navigation);
         }        
       });
      }catch{
