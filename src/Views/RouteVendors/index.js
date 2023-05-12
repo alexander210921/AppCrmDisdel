@@ -45,7 +45,8 @@ const HomeRouteVendors = () => {
     '#C4D7CF',
     '#CED3F2',
     '#f2f2f2',
-    "#b5ead7"
+    "#F6F6EB",
+    "#F5D5CB",
   ];
   const dispatch = useDispatch();
   BackHanlder(navigation, dispatch);
@@ -150,7 +151,7 @@ const HomeRouteVendors = () => {
       );
       if (visits != null && visits.length > 0) {
         dispatch(SetVisiActualityt(visits));
-      } else if (visits.length == 0) {
+      } else if (visits != null && visits.length == 0) {
         dispatch(SetVisiActualityt([]));
       }
     } catch (ex) {
@@ -269,6 +270,14 @@ const HomeRouteVendors = () => {
                 nameIcon="cart"
                 title="Productos"
                 color={pastelColors[6]}
+              />
+            </View>
+            <View style={styles.row}>
+            <PastelCard
+                onPress={HandleGetProduct}
+                nameIcon="shopping-outline"
+                title="Pedidos"
+                color={pastelColors[7]}
               />
             </View>
           </View>
