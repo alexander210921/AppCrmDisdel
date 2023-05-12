@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const DetailProduct = () => {
   const product = useSelector(state => state.Product.ProductView);
  
-  console.log(product);
+  // console.log(product);
   return (
     <ScrollView style={styles.BackroundColor}>
          <View style={{backgroundColor:'#fff',margin:0,width:'100%',padding:10}} >
@@ -156,7 +156,7 @@ const DetailProduct = () => {
       <View style={{marginTop: '5%', marginBottom: '1%'}}>
         <TouchableOpacity style={styles.buyButton}>
             <View style={{display:'flex',flexDirection:'row'}}>
-            <Text style={styles.buyButtonText}>Comprar</Text>
+            <Text style={styles.buyButtonText}>Agregar</Text>
           <Icon
                 name={'shopping-outline'}
                 size={20}
