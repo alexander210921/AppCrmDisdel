@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-const DetailProduct = () => {
+const DetailProduct = ({ViewButtonsAction = false}) => {
   const product = useSelector(state => state.Product.ProductView);
  
   // console.log(product);
@@ -127,48 +127,53 @@ const DetailProduct = () => {
         </View>
         <View style={styles.column}>
           {/* Aquí iría el contenido de la segunda columna */}
-          <Text style={styles.titleQuantity}>Cantidad</Text>
-          <View style={styles.containerQuantity}>
-            <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
-              <Icon
-                name={'minus-box'}
-                size={30}
-                color="black"
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TextField
-              onChangeText={text => console.log(text)}
-              keyboardType="numeric"
-              style={styles.inputQuantity}
-            />
-            <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
-              <Icon
-                name={'plus-box'}
-                size={30}
-                color="orange"
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          </View>
+          {ViewButtonsAction ? <Text style={styles.titleQuantity}>Cantidad</Text> :null}
+          {ViewButtonsAction ? 
+           <View style={styles.containerQuantity}>
+             <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
+               <Icon
+                 name={'minus-box'}
+                 size={30}
+                 color="black"
+                 style={styles.icon}
+               />
+             </TouchableOpacity>
+             <TextField
+               onChangeText={text => console.log(text)}
+               keyboardType="numeric"
+               style={styles.inputQuantity}
+             />
+             <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
+               <Icon
+                 name={'plus-box'}
+                 size={30}
+                 color="orange"
+                 style={styles.icon}
+               />
+             </TouchableOpacity>
+           </View>
+          :null}
+         
         </View>
       </View>
-      <View style={{marginTop: '5%', marginBottom: '1%'}}>
-        <TouchableOpacity style={styles.buyButton}>
-            <View style={{display:'flex',flexDirection:'row'}}>
-            <Text style={styles.buyButtonText}>Agregar</Text>
-          <Icon
-                name={'shopping-outline'}
-                size={20}
-                color="#FF8000"
-                style={styles.icon}
-              />
-            </View>
-         
-        </TouchableOpacity>
-        {/* </View> */}
-        
-      </View>
+      {ViewButtonsAction ?
+         <View style={{marginTop: '5%', marginBottom: '1%'}}>
+         <TouchableOpacity style={styles.buyButton}>
+             <View style={{display:'flex',flexDirection:'row'}}>
+             <Text style={styles.buyButtonText}>Agregar</Text>
+           <Icon
+                 name={'shopping-outline'}
+                 size={20}
+                 color="#FF8000"
+                 style={styles.icon}
+               />
+             </View>
+          
+         </TouchableOpacity>
+         {/* </View> */}
+       </View>
+      :null}
+   
     </ScrollView>
   );
 };

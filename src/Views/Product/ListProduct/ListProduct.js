@@ -13,7 +13,7 @@ import {PageControl, Colors, View} from 'react-native-ui-lib';
 import { SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-const ListProduct = ({ListData, scrollToTop,viewButtonControls=true}) => {
+const ListProduct = ({ListData, scrollToTop,viewButtonControls=false}) => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
