@@ -269,7 +269,7 @@ const VisitCreated = () => {
   };
   const HandleStopVisit = async () => {
     try {
-      dispatch(LoadGetVisitActuality(true));
+      //dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
       const cancelStatus = await StopInitVisit(null, dispatch);
       Geolocation.clearWatch(0);
@@ -432,7 +432,7 @@ const VisitCreated = () => {
             <ViewButtonsOption></ViewButtonsOption>
 
             {/* <View style={styles.upperFold} /> */}
-            {!DrivingVisitDetail.isRouteInCourse ? (
+            {!DrivingVisitDetail.isRouteInCourse || ListRoutes.loadGetCurrentVisit ? (
               <View
                 style={
                   ListRoutes.loadGetCurrentVisit
