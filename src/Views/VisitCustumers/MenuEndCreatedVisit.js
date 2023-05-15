@@ -9,7 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import {GetBasesVendor} from '../../Api/Vendors/ApiVendors';
 import CardVisit from '../../Components/Cards/Card1';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
-import {FunctionGetCustomerDefaultForRoute, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
+import {FunctionGetCustomerDefaultForRoute, LoadGetVisitActuality, SetVisitCustomer} from '../../Api/Customers/ApiCustumer';
 import {AddVisit} from '../../Api/Customers/ApiCustumer';
 import { StartNotification } from './VisitCreated';
 import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
@@ -91,18 +91,19 @@ const MenuEndVisit = () => {
               EsRegreso:'Y'
             }),
           );
-          const isValidateGPS = await GetGeolocation();
-          if(!isValidateGPS.Status){   
-            Alert.alert("","Enciende tu GPS para continuar");          
-              return;
-          }          
-          if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
-            dispatch(SetActualityCoords({
-              latitude:isValidateGPS.Data.coords.latitude,
-              longitude:isValidateGPS.Data.coords.longitude
-            }));
-          } 
-          await StartNotification(User.EntityID,"",dispatch);
+          dispatch(LoadGetVisitActuality(true));          
+          // const isValidateGPS = await GetGeolocation();
+          // if(!isValidateGPS.Status){   
+          //   Alert.alert("","Enciende tu GPS para continuar");          
+          //     return;
+          // }          
+          // if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
+          //   dispatch(SetActualityCoords({
+          //     latitude:isValidateGPS.Data.coords.latitude,
+          //     longitude:isValidateGPS.Data.coords.longitude
+          //   }));
+          // } 
+          await StartNotification(User.EntityID,"",dispatch,false,null);
           ClientDefault=null;
           navigation.navigate('VisitCreated');
         } else if (statusCreateVisit != null && !statusCreateVisit.Resultado) {
@@ -133,13 +134,11 @@ const MenuEndVisit = () => {
       const bases = await GetBasesVendor(User.EntityID);
       //validar la compania
       const CustomerDefault = await FunctionGetCustomerDefaultForRoute(User.EntityID,company.NombreDB);            
-      console.log(CustomerDefault,"Lo que trajo el API")
       if(CustomerDefault?.CardCode){
         ClientDefault = {
           CardCode:CustomerDefault.CardCode,
           CardName:CustomerDefault.CardName,
         }
-        console.log(ClientDefault,"LLENANDO")
         setDataVisitReturn(
             {
                 ...dataVisitReturn,

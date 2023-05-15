@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet} from 'react-native';
-import {Text, View, LoaderScreen, Card,Chip} from 'react-native-ui-lib';
+import {Text, View, LoaderScreen, Card, Chip} from 'react-native-ui-lib';
 import StylesWrapper from '../../Styles/Wrapers';
 import CardVisit from '../../Components/Cards/Card1';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,10 +10,14 @@ import {
   AsyncFunctionSetCoordsDetail,
   SaveUUIDRoute,
   GetVisitByID,
-  GetAddressOfCurrentVisit
+  GetAddressOfCurrentVisit,
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
-import { AsyncStorageGetData, AsyncStorageSaveData, AsyncStorageSaveDataJson} from '../../lib/AsyncStorage';
+import {
+  AsyncStorageGetData,
+  AsyncStorageSaveData,
+  AsyncStorageSaveDataJson,
+} from '../../lib/AsyncStorage';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
 import {LoadGetVisitActuality} from '../../Api/Customers/ApiCustumer';
 import {StartInitVisit, StopInitVisit} from '../../lib/Visits/index';
@@ -24,105 +28,148 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import SearchBar from '../../Components/SearchBar';
 import BackgroundService from 'react-native-background-actions';
-import  geolocation from '@react-native-community/geolocation';
-import { GetGeolocation } from '../../lib/Permissions/Geolocation';
+import geolocation from '@react-native-community/geolocation';
+import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 import Geolocation from '@react-native-community/geolocation';
-import { generateUUID } from '../../lib/UUID';
-import { SetIsInitDrivingVisit } from '../../Api/Customers/ApiCustumer';
-import { SaveIsArriveOrNotTheVisit } from '../../Api/Customers/ApiCustumer';
-import { GetMileagueByIdVisit } from '../../Api/Customers/ApiCustumer';
-import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
-import { SetActualityCoords } from '../../Api/User/ApiUser';
+import {generateUUID} from '../../lib/UUID';
+import {SetIsInitDrivingVisit} from '../../Api/Customers/ApiCustumer';
+import {SaveIsArriveOrNotTheVisit} from '../../Api/Customers/ApiCustumer';
+import {GetMileagueByIdVisit} from '../../Api/Customers/ApiCustumer';
+import {BackHanlderMenuPrincipal} from '../../lib/ExitApp';
+import {SetActualityCoords} from '../../Api/User/ApiUser';
+import {StartBackroundInitCoordsRoute} from '../../Components/GeoBackround';
 
-export const StartNotification=async(userId=0,uuId="",dispatch)=>{     
-const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
-const veryIntensiveTask2 = async (taskDataArguments) => {
-try{
-  let uuid;
-  let isValidUUID = await AsyncStorageGetData("@uuid");
-  if (isValidUUID==null || isValidUUID == '' ) {
-    uuid = generateUUID();
-    await AsyncStorageSaveData("@uuid",uuid);
-  } else {
-    uuid = isValidUUID;
-  }   
-  uuId = uuid;
-  dispatch(SaveUUIDRoute(uuid));       
-  dispatch(SetIsInitDrivingVisit(true)); 
-  const infoRoute = {
-    DatevalidId: new Date().toLocaleDateString(),
-    UUidInProgress: uuid,
-    IdVisitInProgress: 0,
-    isRouteInCourse: true,
-    IdWatch:0,
-    idUsuario:userId
-  };
-  await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
+export const StartNotification = async (
+  userId = 0,
+  uuId = '',
+  dispatch,
+  Navigate = false,
+  nav = null,
+) => {
+  //await StartBackroundInitCoordsRoute(dispatch);
 
-    const { delay } = taskDataArguments; 
-    await new Promise( async (resolve) => {
-        for (let i = 0; BackgroundService.isRunning(); i++) {                        
-            let currentPosition = null;
-            const { coords } = await new Promise((resolve, reject) => {
-              currentPosition =  geolocation.watchPosition(resolve, reject, { enableHighAccuracy: true,timeout:20000,maximumAge:0,distanceFilter:100 });
-            });            
-            try{
-              const data = {
-                Latitud:coords.latitude,
-                Longitud:coords.longitude,
-                UUIRecorrido:uuId,
-                idUsuario:userId
-              } 
-              if(coords.latitude!=0  && coords.longitude ){
-                dispatch(SetActualityCoords({
-                  latitude:coords.latitude,
-                  longitude:coords.longitude
-                }));
-              }              
-              if(data.Latitud && data.Latitud>0){
-               const resultR= await AsyncFunctionSetCoordsDetail(data);                               
-              }
-            }catch(ex){
-              console.log(ex,"Al insertar ocurrió un error")
-            }finally{
-              try{
-                if(currentPosition!=null){
-                 // geolocation.clearWatch(currentPosition);
-                }
-              }finally{
-                currentPosition=null;
-              }              
-            }
-            await BackgroundService.updateNotification({taskDesc: 'Marcando ubicación, Excelente Viaje '+i}); 
-            await sleep(delay);  
+  //dispatch(LoadGetVisitActuality(false));
+  const sleep = time =>
+    new Promise(resolve => setTimeout(() => resolve(), time));
+  const veryIntensiveTask2 = async taskDataArguments => {
+    try {
+      let uuid;
+      let isValidUUID = await AsyncStorageGetData('@uuid');
+      if (isValidUUID == null || isValidUUID == '') {
+        uuid = generateUUID();
+        await AsyncStorageSaveData('@uuid', uuid);
+      } else {
+        uuid = isValidUUID;
+      }
+      uuId = uuid;
+      dispatch(SaveUUIDRoute(uuid));
+
+      const infoRoute = {
+        DatevalidId: new Date().toLocaleDateString(),
+        UUidInProgress: uuid,
+        IdVisitInProgress: 0,
+        isRouteInCourse: true,
+        IdWatch: 0,
+        idUsuario: userId,
+      };
+      await AsyncStorageSaveDataJson('@dataRoute', infoRoute);
+
+      const {delay} = taskDataArguments;
+      await new Promise(async resolve => {
+        const isValidateGPS = await GetGeolocation();
+        if (!isValidateGPS.Status) {
+          Alert.alert('Intente nuevamente', isValidateGPS.Message);
+          dispatch(LoadGetVisitActuality(false));
+          dispatch(SetIsInitDrivingVisit(false));
+          await BackgroundService.stop();
+          return;
         }
-    });  
-}catch(ex){
-  console.log("ocurrió un error :"+ex)
-}
-};
+        if (
+          isValidateGPS.Data.coords.latitude != 0 &&
+          isValidateGPS.Data.coords.longitude != 0
+        ) {
+          dispatch(
+            SetActualityCoords({
+              latitude: isValidateGPS.Data.coords.latitude,
+              longitude: isValidateGPS.Data.coords.longitude,
+            }),
+          );
+        }
+        dispatch(LoadGetVisitActuality(false));
+        dispatch(SetIsInitDrivingVisit(true));
+        if (Navigate && nav != null) {
+          nav.navigate('FormCreateRoute');
+        }
+        for (let i = 0; BackgroundService.isRunning(); i++) {
+          let currentPosition = null;
+          const {coords} = await new Promise((resolve, reject) => {
+            currentPosition = geolocation.watchPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 20000,
+              maximumAge: 0,
+              distanceFilter: 100,
+            });
+          });
+          try {
+            const data = {
+              Latitud: coords.latitude,
+              Longitud: coords.longitude,
+              UUIRecorrido: uuId,
+              idUsuario: userId,
+            };
+            if (coords.latitude != 0 && coords.longitude) {
+              dispatch(
+                SetActualityCoords({
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                }),
+              );
+            }
+            if (data.Latitud && data.Latitud > 0) {
+              const resultR = await AsyncFunctionSetCoordsDetail(data);
+            }
+          } catch (ex) {
+            console.log(ex, 'Al insertar ocurrió un error');
+          } finally {
+            try {
+              if (currentPosition != null) {
+                // geolocation.clearWatch(currentPosition);
+              }
+            } finally {
+              currentPosition = null;
+            }
+          }
+          await BackgroundService.updateNotification({
+            taskDesc: 'Marcando ubicación, Excelente Viaje ' + i,
+          });
+          await sleep(delay);
+        }
+      });
+    } catch (ex) {
+      console.log('ocurrió un error :' + ex);
+    }
+  };
   const options = {
     taskName: '',
     taskTitle: 'Ubicación en curso',
     taskDesc: '',
     taskIcon: {
-        name: 'ic_launcher',
-        type: 'mipmap',
+      name: 'ic_launcher',
+      type: 'mipmap',
     },
     color: '#ff00ff',
     linkingURI: 'yourSchemeHere://Home', // See Deep Linking for more info
     parameters: {
-        delay: 1000,
+      delay: 1000,
     },
   };
-  try{
-    await BackgroundService.start(veryIntensiveTask2, options);  
+  try {
+    await BackgroundService.start(veryIntensiveTask2, options);
     //BackgroundService.addListener("expiration");
-  }catch(exeption){
-    console.log("ocurrió un error ",exeption)
+  } catch (exeption) {
+    console.log('ocurrió un error ', exeption);
   }
-  
-}
+};
 const VisitCreated = () => {
   const ListRoutes = useSelector(state => state.Customer);
   const DrivingVisitDetail = useSelector(state => state.Mileage);
@@ -132,23 +179,26 @@ const VisitCreated = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
   const navigation = useNavigation();
   const [MileageDetail, setMileagueDetail] = useState(null);
-  const User = useSelector(state => state.login.user);  
-  const company = useSelector(state=>state.company.CompanySelected);
-  const [loadGetVisit,setLoadGetVisit] = useState(false);  
+  const User = useSelector(state => state.login.user);
+  const company = useSelector(state => state.company.CompanySelected);
+  const [loadGetVisit, setLoadGetVisit] = useState(false);
   BackHanlderMenuPrincipal(Navigator);
   const SubmitSearch = async value => {
     try {
-      if(value!=""){
+      if (value != '') {
         dispatch(LoadGeCustomer(true));
-        const customers = await getCustomersForVendor(Rol[0]?.IdRelacion, value);
-        if (customers !=null &&  customers.Respuesta.Resultado) {
+        const customers = await getCustomersForVendor(
+          Rol[0]?.IdRelacion,
+          value,
+        );
+        if (customers != null && customers.Respuesta.Resultado) {
           dispatch(GeCustomersVendor(customers.Detalle));
           navigation.navigate('SearchCustomer');
         } else {
           Alert.alert('No se encontraron registros');
           dispatch(GeCustomersVendor([]));
         }
-      }     
+      }
     } catch (ex) {
       Alert.alert('' + ex);
     } finally {
@@ -158,47 +208,41 @@ const VisitCreated = () => {
 
   const HandleInitRoute = async () => {
     try {
-      if (
-        DrivingVisitDetail.isRouteInCourse 
-      ) {
+      if (DrivingVisitDetail.isRouteInCourse) {
         Alert.alert('La ruta ya ha sido iniciada');
         return;
       }
-      if(ListRoutes.loadGetCurrentVisit){
-        Alert.alert("","Se está cargando el proceso, por favor espere");
+      if (ListRoutes.loadGetCurrentVisit) {
+        Alert.alert('', 'Se está cargando el proceso, por favor espere');
         return;
       }
-      dispatch(LoadGetVisitActuality(true));     
+      dispatch(LoadGetVisitActuality(true));
+      //dispatch(SetIsInitDrivingVisit(true));
 
-        const dataMileagueInit = await FunctionGetMileageInit(
-          User.EntityID,
-              0,
-            );            
-      const isValidateGPS = await GetGeolocation();
-      if(!isValidateGPS.Status){   
-        Alert.alert("Intente nuevamente",isValidateGPS.Message); 
-          dispatch(LoadGetVisitActuality(false));              
-          return;
-      }
+      const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
 
-      if(isValidateGPS.Data.coords.latitude!=0  && isValidateGPS.Data.coords.longitude!=0 ){
-        dispatch(SetActualityCoords({
-          latitude:isValidateGPS.Data.coords.latitude,
-          longitude:isValidateGPS.Data.coords.longitude
-        }));
-      } 
-     await StartNotification(User.EntityID,"",dispatch);   
-      dispatch(SaveIsArriveOrNotTheVisit("N"));
+      // const infoInit = await StartBackroundInitCoordsRoute(dispatch);
+
+      let navigateToRegisterMileague = false;
+      dispatch(SaveIsArriveOrNotTheVisit('N'));
       if (
         ListRoutes.RoutesInProgress != null &&
         ListRoutes.RoutesInProgress.length > 0
-      ) {        
-        try { 
-          if(dataMileagueInit && dataMileagueInit.length==0){
-            dispatch(SaveIsArriveOrNotTheVisit("Y"));
-            navigation.navigate('FormCreateRoute');
-          }                               
+      ) {
+        try {
+          if (dataMileagueInit && dataMileagueInit.length == 0) {
+            dispatch(SaveIsArriveOrNotTheVisit('Y'));
+            navigateToRegisterMileague = true;
+            // navigation.navigate('FormCreateRoute');
+          }
         } finally {
+          await StartNotification(
+            User.EntityID,
+            '',
+            dispatch,
+            navigateToRegisterMileague,
+            navigation,
+          );
           //dispatch(LoadGetVisitActuality(false));
         }
       } else {
@@ -207,13 +251,13 @@ const VisitCreated = () => {
           'Cree primero sus visitas antes de poder iniciar su captura de localización ',
         );
       }
-      dispatch(LoadGetVisitActuality(false));
+      //dispatch(LoadGetVisitActuality(false));
     } finally {
-     // dispatch(LoadGetVisitActuality(false));
+      // dispatch(LoadGetVisitActuality(false));
     }
   };
   const AlertMessage = () => {
-    if(!DrivingVisitDetail.isRouteInCourse){
+    if (!DrivingVisitDetail.isRouteInCourse) {
       return;
     }
     AlertConditional(
@@ -223,14 +267,11 @@ const VisitCreated = () => {
       '¿Está seguro de cancelar?',
     );
   };
-   const HandleStopVisit = async () => {
-    try {    
+  const HandleStopVisit = async () => {
+    try {
       dispatch(LoadGetVisitActuality(true));
       await BackgroundService.stop();
-      const cancelStatus = await StopInitVisit(
-        null,
-        dispatch,
-      );
+      const cancelStatus = await StopInitVisit(null, dispatch);
       Geolocation.clearWatch(0);
       Geolocation.stopObserving();
       if (cancelStatus) {
@@ -245,25 +286,29 @@ const VisitCreated = () => {
       Alert.alert('Cancelado correctamente');
     }
   };
-  const setMileagueInit=async()=>{
-    const dataMileagueInit = await FunctionGetMileageInit(
-      User.EntityID,
-      0,
-      ); 
-      if(dataMileagueInit==null){
-        Alert.alert("","Ocurrió un error al valirdar los datos, intente nuevamente");
-        return;
-      }
-      if(dataMileagueInit && dataMileagueInit.length>=1){
-        Alert.alert("Registro ya realizado","Usted ha iniciado el dia con: "+dataMileagueInit[0]["<Kilometraje>k__BackingField"]+" km");
-        return;
-      }
-      if(dataMileagueInit && dataMileagueInit.length==0){
-        dispatch(SaveIsArriveOrNotTheVisit("Y"));
-        navigation.navigate('FormCreateRoute');
-
-      }  
-  }
+  const setMileagueInit = async () => {
+    const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
+    if (dataMileagueInit == null) {
+      Alert.alert(
+        '',
+        'Ocurrió un error al valirdar los datos, intente nuevamente',
+      );
+      return;
+    }
+    if (dataMileagueInit && dataMileagueInit.length >= 1) {
+      Alert.alert(
+        'Registro ya realizado',
+        'Usted ha iniciado el dia con: ' +
+          dataMileagueInit[0]['<Kilometraje>k__BackingField'] +
+          ' km',
+      );
+      return;
+    }
+    if (dataMileagueInit && dataMileagueInit.length == 0) {
+      dispatch(SaveIsArriveOrNotTheVisit('Y'));
+      navigation.navigate('FormCreateRoute');
+    }
+  };
   const HandleCancelAlert = () => {};
   const ViewButtonsOption = () => {
     return <View flex style={styles.containerButton}></View>;
@@ -276,49 +321,64 @@ const VisitCreated = () => {
       '',
     );
   };
-  const SelectViewVisitDetail =async visit => {    
-    try{
+  const SelectViewVisitDetail = async visit => {
+    try {
       visit.isMarkerArrival = false;
       visit.isMarkerMileague = false;
-      visit.EsRegreso = "N";
-      visit.LatitudeArrival=0;
-      visit.LongitudArrival=0;
+      visit.EsRegreso = 'N';
+      visit.LatitudeArrival = 0;
+      visit.LongitudArrival = 0;
       setLoadGetVisit(true);
-      const GetVisit = await GetVisitByID(visit.IdRegistro);  
-      const GetMileagueById = await GetMileagueByIdVisit(visit.IdRegistro);         
-      if(GetVisit!=null && (GetVisit["<isMarkerArrival>k__BackingField"]==true) ){        
-        visit.isMarkerArrival = true;      
-      }else if(GetVisit==null){
-        Alert.alert("Ocurrió un error","Por favor intenta nuevamente");        
+      const GetVisit = await GetVisitByID(visit.IdRegistro);
+      const GetMileagueById = await GetMileagueByIdVisit(visit.IdRegistro);
+      if (
+        GetVisit != null &&
+        GetVisit['<isMarkerArrival>k__BackingField'] == true
+      ) {
+        visit.isMarkerArrival = true;
+      } else if (GetVisit == null) {
+        Alert.alert('Ocurrió un error', 'Por favor intenta nuevamente');
         return;
       }
-      if(GetVisit["<EsRegreso>k__BackingField"]!=null && GetVisit["<EsRegreso>k__BackingField"] =="Y" ){
-        visit.EsRegreso = "Y";
-      }            
-      if(GetMileagueById!=null && GetMileagueById.EntityID>0){
+      if (
+        GetVisit['<EsRegreso>k__BackingField'] != null &&
+        GetVisit['<EsRegreso>k__BackingField'] == 'Y'
+      ) {
+        visit.EsRegreso = 'Y';
+      }
+      if (GetMileagueById != null && GetMileagueById.EntityID > 0) {
         visit.isMarkerMileague = true;
-      }   
-      if( GetMileagueById!=null && GetVisit["<IdDireccionVisita>k__BackingField"]!=null){
-        visit.IdDireccionVisita = GetVisit["<IdDireccionVisita>k__BackingField"];
-        const getInfoAddress =await GetAddressOfCurrentVisit(company.NombreDB,visit.CardCode,visit.IdDireccionVisita);
-        if(getInfoAddress!=null){
-          if(getInfoAddress["<longitudDestino>k__BackingField"]){
-            visit.LongitudArrival = getInfoAddress["<longitudDestino>k__BackingField"];
+      }
+      if (
+        GetMileagueById != null &&
+        GetVisit['<IdDireccionVisita>k__BackingField'] != null
+      ) {
+        visit.IdDireccionVisita =
+          GetVisit['<IdDireccionVisita>k__BackingField'];
+        const getInfoAddress = await GetAddressOfCurrentVisit(
+          company.NombreDB,
+          visit.CardCode,
+          visit.IdDireccionVisita,
+        );
+        if (getInfoAddress != null) {
+          if (getInfoAddress['<longitudDestino>k__BackingField']) {
+            visit.LongitudArrival =
+              getInfoAddress['<longitudDestino>k__BackingField'];
           }
-          if(getInfoAddress["<latitudDestino>k__BackingField"]){
-            visit.LatitudeArrival=getInfoAddress["<latitudDestino>k__BackingField"];
-          }                              
+          if (getInfoAddress['<latitudDestino>k__BackingField']) {
+            visit.LatitudeArrival =
+              getInfoAddress['<latitudDestino>k__BackingField'];
+          }
         }
-
       }
       dispatch(SaveSelectVisitDetail(visit));
       Navigator.navigate('DetailVisit');
-    }finally{
-      setLoadGetVisit(false);  
-    }   
+    } finally {
+      setLoadGetVisit(false);
+    }
   };
   useEffect(() => {
-    if(DrivingVisitDetail.isRouteInCourse &&!BackgroundService.isRunning()){
+    if (DrivingVisitDetail.isRouteInCourse && !BackgroundService.isRunning()) {
       HandleStopVisit();
     }
     try {
@@ -333,83 +393,133 @@ const VisitCreated = () => {
     } catch (ex) {}
   }, []);
   async function InitVisit() {
-    await StartInitVisit(ListRoutes, DrivingVisitDetail, dispatch,User.EntityID);
+    await StartInitVisit(
+      ListRoutes,
+      DrivingVisitDetail,
+      dispatch,
+      User.EntityID,
+    );
   }
   return (
-    <View style={{flex:1}}>
-    <ScrollView contentContainerStyle={{paddingBottom: 20}}  style={StylesWrapper.secondWrapper}>
-      <SearchBar onSubmit={SubmitSearch}></SearchBar>
-      <View style={styles.chip}>
-        <Chip label={'Bases'} onPress={()=>{
-          navigation.navigate("MenuEndVisit");
-        }}/>
-      </View>
-      <View style={styles.chip}>
-        <Chip label={'kilometraje inicial del día'} onPress={setMileagueInit}/>
-      </View>
-      {ListRoutes.RoutesInProgress.length > 0 || DrivingVisitDetail.isRouteInCourse ? (
-        <View>
-          <Text style={styles.Title}>Mis visitas</Text>
-          {loadGetVisit? <LoaderScreen message="Obteniendo visita..." color="black"></LoaderScreen> :null}
-          <ViewButtonsOption></ViewButtonsOption>
-          {DrivingVisitDetail.isRouteInCourse ? (
-            <Text>Se está capturando su ubicación actual</Text>
-          ) : (
-            <Text>
-              Cuando esté listo para salir presione el botón "Iniciar Ruta"
-            </Text>
-          )}
-          <Text>{ErrorConnection}</Text>
-          <View flex center>
-            {ListRoutes.loadGetCurrentVisit ? (
+    <View style={{flex: 1}}>
+      <ScrollView
+        contentContainerStyle={{paddingBottom: 20}}
+        style={StylesWrapper.secondWrapper}>
+        <SearchBar onSubmit={SubmitSearch}></SearchBar>
+        <View style={styles.chip}>
+          <Chip
+            label={'Bases'}
+            onPress={() => {
+              navigation.navigate('MenuEndVisit');
+            }}
+          />
+        </View>
+        <View style={styles.chip}>
+          <Chip
+            label={'kilometraje inicial del día'}
+            onPress={setMileagueInit}
+          />
+        </View>
+        {ListRoutes.RoutesInProgress.length > 0 ||
+        DrivingVisitDetail.isRouteInCourse ? (
+          <View>
+            <Text style={styles.Title}>Mis visitas</Text>
+            {loadGetVisit ? (
               <LoaderScreen
-                color="black"
-                message="Cargando proceso..."></LoaderScreen>
+                message="Obteniendo visita..."
+                color="black"></LoaderScreen>
             ) : null}
-            <Card
-              selected={false}
-              selectionOptions={styles.selectOptionCard}
-              elevation={20}
-              flexS
-              style={!DrivingVisitDetail.isRouteInCourse && !ListRoutes.loadGetCurrentVisit? styles.mainCardView:styles.ButtonDisable}
-              flex
-              center
-              onPress={HandleInitRoute}>
-              <Text>Iniciar Ruta</Text>
-            </Card>
-            <Card
-              selected={false}
-              selectionOptions={styles.selectOptionCard}
-              elevation={20}
-              flexS
-              style={DrivingVisitDetail.isRouteInCourse? styles.mainCardView2:styles.ButtonDisable }
-              flex
-              center
-              onPress={AlertMessage}>
-              <Text>Cancelar ubicación en segundo plano</Text>
-            </Card>
-            {ListRoutes.RoutesInProgress.map(route => {
-              return (
-                <CardVisit
-                  FunctionInit={InitVisit}
-                  data={route}
-                  title2={route.CardName + ' / ' + route.IdRegistro}
-                  title={route.CardCode}
-                  subtitle={route.Comentario}
-                  key={route.IdRegistro}
-                  handleSelectCard={SelectViewVisitDetail}></CardVisit>
-              );
-            })}
+            <ViewButtonsOption></ViewButtonsOption>
+
+            {/* <View style={styles.upperFold} /> */}
+            {!DrivingVisitDetail.isRouteInCourse ? (
+              <View
+                style={
+                  ListRoutes.loadGetCurrentVisit
+                    ? styles.card
+                    : styles.cardNoInit
+                }>
+                <View style={styles.content}>
+                  {/* Contenido de la tarjeta */}
+
+                  {ListRoutes.loadGetCurrentVisit ? (
+                    <Text style={{color: '#fff'}}>
+                      Se está capturando su ubicación actual, por favor espere
+                      ...
+                    </Text>
+                  ) : (
+                    <Text style={{color: '#fff'}}>
+                      Cuando esté listo para salir presione el botón "Iniciar
+                      Ruta"
+                    </Text>
+                  )}
+                </View>
+              </View>
+            ) : null}
+
+            <Text>{ErrorConnection}</Text>
+            <View flex center>
+              {ListRoutes.loadGetCurrentVisit ? (
+                <LoaderScreen
+                  color="black"
+                  message="Cargando proceso..."></LoaderScreen>
+              ) : null}
+              <Card
+                selected={false}
+                selectionOptions={styles.selectOptionCard}
+                elevation={20}
+                flexS
+                style={
+                  !DrivingVisitDetail.isRouteInCourse &&
+                  !ListRoutes.loadGetCurrentVisit
+                    ? styles.mainCardView
+                    : styles.ButtonDisable
+                }
+                flex
+                center
+                onPress={async () => {
+                  await HandleInitRoute();
+                }}>
+                <Text>Iniciar Ruta</Text>
+              </Card>
+              <Card
+                selected={false}
+                selectionOptions={styles.selectOptionCard}
+                elevation={20}
+                flexS
+                style={
+                  DrivingVisitDetail.isRouteInCourse &&
+                  !ListRoutes.loadGetCurrentVisit
+                    ? styles.mainCardView2
+                    : styles.ButtonDisable
+                }
+                flex
+                center
+                onPress={AlertMessage}>
+                <Text>Cancelar ubicación en segundo plano</Text>
+              </Card>
+              {ListRoutes.RoutesInProgress.map(route => {
+                return (
+                  <CardVisit
+                    FunctionInit={InitVisit}
+                    data={route}
+                    title2={route.CardName + ' / ' + route.IdRegistro}
+                    title={route.CardCode}
+                    subtitle={route.Comentario}
+                    key={route.IdRegistro}
+                    handleSelectCard={SelectViewVisitDetail}></CardVisit>
+                );
+              })}
+            </View>
           </View>
-        </View>
-      ) : (
-        <View>
-          <Text style={styles.Title}>No hay visitas creadas aún</Text>
-          <Text style={styles.title1}>Cree primero su visita </Text>
-          <ViewButtonsOption></ViewButtonsOption>
-        </View>
-      )}
-    </ScrollView>
+        ) : (
+          <View>
+            <Text style={styles.Title}>No hay visitas creadas aún</Text>
+            <Text style={styles.title1}>Cree primero su visita </Text>
+            <ViewButtonsOption></ViewButtonsOption>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -496,13 +606,13 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 50,
   },
-  chip:{
-    margin:'1%'
+  chip: {
+    margin: '1%',
   },
-  ButtonDisable:{
-    backgroundColor:'#f2f2f2',
-    color:'#a9a9a9',
-    opacity:0.5,
+  ButtonDisable: {
+    backgroundColor: '#f2f2f2',
+    color: '#a9a9a9',
+    opacity: 0.5,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -520,5 +630,33 @@ const styles = StyleSheet.create({
     marginBottom: 9,
     width: '90%',
     height: 50,
-  }
+  },
+  //card message
+  card: {
+    backgroundColor: 'red',
+    borderRadius: 10,
+    overflow: 'hidden',
+    width: '100%',
+    height: 70,
+    color: '#fff',
+  },
+  cardNoInit: {
+    backgroundColor: '#DEA554',
+    borderRadius: 10,
+    overflow: 'hidden',
+    width: '100%',
+    height: 50,
+  },
+  upperFold: {
+    backgroundColor: '#eaeaea',
+    borderBottomLeftRadius: 60,
+    borderBottomRightRadius: 60,
+    height: 20,
+    //transform: [{ translateY: -30 }],
+  },
+  content: {
+    flex: 1,
+    padding: 10,
+    marginBottom: 5,
+  },
 });

@@ -76,43 +76,46 @@ const HomeRouteVendors = () => {
         dispatch(SetVisiActualityt(visits));
       } else if (visits.length == 0) {
         dispatch(SetVisiActualityt([]));
+        dispatch(LoadGetVisitActuality(false));
         Alert.alert('', 'No tiene visitas creadas');
         return;
       }
-      const isValidateGPS = await GetGeolocation();
-      if (!isValidateGPS.Status) {
-        Alert.alert('Intente nuevamente', isValidateGPS.Message);
-        return;
-      }
-      if (
-        isValidateGPS.Data.coords.latitude != 0 &&
-        isValidateGPS.Data.coords.longitude != 0
-      ) {
-        dispatch(
-          SetActualityCoords({
-            latitude: isValidateGPS.Data.coords.latitude,
-            longitude: isValidateGPS.Data.coords.longitude,
-          }),
-        );
-      }
-      await StartNotification(User.EntityID, '', dispatch);
-
+      // const isValidateGPS = await GetGeolocation();
+      // if (!isValidateGPS.Status) {
+      //   Alert.alert('Intente nuevamente', isValidateGPS.Message);
+      //   return;
+      // }
+      // if (
+      //   isValidateGPS.Data.coords.latitude != 0 &&
+      //   isValidateGPS.Data.coords.longitude != 0
+      // ) {
+      //   dispatch(
+      //     SetActualityCoords({
+      //       latitude: isValidateGPS.Data.coords.latitude,
+      //       longitude: isValidateGPS.Data.coords.longitude,
+      //     }),
+      //   );
+      // }
+      
+      let navigateToRegisterMileague = false;
       const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
-      dispatch(LoadGetVisitActuality(false));
+      //dispatch(LoadGetVisitActuality(false));
       try {
         if (dataMileagueInit && dataMileagueInit.length == 0) {
           dispatch(SaveIsArriveOrNotTheVisit('Y'));
-          navigation.navigate('FormCreateRoute');
+          navigateToRegisterMileague = true;
+          //navigation.navigate('FormCreateRoute');
         }
       } finally {
-        dispatch(LoadGetVisitActuality(false));
+        await StartNotification(User.EntityID, '', dispatch,navigateToRegisterMileague,navigation);
+        //dispatch(LoadGetVisitActuality(false));
       }
 
-      Alert.alert('', 'Ruta Iniciada con éxito');
+      //Alert.alert('', 'Ruta Iniciada con éxito');
     } catch (ex) {
       Alert.alert('' + ex);
     } finally {
-      dispatch(LoadGetVisitActuality(false));
+     // dispatch(LoadGetVisitActuality(false));
     }
   };
   const HandleGoBases = () => {
@@ -245,10 +248,10 @@ const HomeRouteVendors = () => {
                 nameIcon="map-marker-plus"
                 title="Iniciar Ruta"
                 color={
-                  DrivingVisitDetail.isRouteInCourse ||
-                  listVisit.loadGetCurrentVisit
-                    ? pastelColors[5]
-                    : pastelColors[2]
+                  !DrivingVisitDetail.isRouteInCourse &&
+                  !listVisit.loadGetCurrentVisit
+                    ? pastelColors[2]
+                    : pastelColors[5]
                 }
               />
               <PastelCard
