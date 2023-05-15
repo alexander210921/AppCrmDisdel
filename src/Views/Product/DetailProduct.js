@@ -6,6 +6,8 @@ import {
   Typography,
   View,
   TextField,
+  Button,
+  LoaderScreen,
 } from 'react-native-ui-lib';
 import {
   StyleSheet,
@@ -16,26 +18,83 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import RNFS from 'react-native-fs';
+import {useState} from 'react';
+import {Alert} from 'react-native';
+import Share from 'react-native-share';
+
 const DetailProduct = ({ViewButtonsAction = false}) => {
   const product = useSelector(state => state.Product.ProductView);
- 
+  const [loadDowload, setLoadDowload] = useState(false);
+  const [urlImage, setUrlImage] = useState(
+    'https://disdelsa.com/imagenes/productos/' + product.Imagen + '?w=70&h=70',
+  );
+  const dowloadImage = async () => {
+    try {
+      setLoadDowload(true);
+      if (loadDowload) {
+        return;
+      }
+      const imagePath = `${RNFS.DownloadDirectoryPath}/${product.Imagen}`;
+      RNFS.downloadFile({
+        fromUrl: urlImage,
+        toFile: imagePath,
+        background: true,
+        connectionTimeout: 300000 * 20,
+        readTimeout:300000 * 20
+      })
+        .promise.then(() => {
+          const shareOptions = {
+            url: `file://${imagePath}`,
+          };
+          //Alert.alert("","Descarga Realizada");
+          setLoadDowload(false);
+          Share.open(shareOptions)
+            .then(() => {
+              console.log('Archivo abierto con la galería correctamente');
+            })
+            .catch(error => {
+              console.log('Error al abrir el archivo con la galería:', error);
+            });
+        })
+        .catch(error => {
+          Alert.alert('', 'Ocurrió un error: ' + error);
+          setLoadDowload(false);
+        });
+    } catch (error) {
+      Alert.alert('', 'Ocurrió un error: ' + error);
+      setLoadDowload(false);
+    }
+  };
   // console.log(product);
   return (
     <ScrollView style={styles.BackroundColor}>
-         <View style={{backgroundColor:'#fff',margin:0,width:'100%',padding:10}} >
+      <View
+        style={{
+          backgroundColor: '#fff',
+          margin: 0,
+          width: '100%',
+          padding: 10,
+        }}>
         <Image
           source={{
-            uri:
-              'https://disdelsa.com/imagenes/productos/' +
-              product.Imagen +
-              '?w=70&h=70',
+            uri: urlImage,
           }}
           style={styles.image}
         />
-        </View>
+      </View>
       <View style={styles.container}>
-       
-        
+        <View flex right>
+          {loadDowload ? (
+            <LoaderScreen color="black"></LoaderScreen>
+          ) : (
+            <Button
+              style={{backgroundColor: 'black', width: '40%'}}
+              onPress={dowloadImage}
+              label="Descargar"></Button>
+          )}
+        </View>
+
         {/* <View> */}
         <Text style={styles.priceText}> {product.IdProducto}</Text>
         <View style={styles.priceContainer}>
@@ -123,57 +182,59 @@ const DetailProduct = ({ViewButtonsAction = false}) => {
               />
             }
           />
-           
         </View>
         <View style={styles.column}>
           {/* Aquí iría el contenido de la segunda columna */}
-          {ViewButtonsAction ? <Text style={styles.titleQuantity}>Cantidad</Text> :null}
-          {ViewButtonsAction ? 
-           <View style={styles.containerQuantity}>
-             <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
-               <Icon
-                 name={'minus-box'}
-                 size={30}
-                 color="black"
-                 style={styles.icon}
-               />
-             </TouchableOpacity>
-             <TextField
-               onChangeText={text => console.log(text)}
-               keyboardType="numeric"
-               style={styles.inputQuantity}
-             />
-             <TouchableOpacity onPress={() => {}} style={styles.buttonQuantity}>
-               <Icon
-                 name={'plus-box'}
-                 size={30}
-                 color="orange"
-                 style={styles.icon}
-               />
-             </TouchableOpacity>
-           </View>
-          :null}
-         
+          {ViewButtonsAction ? (
+            <Text style={styles.titleQuantity}>Cantidad</Text>
+          ) : null}
+          {ViewButtonsAction ? (
+            <View style={styles.containerQuantity}>
+              <TouchableOpacity
+                onPress={() => {}}
+                style={styles.buttonQuantity}>
+                <Icon
+                  name={'minus-box'}
+                  size={30}
+                  color="black"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+              <TextField
+                onChangeText={text => console.log(text)}
+                keyboardType="numeric"
+                style={styles.inputQuantity}
+              />
+              <TouchableOpacity
+                onPress={() => {}}
+                style={styles.buttonQuantity}>
+                <Icon
+                  name={'plus-box'}
+                  size={30}
+                  color="orange"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
       </View>
-      {ViewButtonsAction ?
-         <View style={{marginTop: '5%', marginBottom: '1%'}}>
-         <TouchableOpacity style={styles.buyButton}>
-             <View style={{display:'flex',flexDirection:'row'}}>
-             <Text style={styles.buyButtonText}>Agregar</Text>
-           <Icon
-                 name={'shopping-outline'}
-                 size={20}
-                 color="#FF8000"
-                 style={styles.icon}
-               />
-             </View>
-          
-         </TouchableOpacity>
-         {/* </View> */}
-       </View>
-      :null}
-   
+      {ViewButtonsAction ? (
+        <View style={{marginTop: '5%', marginBottom: '1%'}}>
+          <TouchableOpacity style={styles.buyButton}>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
+              <Text style={styles.buyButtonText}>Agregar</Text>
+              <Icon
+                name={'shopping-outline'}
+                size={20}
+                color="#FF8000"
+                style={styles.icon}
+              />
+            </View>
+          </TouchableOpacity>
+          {/* </View> */}
+        </View>
+      ) : null}
     </ScrollView>
   );
 };
@@ -185,7 +246,6 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    
     borderRadius: 10,
     padding: 10,
     margin: 10,
@@ -203,7 +263,6 @@ const styles = StyleSheet.create({
     height: 340,
     borderRadius: 10,
     marginBottom: 10,
-  
   },
   priceContainer: {
     flexDirection: 'row',
@@ -300,12 +359,12 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   inputQuantity: {
-   // flex: 1,
-   // marginLeft: 4,
-   // marginRight: 4,
+    // flex: 1,
+    // marginLeft: 4,
+    // marginRight: 4,
     fontSize: 12,
     textAlign: 'center',
     color: 'black',
-   // maxWidth: 45,
+    // maxWidth: 45,
   },
 });

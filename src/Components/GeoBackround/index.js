@@ -1,66 +1,68 @@
-import { useEffect, useRef } from 'react';
-import { AppState, Platform } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
-
-const useBackgroundGeolocation = ({callback}) => {
-  const watchIdRef = useRef(null);
-
-  useEffect(() => {
-    const isIOS = Platform.OS === 'ios';
-    let watchId = null;
-
-    if (!isIOS) {
-      watchId = Geolocation.watchPosition(
-        (position) => {
-          // Llama a tu función de devolución de llamada con la nueva posición
-          callback(position);
-        },
-        (error) => console.log('Error de geolocalización:', error),
-        {
-          enableHighAccuracy: true,
-          distanceFilter: 10,
-          fastestInterval: 5000,
-          interval: 10000,
-          showLocationDialog: true,
-        },
-      );
-      watchIdRef.current = watchId;
+import BackgroundService from 'react-native-background-actions';
+import {GetGeolocation} from '../../lib/Permissions/Geolocation';
+import {SetActualityCoords} from '../../Api/User/ApiUser';
+import {Alert} from 'react-native';
+import { LoadGetVisitActuality } from '../../Api/Customers/ApiCustumer';
+export const StartBackroundInitCoordsRoute = async dispatch => {
+  const sleep = time =>
+    new Promise(resolve => setTimeout(() => resolve(), time));
+  const TaskGetCoords = async taskDataArguments => {
+    try {
+      const {delay} = taskDataArguments;
+      try {
+        await new Promise(async resolve => {
+          for (let i = 0; BackgroundService.isRunning(); i++) {
+            const isValidateGPS = await GetGeolocation();
+            if (!isValidateGPS.Status) {
+              Alert.alert('Intente nuevamente', isValidateGPS.Message);
+              dispatch(LoadGetVisitActuality(false));
+              await BackgroundService.stop();
+              return false;
+            }
+            if (
+              isValidateGPS.Data.coords.latitude != 0 &&
+              isValidateGPS.Data.coords.longitude != 0
+            ) {
+              dispatch(
+                SetActualityCoords({
+                  latitude: isValidateGPS.Data.coords.latitude,
+                  longitude: isValidateGPS.Data.coords.longitude,
+                }),
+              );
+            }
+            await sleep(delay);
+            await BackgroundService.stop();
+            break;
+          }
+        });
+       // return true;
+      } catch (ex) {
+        console.log(ex, 'Al insertar ocurrió un error');
+        //return false;
+      }
+    } catch (ex) {
+      console.log('ocurrió un error :' + ex);
+      //return false;
     }
-
-    const handleAppStateChange = (nextAppState) => {
-      if (nextAppState === 'background' && watchIdRef.current !== null) {
-        // Detiene la geolocalización en segundo plano cuando la aplicación pasa a segundo plano
-        Geolocation.clearWatch(watchIdRef.current);
-      } else if (nextAppState === 'active' && watchIdRef.current === null && !isIOS) {
-        // Inicia la geolocalización en segundo plano cuando la aplicación se activa nuevamente
-        watchId = Geolocation.watchPosition(
-          (position) => {
-            // Llama a tu función de devolución de llamada con la nueva posición
-            callback(position);
-          },
-          (error) => console.log('Error de geolocalización:', error),
-          {
-            enableHighAccuracy: true,
-            distanceFilter: 10,
-            fastestInterval: 5000,
-            interval: 10000,
-            showLocationDialog: true,
-          },
-        );
-        watchIdRef.current = watchId;
-      }
-    };
-
-    AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      // Limpia los efectos secundarios cuando el componente se desmonta
-      AppState.removeEventListener('change', handleAppStateChange);
-      if (watchIdRef.current !== null) {
-        Geolocation.clearWatch(watchIdRef.current);
-      }
-    };
-  }, [callback]);
+  };
+  const options = {
+    taskName: '',
+    taskTitle: 'Estamos iniciando el viaje',
+    taskDesc: '',
+    taskIcon: {
+      name: 'ic_launcher',
+      type: 'mipmap',
+    },
+    color: '#ff00ff',
+    linkingURI: 'yourSchemeHere://Home', // See Deep Linking for more info
+    parameters: {
+      delay: 1000,
+    },
+  };
+  try {
+    await BackgroundService.start(TaskGetCoords, options);
+    //await BackgroundService.stop();
+  } catch (exeption) {
+    console.log('ocurrió un error ', exeption);
+  }
 };
-
-export default useBackgroundGeolocation;

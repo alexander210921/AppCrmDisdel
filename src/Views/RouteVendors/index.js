@@ -272,14 +272,14 @@ const HomeRouteVendors = () => {
                 color={pastelColors[6]}
               />
             </View>
-            <View style={styles.row}>
+            {/* <View style={styles.row}>
             <PastelCard
                 onPress={HandleGetProduct}
                 nameIcon="shopping-outline"
                 title="Pedidos"
                 color={pastelColors[7]}
               />
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </View>
