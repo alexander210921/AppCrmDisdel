@@ -16,7 +16,7 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {useNavigation} from '@react-navigation/native';
 import {  AsyncStorageSaveData } from '../../lib/AsyncStorage';
-import { StartNotification } from './VisitCreated';
+//import { StartNotification } from './VisitCreated';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
 const FormFinaliceVisit = () => { 
   const navigation = useNavigation();
