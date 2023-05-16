@@ -154,7 +154,7 @@ export const StartNotification = async (
   };
   const options = {
     taskName: '',
-    taskTitle: 'Ubicación en curso',
+    taskTitle: 'Cargando... por favor espere',
     taskDesc: '',
     taskIcon: {
       name: 'ic_launcher',
