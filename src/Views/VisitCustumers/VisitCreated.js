@@ -143,6 +143,7 @@ export const StartNotification = async (
             }
           }
           await BackgroundService.updateNotification({
+            taskTitle:"¡Estamos listos!",
             taskDesc: 'Marcando ubicación, Excelente Viaje ' + i,
           });
           await sleep(delay);
