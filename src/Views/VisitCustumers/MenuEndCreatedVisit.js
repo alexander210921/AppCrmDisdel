@@ -103,7 +103,7 @@ const MenuEndVisit = () => {
           //     longitude:isValidateGPS.Data.coords.longitude
           //   }));
           // } 
-          await StartNotification(User.EntityID,"",dispatch,false,null);
+          await StartNotification(User.EntityID,"",dispatch,false,nul,true);
           ClientDefault=null;
           navigation.navigate('VisitCreated');
         } else if (statusCreateVisit != null && !statusCreateVisit.Resultado) {

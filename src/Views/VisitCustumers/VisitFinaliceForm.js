@@ -60,7 +60,7 @@ const FormFinaliceVisit = () => {
         return;
       }
       setLoadnewVisit(true);
-      await StartNotification(User.EntityID,"",dispatch);
+      //await StartNotification(User.EntityID,"",dispatch);
       navigation.navigate("VisitCreated");
     }catch(ex){
       Alert.alert(""+ex);

@@ -45,7 +45,7 @@ const HomeRouteVendors = () => {
     '#C4D7CF',
     '#CED3F2',
     '#f2f2f2',
-    "#F6F6EB",
+    "#F5D5CB",
     "#F5D5CB",
   ];
   const dispatch = useDispatch();
@@ -107,7 +107,7 @@ const HomeRouteVendors = () => {
           //navigation.navigate('FormCreateRoute');
         }
       } finally {
-        await StartNotification(User.EntityID, '', dispatch,navigateToRegisterMileague,navigation);
+        await StartNotification(User.EntityID, '', dispatch,navigateToRegisterMileague,navigation,true);
         //dispatch(LoadGetVisitActuality(false));
       }
 
@@ -172,7 +172,15 @@ const HomeRouteVendors = () => {
         DrivingVisitDetail.isRouteInCourse &&
         !BackgroundService.isRunning()
       ) {
-        await StopInitVisit(null, dispatch);
+        await StartNotification( 
+          User.EntityID,
+          '',
+          dispatch,
+          false,
+          null,
+          false
+          )
+        //await StopInitVisit(null, dispatch);
       }
     }
     StopVisit();

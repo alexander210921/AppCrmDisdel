@@ -45,6 +45,7 @@ export const StartNotification = async (
   dispatch,
   Navigate = false,
   nav = null,
+  validatePresition=true
 ) => {
   //await StartBackroundInitCoordsRoute(dispatch);
 
@@ -76,24 +77,26 @@ export const StartNotification = async (
 
       const {delay} = taskDataArguments;
       await new Promise(async resolve => {
-        const isValidateGPS = await GetGeolocation();
-        if (!isValidateGPS.Status) {
-          Alert.alert('Intente nuevamente', isValidateGPS.Message);
-          dispatch(LoadGetVisitActuality(false));
-          dispatch(SetIsInitDrivingVisit(false));
-          await BackgroundService.stop();
-          return;
-        }
-        if (
-          isValidateGPS.Data.coords.latitude != 0 &&
-          isValidateGPS.Data.coords.longitude != 0
-        ) {
-          dispatch(
-            SetActualityCoords({
-              latitude: isValidateGPS.Data.coords.latitude,
-              longitude: isValidateGPS.Data.coords.longitude,
-            }),
-          );
+        if(validatePresition){
+          const isValidateGPS = await GetGeolocation();
+          if (!isValidateGPS.Status) {
+            Alert.alert('Intente nuevamente', isValidateGPS.Message);
+            dispatch(LoadGetVisitActuality(false));
+            dispatch(SetIsInitDrivingVisit(false));
+            await BackgroundService.stop();
+            return;
+          }
+          if (
+            isValidateGPS.Data.coords.latitude != 0 &&
+            isValidateGPS.Data.coords.longitude != 0
+          ) {
+            dispatch(
+              SetActualityCoords({
+                latitude: isValidateGPS.Data.coords.latitude,
+                longitude: isValidateGPS.Data.coords.longitude,
+              }),
+            );
+          }
         }
         dispatch(LoadGetVisitActuality(false));
         dispatch(SetIsInitDrivingVisit(true));
@@ -242,6 +245,7 @@ const VisitCreated = () => {
             dispatch,
             navigateToRegisterMileague,
             navigation,
+            true
           );
           //dispatch(LoadGetVisitActuality(false));
         }
@@ -377,9 +381,17 @@ const VisitCreated = () => {
       setLoadGetVisit(false);
     }
   };
-  useEffect(() => {
+  useEffect(async () => {
     if (DrivingVisitDetail.isRouteInCourse && !BackgroundService.isRunning()) {
-      HandleStopVisit();
+      //HandleStopVisit();
+        await StartNotification( 
+          User.EntityID,
+          '',
+          dispatch,
+          false,
+          null,
+          false
+          );
     }
     try {
       async function getMileague() {
