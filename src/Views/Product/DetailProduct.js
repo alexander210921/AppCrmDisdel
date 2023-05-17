@@ -29,38 +29,49 @@ const DetailProduct = ({ViewButtonsAction = false}) => {
   const [urlImage, setUrlImage] = useState(
     'https://disdelsa.com/imagenes/productos/' + product.Imagen + '?w=70&h=70',
   );
+  const OpenFile = path => {
+    const shareOptions = {
+      url: `file://${path}`,
+    };
+    Share.open(shareOptions)
+      .then(() => {
+        console.log('Archivo abierto con la galería correctamente');
+      })
+      .catch(error => {
+        console.log('Error al abrir el archivo con la galería:', error);
+      });
+  };
   const dowloadImage = async () => {
     try {
       setLoadDowload(true);
       if (loadDowload) {
         return;
       }
-      const imagePath = `${RNFS.DownloadDirectoryPath}/${product.Imagen}`;
-      RNFS.downloadFile({
-        fromUrl: urlImage,
-        toFile: imagePath,
-        background: true,
-        connectionTimeout: 300000 * 20,
-        readTimeout:300000 * 20
-      })
-        .promise.then(() => {
-          const shareOptions = {
-            url: `file://${imagePath}`,
-          };
-          //Alert.alert("","Descarga Realizada");
+
+      const imagePath = `${RNFS.DocumentDirectoryPath}/${product.Imagen}`;
+
+      RNFS.exists(imagePath).then(exist => {
+        if (exist) {
+          OpenFile(imagePath);
           setLoadDowload(false);
-          Share.open(shareOptions)
-            .then(() => {
-              console.log('Archivo abierto con la galería correctamente');
+        } else {
+          RNFS.downloadFile({
+            fromUrl: urlImage,
+            toFile: imagePath,
+            background: true,
+            connectionTimeout: 300000 * 20,
+            readTimeout: 300000 * 20,
+          })
+            .promise.then(() => {
+              setLoadDowload(false);
+              OpenFile(imagePath);
             })
             .catch(error => {
-              console.log('Error al abrir el archivo con la galería:', error);
+              Alert.alert('', 'Ocurrió un error: ' + error);
+              setLoadDowload(false);
             });
-        })
-        .catch(error => {
-          Alert.alert('', 'Ocurrió un error: ' + error);
-          setLoadDowload(false);
-        });
+        }
+      });
     } catch (error) {
       Alert.alert('', 'Ocurrió un error: ' + error);
       setLoadDowload(false);
