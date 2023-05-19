@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableWithoutFeedback, Text} from 'react-native';
+import {View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {Button} from 'react-native-ui-lib';
 const CardCustomer = ({
@@ -7,17 +7,23 @@ const CardCustomer = ({
   title = 'title',
   subtitle = 'subtitle',
   handleSelectCard,
-  data
+  data,
+  PressCustomer = function(){}
 }) => {
   const HandlePressButton = () => {
     handleSelectCard(data);
   };
+  const OnpressCustomer=()=>{
+    PressCustomer(data);
+  }
   return (
     <TouchableWithoutFeedback>
       <View style={styles.mainCardView}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={styles.subCardView}>
-            <Icon name="user" size={30} color="gray" />
+            <TouchableOpacity onPress={OnpressCustomer}>
+              <Icon name="user" size={30} color="gray" />
+            </TouchableOpacity>            
           </View>
           <View style={{marginLeft: 12}}>
             <Text

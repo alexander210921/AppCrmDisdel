@@ -249,14 +249,6 @@ export async function FunctionGetMileageInit (IdUsuario,TypeMileage){
     return null;
   }
 }
-export async function FunctionGetCustomerDefaultForRoute (IdUsuario,company){  
-  try{
-    const {data} = await Axios.get("MyWsMobil/Api/Mobil/GetDatosClienteRuta/"+IdUsuario+"/"+company+"/");
-    return data;
-  }catch(ex){   
-    return null;
-  }
-}
 export const FunctionUpdateAddressCoords = (data, dispatch) => {
   try {
     Axios.post('MyWsOneVenta/api/Tracking/ActualizarCamposContacto/', data)
@@ -283,6 +275,44 @@ export const CancelListVisitsInCourse = (listVisit, dispatch) => {
   }
 };
 
+export async function FunctionGetDetailCustomer (CardCode,NomnbreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetCardCodeDetalle/"+NomnbreBD+"/"+CardCode+"/");
+    return data;
+  }catch(ex){
+   // Alert.alert(""+ex);
+    return null;
+  }
+}
+
+export async function FunctionGetCustomerActive (CardCode,NomnbreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetClienteActivo/"+NomnbreBD+"/"+CardCode+"/");
+    return data;
+  }catch(ex){
+   // Alert.alert(""+ex);
+    return null;
+  }
+}
+
+export async function FunctionGetCustomerAdressList (CardCode,NomnbreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetDireccionCardCode/"+NomnbreBD+"/"+CardCode);
+    return data;
+  }catch(ex){
+   // Alert.alert(""+ex);
+    return null;
+  }
+}
+export async function FunctionGetCustomerFiscalAdressList (CardCode,NomnbreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetDireccionFiscal/"+NomnbreBD+"/"+CardCode+"/");
+    return data;
+  }catch(ex){
+   // Alert.alert(""+ex);
+    return null;
+  }
+}
 export const CancelVisits=(status)=>({
   type:LOAD_CANCEL_VISITS_IN_COURSE,
   payload:status

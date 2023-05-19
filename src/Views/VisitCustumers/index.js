@@ -1,29 +1,38 @@
 import React from 'react';
 import {View, LoaderScreen} from 'react-native-ui-lib';
 import SearchBar from '../../Components/SearchBar';
-import {GetCustumerVendor} from '../../Api/Customers/ApiCustumer';
+import {
+  FunctionGetCustomerActive,
+  FunctionGetCustomerAdressList,
+  FunctionGetCustomerFiscalAdressList,
+  FunctionGetDetailCustomer,
+  GetCustumerVendor,
+} from '../../Api/Customers/ApiCustumer';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
 import {LoadGeCustomer} from '../../Api/Customers/ApiCustumer';
 import CardCustomer from '../../Components/Cards/CardCustomer';
 import {useNavigation} from '@react-navigation/native';
 import {SetDefaultCustomerSelect} from '../../Api/Customers/ApiCustumer';
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, Dimensions, Alert} from 'react-native';
 import {ColorBackroundSecundary} from '../../Assets/Colors/Colors';
-import { FunctionGetAdressCustomer,LoadGetAdressCustomer } from '../../Api/Customers/ApiCustumer';
-import { BackHanlderMenuPrincipal } from '../../lib/ExitApp';
+import {
+  FunctionGetAdressCustomer,
+  LoadGetAdressCustomer,
+} from '../../Api/Customers/ApiCustumer';
+import {BackHanlderMenuPrincipal} from '../../lib/ExitApp';
 
 const windowHeight = Dimensions.get('window').height;
 
 const VisitirCustomer = () => {
   const Rol = useSelector(state => state.rol.RolSelect);
-  const company = useSelector(state=>state.company.CompanySelected);
+  const company = useSelector(state => state.company.CompanySelected);
   const Customer = useSelector(state => state.Customer);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   BackHanlderMenuPrincipal(navigation);
   const SubmitSearch = value => {
-    if(value ==null|| value ==""){
+    if (value == null || value == '') {
       return;
     }
     value = value.trim();
@@ -31,12 +40,45 @@ const VisitirCustomer = () => {
     GetCustumerVendor(Rol[0]?.IdRelacion, value, dispatch);
   };
   const HandleSelectCustomer = customer => {
-    //get addres customer    
-    dispatch(LoadGetAdressCustomer(true));    
+    //get addres customer
+    dispatch(LoadGetAdressCustomer(true));
     dispatch(SetDefaultCustomerSelect(customer));
-    FunctionGetAdressCustomer(customer.CardCode,company.NombreDB?company.NombreDB:"SBO_DISDELSA_2013",dispatch,true,navigation);    
+    FunctionGetAdressCustomer(
+      customer.CardCode,
+      company.NombreDB ? company.NombreDB : 'SBO_DISDELSA_2013',
+      dispatch,
+      true,
+      navigation,
+    );
   };
- 
+  const GoDetailCustomer = async customer => {
+    try {
+      const infoCustomer = await FunctionGetDetailCustomer(
+        customer.CardCode,
+        company.NombreDB,
+      );
+      const ActiveCustonmer = await FunctionGetCustomerActive(
+        customer.CardCode,
+        company.NombreDB,
+      );
+      const FiscalAdress = await FunctionGetCustomerFiscalAdressList(
+        customer.CardCode,
+        company.NombreDB,
+      );
+      const Adress = FunctionGetCustomerAdressList(
+        customer.CardCode,
+        company.NombreDB,
+      );
+      if(infoCustomer &&ActiveCustonmer&&FiscalAdress&&Adress){
+        navigation.navigate("DetailCustomer");
+      }else{
+        Alert.alert("","Ocurrió un problema, intente nuevamente");
+      }
+      //console.log(Adress);
+    } catch (ex) {
+      Alert.alert('Ocurrió un error: ' + ex);
+    }
+  };
   return (
     <ScrollView style={styles.secondWrapper}>
       <View style={styles.WrapperSearchBar}>
@@ -53,7 +95,8 @@ const VisitirCustomer = () => {
                   handleSelectCard={HandleSelectCustomer}
                   subtitle={customer.CardName}
                   title={customer.CardCode}
-                  key={customer.CardCode}></CardCustomer>
+                  key={customer.CardCode}
+                  PressCustomer={GoDetailCustomer}></CardCustomer>
               ))
             : null}
         </View>
@@ -80,7 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: '9%',
   },
-  WrapperSearchBar:{
-    padding:'4%'
-  }
+  WrapperSearchBar: {
+    padding: '4%',
+  },
 });

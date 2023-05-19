@@ -17,6 +17,7 @@ import MenuEndVisit from '../Views/VisitCustumers/MenuEndCreatedVisit';
 import FormGasoline from '../Views/Gasoline/IndexGasoline';
 import ListProductHome from '../Views/Product/ListProduct';
 import DetailProduct from '../Views/Product/DetailProduct';
+import DetailCustomer from '../Views/Customer/DetailCustomer';
 import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 export default function StackNavigation() {
@@ -166,6 +167,14 @@ export default function StackNavigation() {
         <Stack.Screen
         name="DetailProduct"
         component={DetailProduct}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+             <Stack.Screen
+        name="DetailCustomer"
+        component={DetailCustomer}
         options={{
           title: '',
           headerShown: false,
