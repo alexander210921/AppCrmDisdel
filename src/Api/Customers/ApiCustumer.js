@@ -20,7 +20,8 @@ import {
   ADD_VISIT_CREATED,
   SAVE_IS_ARRIVE_OR_END_VISIT,
   SAVE_CONTACT_PERSON_CUSTOMER,
-  LOAD_REFRESH_LOCATION
+  LOAD_REFRESH_LOCATION,
+  SAVE_CUSTOMER_DETAIL,  
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -417,3 +418,8 @@ export const LoadRefreshLocation=(Status)=>({
   type:LOAD_REFRESH_LOCATION,
   payload:Status
 });
+
+export const SaveDetailCustomer=(customer)=>({
+  type:SAVE_CUSTOMER_DETAIL,
+  payload:customer
+})

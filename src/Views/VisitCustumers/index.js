@@ -7,6 +7,7 @@ import {
   FunctionGetCustomerFiscalAdressList,
   FunctionGetDetailCustomer,
   GetCustumerVendor,
+  SaveDetailCustomer,
 } from '../../Api/Customers/ApiCustumer';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -70,6 +71,8 @@ const VisitirCustomer = () => {
         company.NombreDB,
       );
       if(infoCustomer &&ActiveCustonmer&&FiscalAdress&&Adress){
+        dispatch(SaveDetailCustomer(infoCustomer));
+        //console.log(infoCustomer);
         navigation.navigate("DetailCustomer");
       }else{
         Alert.alert("","Ocurrió un problema, intente nuevamente");
