@@ -1,4 +1,4 @@
-import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED,SAVE_IS_ARRIVE_OR_END_VISIT,SAVE_CONTACT_PERSON_CUSTOMER,LOAD_REFRESH_LOCATION,SAVE_CUSTOMER_DETAIL} from "../../Types/index";
+import {LOAD_GET_CUSTOMERS_VENDOR,GET_CUSTOMER_VENDOR,SET_CUSTOMER_SELECTED,LOAD_SET_VISIT_CUSTOMER,LOGOUT_USER,SET_VISIT_ACTUALITY,LOAD_GET_VISIT_ACTUALITY,LOAD_GET_ADRESS_CUSTOMER,GET_ADRESS_CUSTOMER,SAVE_VIVIST_DETAIL_SELECT,LOAD_UPDATE_VISIT,DELETE_VISIT,ADD_VISIT_CREATED,SAVE_IS_ARRIVE_OR_END_VISIT,SAVE_CONTACT_PERSON_CUSTOMER,LOAD_REFRESH_LOCATION,SAVE_CUSTOMER_DETAIL,SAVE_DOC_OPEN_CUSTOMER} from "../../Types/index";
 
 const initialState = { 
     ListCustomer:[],
@@ -14,7 +14,8 @@ const initialState = {
     VisitArriveOrEnd:null,
     ListContactPerson:[],
     LoadRefreshLocation:false,
-    DetailCustomer:null
+    DetailCustomer:null,
+    DocumentsOpen:[]
        
 };
     
@@ -123,7 +124,12 @@ const initialState = {
         return{
           ...state,
           DetailCustomer:action.payload
-        }           
+        }
+      case SAVE_DOC_OPEN_CUSTOMER:
+        return {
+          ...state,
+          DocumentsOpen:action.payload
+        }             
       default:
         return state;
     }

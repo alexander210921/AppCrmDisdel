@@ -18,8 +18,9 @@ import FormGasoline from '../Views/Gasoline/IndexGasoline';
 import ListProductHome from '../Views/Product/ListProduct';
 import DetailProduct from '../Views/Product/DetailProduct';
 import DetailCustomer from '../Views/Customer/DetailCustomer';
+import ListDocumentHome from '../Views/Documents';
 import Icon from 'react-native-vector-icons/Entypo';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
   const navigation = useNavigation();
@@ -38,14 +39,16 @@ export default function StackNavigation() {
         component={HomeRouteVendors}
         options={{
           title: '',
-          headerShown: true,          
+          headerShown: true,
           headerLeft: () => (
             <Icon
               name="menu"
-              size={25} 
+              size={25}
               color="gray"
-              onPress={()=>{navigation.openDrawer()}}
-              style={{ marginLeft: 20 }}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+              style={{marginLeft: 20}}
             />
           ),
         }}
@@ -56,9 +59,7 @@ export default function StackNavigation() {
         options={{
           title: '',
           headerShown: true,
-          
         }}
-        
       />
       <Stack.Screen
         name="VisistCustomer"
@@ -156,7 +157,7 @@ export default function StackNavigation() {
           headerShown: true,
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="ListProductHome"
         component={ListProductHome}
         options={{
@@ -164,7 +165,7 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="DetailProduct"
         component={DetailProduct}
         options={{
@@ -172,9 +173,17 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-             <Stack.Screen
+      <Stack.Screen
         name="DetailCustomer"
         component={DetailCustomer}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ListDocumentHome"
+        component={ListDocumentHome}
         options={{
           title: '',
           headerShown: false,

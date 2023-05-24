@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {View, LoaderScreen} from 'react-native-ui-lib';
 import SearchBar from '../../Components/SearchBar';
 import {
@@ -31,6 +31,7 @@ const VisitirCustomer = () => {
   const Customer = useSelector(state => state.Customer);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [loadGetDetail,setLoadGetDetail] = useState(false);
   BackHanlderMenuPrincipal(navigation);
   const SubmitSearch = value => {
     if (value == null || value == '') {
@@ -42,18 +43,26 @@ const VisitirCustomer = () => {
   };
   const HandleSelectCustomer = customer => {
     //get addres customer
-    dispatch(LoadGetAdressCustomer(true));
-    dispatch(SetDefaultCustomerSelect(customer));
-    FunctionGetAdressCustomer(
-      customer.CardCode,
-      company.NombreDB ? company.NombreDB : 'SBO_DISDELSA_2013',
-      dispatch,
-      true,
-      navigation,
-    );
+    try{
+      setLoadGetDetail(true);
+      dispatch(LoadGetAdressCustomer(true));
+      dispatch(SetDefaultCustomerSelect(customer));
+      FunctionGetAdressCustomer(
+        customer.CardCode,
+        company.NombreDB ? company.NombreDB : 'SBO_DISDELSA_2013',
+        dispatch,
+        true,
+        navigation,
+      );
+    }catch(ex){
+      Alert.alert("","ocurrió un error: "+ex);
+    }finally{
+      setLoadGetDetail(false);  
+    }
   };
   const GoDetailCustomer = async customer => {
     try {
+      setLoadGetDetail(true);
       const infoCustomer = await FunctionGetDetailCustomer(
         customer.CardCode,
         company.NombreDB,
@@ -80,12 +89,16 @@ const VisitirCustomer = () => {
       //console.log(Adress);
     } catch (ex) {
       Alert.alert('Ocurrió un error: ' + ex);
+      setLoadGetDetail(false);
+    }finally{
+      setLoadGetDetail(false);
     }
   };
   return (
     <ScrollView style={styles.secondWrapper}>
       <View style={styles.WrapperSearchBar}>
         <SearchBar focus={true} onSubmit={SubmitSearch}></SearchBar>
+        {loadGetDetail ? <LoaderScreen message="Cargando..." color="black"></LoaderScreen>:null}
       </View>
       {Customer.loadCustomer ? (
         <LoaderScreen message="Buscando..." overlay></LoaderScreen>

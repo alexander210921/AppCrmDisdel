@@ -1,103 +1,159 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  FlatList,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Chip} from 'react-native-ui-lib';
+import {Chip, LoaderScreen} from 'react-native-ui-lib';
+import {
+  FunctionGetPedidosOpen,
+  SaveDocumentCustomer,
+  FunctionGetCotizacionOpen,
+} from '../../Api/Customers/ApiCustumer';
+import {useNavigation} from '@react-navigation/native';
 const DetailCustomer = () => {
   const CustomerDetail = useSelector(state => state.Customer.DetailCustomer);
+  const company = useSelector(state => state.company.CompanySelected);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [loadGetDocument, setLoadGetDocument] = useState(false);
+  const getOpenOrder = async typeDocument => {
+    try {
+      setLoadGetDocument(true);
+      let doc = null;
+      switch (typeDocument) {
+        case 'Pedido': {
+          doc = await FunctionGetPedidosOpen(
+            CustomerDetail.CardCode,
+            company?.NombreDB,
+          );
+          break;
+        }
+        case 'Cotizacion': {
+          doc = await FunctionGetCotizacionOpen(
+            CustomerDetail.CardCode,
+            company?.NombreDB,
+          );
+          break;
+        }
+      }
+      if (doc == null) {
+        Alert.alert('', 'Ocurrió un error por favor intente nuevamente');
+        return;
+      }
+      if(doc.length==0){
+        Alert.alert('', 'No hay '+typeDocument +" abiertos");
+        return;
+      }
+      doc[0].tipoDoc = typeDocument;
+      navigation.navigate('ListDocumentHome');
+      dispatch(SaveDocumentCustomer(doc));
+    } finally {
+      setLoadGetDocument(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView>
-
-     
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{CustomerDetail.CardName}</Text>
-        <Text style={styles.headerTextSecundary}>
-          {CustomerDetail.CardCode}{' '}
-        </Text>
-        <Text style={styles.headerTextSecundary}>
-          Vendedor: {CustomerDetail.SlpName}{' '}
-        </Text>
-      </View>
-      {/* content page */}
-      <View style={{flexDirection: 'row', marginLeft: '5%', marginRight: '5%',width:"90%"}}>
-        <TouchableOpacity style={{...styles.CardStyle,width:'30%'}}>
-          {/* <Icon name={'file-document'} size={30} color="#fff"></Icon>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{CustomerDetail.CardName}</Text>
+          <Text style={styles.headerTextSecundary}>
+            {CustomerDetail.CardCode}{' '}
+          </Text>
+          <Text style={styles.headerTextSecundary}>
+            Vendedor: {CustomerDetail.SlpName}{' '}
+          </Text>
+        </View>
+        {/* content page */}
+        {loadGetDocument ? <LoaderScreen></LoaderScreen> : null}
+        <View
+          style={{
+            flexDirection: 'row',
+            marginLeft: '5%',
+            marginRight: '5%',
+            width: '90%',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              getOpenOrder('Pedido');
+            }}
+            style={{...styles.CardStyle, width: '30%'}}>
+            {/* <Icon name={'file-document'} size={30} color="#fff"></Icon>
           <Text style={{color:'#fff'}}> Pedidos </Text> */}
-          <Chip
-            label={'Pedidos'}
-            // iconSource={checkmark}
-            containerStyle={{width:'100%'}}
-            iconStyle={{width: "100%", height: 24}}
-            //iconProps={{tintColorz: Colors.$iconDefault}}
-          />
-        </TouchableOpacity>
+            <Chip
+              label={'Pedidos'}
+              // iconSource={checkmark}
+              containerStyle={{width: '100%'}}
+              iconStyle={{width: '100%', height: 24}}
+              //iconProps={{tintColorz: Colors.$iconDefault}}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={{...styles.CardStyle,width:'30%'}}>
-          {/* <Icon name={'file-document-outline'} size={30} color="#000"></Icon>
+          <TouchableOpacity
+            onPress={() => {
+              getOpenOrder('Cotizacion');
+            }}
+            style={{...styles.CardStyle, width: '30%'}}>
+            {/* <Icon name={'file-document-outline'} size={30} color="#000"></Icon>
           <Text style={{color:'#000'}} > Cotizaciones </Text> */}
-          <Chip
-            label={'Cotizaciones'}
-            containerStyle={{width:'100%'}}
-            // iconSource={checkmark}
-            iconStyle={{width: "33%", height: 24}}
-            //iconProps={{tintColor: Colors.$iconDefault}}
-          />
-        </TouchableOpacity>
+            <Chip
+              label={'Cotizaciones'}
+              containerStyle={{width: '100%'}}
+              // iconSource={checkmark}
+              iconStyle={{width: '33%', height: 24}}
+              //iconProps={{tintColor: Colors.$iconDefault}}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={{...styles.CardStyle,width:'30%'}}>
-          {/* <Icon name={'file-document-outline'} size={30} color="#000"></Icon>
-          <Text> Entregas </Text> */}
-          <Chip
-            label={'Entregas'}
-            containerStyle={{width:'100%'}}
-            // iconSource={checkmark}
-            iconStyle={{width: "33%", height: 24}}
-            //iconProps={{tintColor: Colors.$iconDefault}}
-          />
-        </TouchableOpacity>
+          {/* <TouchableOpacity style={{...styles.CardStyle, width: '30%'}}>
+        
+            <Chip
+              label={'Entregas'}
+              containerStyle={{width: '100%'}}
+              // iconSource={checkmark}
+              iconStyle={{width: '33%', height: 24}}
+              //iconProps={{tintColor: Colors.$iconDefault}}
+            />
+          </TouchableOpacity> */}
 
-        {/* <TouchableOpacity
+          {/* <TouchableOpacity
           style={{...styles.CardStyle, backgroundColor: '#fdeecd'}}>
           <Icon  name={'plus-box'}
                   size={30}
                   color="#f4d087" ></Icon>
                   <Text> Pedidos </Text>
         </TouchableOpacity> */}
-        {/* <View style={{ flex: 1, backgroundColor: 'yellow', height: 100 }} /> */}
-      </View>
-      <View style={styles.card2}>
+          {/* <View style={{ flex: 1, backgroundColor: 'yellow', height: 100 }} /> */}
+        </View>
+        {/* <View style={styles.card2}>
         <Text style={styles.text}>Editar Cliente</Text>
-        <Text>Edita los datos del cliente</Text>
+        <Text style={styles.textSecundary}>Edita los datos del cliente</Text>
         <TouchableOpacity style={styles.button}>
           <Text style={{color: '#000'}}>Ir a editar</Text>
         </TouchableOpacity>
       </View>
       <View style={{...styles.card2, backgroundColor: '#f6df5e'}}>
         <Text style={styles.text}>Dirección de entrega</Text>
-        <Text>Agrega o edita las direcciones del cliente</Text>
+        <Text style={styles.textSecundary}>Agrega o edita las direcciones del cliente</Text>
         <TouchableOpacity style={styles.button}>
           <Text style={{color: '#000'}}>Ir a direcciones</Text>
         </TouchableOpacity>
       </View>
       <View style={{...styles.card2, backgroundColor: '#10d59f'}}>
         <Text style={styles.text}>Dirección fiscal</Text>
-        <Text>Agrega o edita las direcciones del cliente</Text>
+        <Text style={styles.textSecundary}>Agrega o edita las direcciones del cliente</Text>
         <TouchableOpacity style={styles.button}>
           <Text style={{color: '#000'}}>Ir a direcciones</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
-      {/* <FlatList
+        {/* <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
@@ -105,10 +161,10 @@ const DetailCustomer = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.cardsContainer}
       /> */}
-      {/* <View style={styles.footer}>
+        {/* <View style={styles.footer}>
         <Text style={styles.footerText}>Pie de página</Text>
       </View> */}
-       </ScrollView>
+      </ScrollView>
     </View>
   );
 };
@@ -202,6 +258,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     fontWeight: 800,
+    color: 'black',
   },
   button: {
     position: 'absolute',
@@ -210,6 +267,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 5,
     borderRadius: 5,
+  },
+  textSecundary: {
+    color: 'black',
   },
 });
 

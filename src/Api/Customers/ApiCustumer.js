@@ -21,7 +21,8 @@ import {
   SAVE_IS_ARRIVE_OR_END_VISIT,
   SAVE_CONTACT_PERSON_CUSTOMER,
   LOAD_REFRESH_LOCATION,
-  SAVE_CUSTOMER_DETAIL,  
+  SAVE_CUSTOMER_DETAIL,
+  SAVE_DOC_OPEN_CUSTOMER  
 } from '../../Store/Types/index';
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native';
@@ -314,6 +315,41 @@ export async function FunctionGetCustomerFiscalAdressList (CardCode,NomnbreBD){
     return null;
   }
 }
+
+export async function FunctionGetPedidosOpen (CardCode,NomnbreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetPedidoV/"+NomnbreBD+"/"+CardCode+"/");
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
+
+export async function FunctionGetCotizacionOpen (CardCode,NombreBD){
+  try{
+    const {data} = await Axios.get("MyWsSocio/api/OCRD_Clientes/GetCotizacionOpen/"+NombreBD+"/"+CardCode+"/");
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
+
+export async function FunctionGetPDFPedidoPrice (NombreBD,DocEntry){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/DocumentoPdf/GetPdfordrCarrito_CP/"+NombreBD+"/"+DocEntry);
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
+export async function FunctionGetPDFCotiNoPrice (NombreBD,DocEntry){
+  try{
+    const {data} = await Axios.get("MyWsOneVenta/api/DocumentoPdf/GetPdfCotizacion/"+NombreBD+"/"+DocEntry);
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
 export const CancelVisits=(status)=>({
   type:LOAD_CANCEL_VISITS_IN_COURSE,
   payload:status
@@ -422,4 +458,8 @@ export const LoadRefreshLocation=(Status)=>({
 export const SaveDetailCustomer=(customer)=>({
   type:SAVE_CUSTOMER_DETAIL,
   payload:customer
+})
+export const SaveDocumentCustomer=(document)=>({
+  type:SAVE_DOC_OPEN_CUSTOMER,
+  payload:document
 })
