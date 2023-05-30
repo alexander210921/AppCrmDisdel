@@ -176,7 +176,8 @@ export const AsyncFunctionSetCoordsDetail =async object => {
   }
 };
 export const FunctionUpdateVisit =async (object, dispatch, navigation,nameViewRedirect="VisitCreated") => {
-  try {
+  try {    
+    //UpdateStatusVisit
     const {data}=await Axios.post('MyWsMobil/Api/Mobil/UpdateStatusVisit/', object)
     return data;
 
@@ -350,6 +351,16 @@ export async function FunctionGetPDFCotiNoPrice (NombreBD,DocEntry){
     return null;
   }
 }
+
+export async function FunctionGetCustomerDefaultForRoute (idUsuario,NombreDB){
+  try{
+    const {data} = await Axios.get("MyWsMobil/Api/Mobil/GetDatosClienteRuta/"+idUsuario+"/"+NombreDB);
+    return data;
+  }catch(ex){   
+    return null;
+  }
+}
+
 export const CancelVisits=(status)=>({
   type:LOAD_CANCEL_VISITS_IN_COURSE,
   payload:status

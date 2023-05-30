@@ -95,8 +95,17 @@ export  const GetUserCompany  =(UserId,navigation,dispatch)=>{
 export const GetUserRol =(UserId,CompanyId,navigation,dispatch)=>{
   try {
     Axios.get('MyWsMobil/api/Mobil/GetUserRol/'+UserId+"/"+CompanyId+"/")
-      .then(response => {
-        if(response.data.length==1){
+      .then(async response =>  {
+        if(response.data.length==1){                    
+           const options =  await FunctionGetOptionUser(response.data[0].IdRol);
+           if(options == null){
+            Alert.alert("","Ocurrió un error intente ingresar nuevamente por favor");
+            return;
+           }
+           if(options.length == 0){
+            Alert.alert("","Su rol asignado no tiene opciones para usar la app");
+            return;
+           }
            dispatch(SetUserDefaultRol(response.data))
            dispatch(SetUserRoles(response.data));
            AsyncStorageSaveDataJson("@Rol",response.data);  
@@ -118,7 +127,16 @@ export const GetUserRol =(UserId,CompanyId,navigation,dispatch)=>{
     dispatch(LoadGetUser(false));
   }
 }
-
+export async function FunctionGetOptionUser (idRol){
+  try{
+    const {data} = await Axios.get("MyWsOneControlCenter/api/Autenticacion/GetOpcRolUsr/"+idRol);
+    //here filter for only data mobile    
+    const filterOnlyMobile = data.filter((x)=>x.isMobile ==="Y" )
+    return filterOnlyMobile;
+  }catch(ex){   
+    return null;
+  }
+}
 // manipulation actios
 export const GetUser = data => ({
   type: GET_USER,
