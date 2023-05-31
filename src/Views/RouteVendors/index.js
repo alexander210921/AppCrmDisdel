@@ -69,7 +69,7 @@ const HomeRouteVendors = () => {
         navigation.navigate('VisitCreated');
       }
     },
-    HandleInitRouteForHome : async function(){
+    HandleInitRouteForHome: async function () {
       if (DrivingVisitDetail.isRouteInCourse) {
         Alert.alert('La ruta ya ha sido iniciada');
         return;
@@ -116,13 +116,13 @@ const HomeRouteVendors = () => {
       } finally {
       }
     },
-    HandleGoGasoline: function(){
+    HandleGoGasoline: function () {
       navigation.navigate('FormGasoline');
     },
-    HandleGoBases: function(){
+    HandleGoBases: function () {
       navigation.navigate('MenuEndVisit');
     },
-    HandleGetProduct:async function(){
+    HandleGetProduct: async function () {
       try {
         if (ListProducts && ListProducts.length == 0) {
           setLoadGetProduct(true);
@@ -137,14 +137,16 @@ const HomeRouteVendors = () => {
       } finally {
         setLoadGetProduct(false);
       }
-    }
+    },
   };
   const User = useSelector(state => state.login.user);
   useEffect(() => {
     async function GetOptionsUser() {
-      const restoreOption = await AsyncStorageGetData('@Options');
-      if (restoreOption != null) {
-        setListOptions(JSON.parse(restoreOption));
+      if (ListOption?.length == 0) {
+        const restoreOption = await AsyncStorageGetData('@Options');
+        if (restoreOption != null) {
+          setListOptions(JSON.parse(restoreOption));
+        }
       }
     }
     async function StopVisit() {
@@ -232,12 +234,11 @@ const HomeRouteVendors = () => {
                         );
                         return;
                       }
-                      if(FunctionsHome[optiona.Controlador]){
+                      if (FunctionsHome[optiona.Controlador]) {
                         FunctionsHome[optiona.Controlador]();
-                      }else{
-                        Alert.alert("","Se está trabajando en esta opción");
+                      } else {
+                        Alert.alert('', 'Se está trabajando en esta opción');
                       }
-                      
                     }}
                     nameIcon={optiona.Icono ? optiona.Icono : 'warehouse'}
                     title={
@@ -258,57 +259,12 @@ const HomeRouteVendors = () => {
 };
 export default HomeRouteVendors;
 const styles = StyleSheet.create({
-  wrapperButtons: {
-    margin: '1%',
-  },
-  HeaderSection: {
-    height: '100%',
-    backgroundColor: '#f3f5f7',
-  },
   card: {
     height: '17%',
     borderColor: 'black',
     marginTop: '4%',
     backgroundColor: '#CED3F2',
     color: 'black',
-  },
-  card2: {
-    height: '17%',
-    borderColor: 'black',
-    marginTop: '4%',
-    backgroundColor: '#D0F2E9',
-    color: 'black',
-  },
-  card3: {
-    height: '17%',
-    borderColor: 'black',
-    marginTop: '4%',
-    backgroundColor: '#F2E8C9',
-    color: 'black',
-  },
-  card4: {
-    height: '17%',
-    borderColor: 'black',
-    marginTop: '4%',
-    backgroundColor: '#F2D8CE',
-    color: 'black',
-  },
-  card5: {
-    height: '17%',
-    borderColor: 'black',
-    marginTop: '4%',
-    backgroundColor: 'gray',
-    color: 'black',
-  },
-  selectOptionCard: {
-    color: 'green',
-  },
-  ButtonDisable: {
-    backgroundColor: '#f2f2f2',
-    color: '#a9a9a9',
-    height: '17%',
-    shadowColor: 'shadow',
-    marginTop: '4%',
   },
   WrapperCustomer: {
     ...StylesWrapper.wraper,
@@ -321,13 +277,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   row: {
-    display:'flex',
-    width:'100%',
+    display: 'flex',
+    width: '100%',
     flexDirection: 'row',
     marginBottom: 10,
-    flexWrap:'wrap',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    alignContent:'space-between',
+    alignContent: 'space-between',
   },
   card: {
     flex: 1,
