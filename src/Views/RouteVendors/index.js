@@ -19,13 +19,14 @@ import {
 } from '../../Api/Customers/ApiCustumer';
 import {GeCustomersVendor} from '../../Api/Customers/ApiCustumer';
 import BackgroundService from 'react-native-background-actions';
-import {StopInitVisit} from '../../lib/Visits';
-import {SetActualityCoords} from '../../Api/User/ApiUser';
-import {GetGeolocation} from '../../lib/Permissions/Geolocation';
 const imagePath = require('../../Assets/Images/logoDisdel.png');
 const imagePathLyG = require('../../Assets/Images/logoLyG.png');
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { GetListProductByCompany, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
+import {
+  GetListProductByCompany,
+  SaveProductsByCompany,
+} from '../../Api/Products/ApiProduct';
+import {AsyncStorageGetData} from '../../lib/AsyncStorage';
 
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
@@ -36,158 +37,137 @@ const HomeRouteVendors = () => {
   const navigator = useNavigation();
   const company = useSelector(state => state.company.CompanySelected);
   const [loadGetVisit, setLoadGetVisit] = useState(false);
-  const [loadGetProduct,setLoadGetProduct] = useState(false);
-  const ListProducts = useSelector(state=>state.Product.ListProductCompany);    
-  const pastelColors = [
-    '#E5D8CF',
-    '#B7DDE8',
-    '#E8D9B9',
-    '#C4D7CF',
-    '#CED3F2',
-    '#f2f2f2',
-    "#F5D5CB",
-    "#F5D5CB",
-  ];
+  const [loadGetProduct, setLoadGetProduct] = useState(false);
+  const ListProducts = useSelector(state => state.Product.ListProductCompany);
+  const [ListOption, setListOptions] = useState([]);
   const dispatch = useDispatch();
   BackHanlder(navigation, dispatch);
-  const HandleMarkerSelectCard = () => {
-    setSelectCard(!selectCard);
-    dispatch(GeCustomersVendor([]));
-    navigation.navigate('SearchCustomer');
-  };
-  const HandleInitRouteForHome = async () => {
-    if (DrivingVisitDetail.isRouteInCourse) {
-      Alert.alert('La ruta ya ha sido iniciada');
-      return;
-    }
-    if (listVisit.loadGetCurrentVisit) {
-      Alert.alert('', 'Se está cargando el proceso, por favor espere');
-      return;
-    }
-    try {
-      dispatch(LoadGetVisitActuality(true));
-      const visits = await FunctionGetCurrentVisit(
-        Rol[0].IdRelacion,
-        dispatch,
-        true,
-        navigator,
-      );
-      if (visits != null && visits.length > 0) {
-        dispatch(SetVisiActualityt(visits));
-      } else if (visits.length == 0) {
-        dispatch(SetVisiActualityt([]));
-        dispatch(LoadGetVisitActuality(false));
-        Alert.alert('', 'No tiene visitas creadas');
+  const FunctionsHome = {
+    HandleMarkerSelectCard: function () {
+      setSelectCard(!selectCard);
+      dispatch(GeCustomersVendor([]));
+      navigation.navigate('SearchCustomer');
+    },
+    HandleGoToVisitCustumer: async function () {
+      try {
+        setLoadGetVisit(true);
+        const visits = await FunctionGetCurrentVisit(
+          Rol[0].IdRelacion,
+          dispatch,
+          true,
+          navigator,
+        );
+        if (visits != null && visits.length > 0) {
+          dispatch(SetVisiActualityt(visits));
+        } else if (visits != null && visits.length == 0) {
+          dispatch(SetVisiActualityt([]));
+        }
+      } catch (ex) {
+        Alert.alert('' + ex);
+      } finally {
+        setLoadGetVisit(false);
+        navigation.navigate('VisitCreated');
+      }
+    },
+    HandleInitRouteForHome : async function(){
+      if (DrivingVisitDetail.isRouteInCourse) {
+        Alert.alert('La ruta ya ha sido iniciada');
         return;
       }
-      // const isValidateGPS = await GetGeolocation();
-      // if (!isValidateGPS.Status) {
-      //   Alert.alert('Intente nuevamente', isValidateGPS.Message);
-      //   return;
-      // }
-      // if (
-      //   isValidateGPS.Data.coords.latitude != 0 &&
-      //   isValidateGPS.Data.coords.longitude != 0
-      // ) {
-      //   dispatch(
-      //     SetActualityCoords({
-      //       latitude: isValidateGPS.Data.coords.latitude,
-      //       longitude: isValidateGPS.Data.coords.longitude,
-      //     }),
-      //   );
-      // }
-      
-      let navigateToRegisterMileague = false;
-      const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
-      //dispatch(LoadGetVisitActuality(false));
-      try {
-        if (dataMileagueInit && dataMileagueInit.length == 0) {
-          dispatch(SaveIsArriveOrNotTheVisit('Y'));
-          navigateToRegisterMileague = true;
-          //navigation.navigate('FormCreateRoute');
-        }
-      } finally {
-        await StartNotification(User.EntityID, '', dispatch,navigateToRegisterMileague,navigation,true);
-        //dispatch(LoadGetVisitActuality(false));
+      if (listVisit.loadGetCurrentVisit) {
+        Alert.alert('', 'Se está cargando el proceso, por favor espere');
+        return;
       }
-
-      //Alert.alert('', 'Ruta Iniciada con éxito');
-    } catch (ex) {
-      Alert.alert('' + ex);
-    } finally {
-     // dispatch(LoadGetVisitActuality(false));
-    }
-  };
-  const HandleGoBases = () => {
-    navigation.navigate('MenuEndVisit');
-  };
-  const HandleGetProduct =async () => {  
-    try {
-      if (ListProducts && ListProducts.length == 0) {
-        setLoadGetProduct(true);
-        const ListProduct = await GetListProductByCompany(company?.NombreDB);
-        if (ListProduct == null || ListProduct?.length == 0) {
-          Alert.alert('', 'No se encontraron productos');
+      try {
+        dispatch(LoadGetVisitActuality(true));
+        const visits = await FunctionGetCurrentVisit(
+          Rol[0].IdRelacion,
+          dispatch,
+          true,
+          navigator,
+        );
+        if (visits != null && visits.length > 0) {
+          dispatch(SetVisiActualityt(visits));
+        } else if (visits.length == 0) {
+          dispatch(SetVisiActualityt([]));
+          dispatch(LoadGetVisitActuality(false));
+          Alert.alert('', 'No tiene visitas creadas');
           return;
         }
-        dispatch(SaveProductsByCompany(ListProduct));
-      }      
-      navigation.navigate('ListProductHome');
-    } finally {
-      setLoadGetProduct(false);
-    }  
-    
-  };
-  const HandleGoGasoline = () => {
-    navigation.navigate('FormGasoline');
-  };
-
-  const HandleGoToVisitCustumer = async () => {
-    try {
-      //dispatch(LoadGetVisitActuality(true));
-      setLoadGetVisit(true);
-      const visits = await FunctionGetCurrentVisit(
-        Rol[0].IdRelacion,
-        dispatch,
-        true,
-        navigator,
-      );
-      if (visits != null && visits.length > 0) {
-        dispatch(SetVisiActualityt(visits));
-      } else if (visits != null && visits.length == 0) {
-        dispatch(SetVisiActualityt([]));
+        let navigateToRegisterMileague = false;
+        const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
+        try {
+          if (dataMileagueInit && dataMileagueInit.length == 0) {
+            dispatch(SaveIsArriveOrNotTheVisit('Y'));
+            navigateToRegisterMileague = true;
+          }
+        } finally {
+          await StartNotification(
+            User.EntityID,
+            '',
+            dispatch,
+            navigateToRegisterMileague,
+            navigation,
+            true,
+          );
+        }
+      } catch (ex) {
+        Alert.alert('' + ex);
+      } finally {
       }
-    } catch (ex) {
-      Alert.alert('' + ex);
-    } finally {
-      setLoadGetVisit(false);
-      navigation.navigate('VisitCreated');
+    },
+    HandleGoGasoline: function(){
+      navigation.navigate('FormGasoline');
+    },
+    HandleGoBases: function(){
+      navigation.navigate('MenuEndVisit');
+    },
+    HandleGetProduct:async function(){
+      try {
+        if (ListProducts && ListProducts.length == 0) {
+          setLoadGetProduct(true);
+          const ListProduct = await GetListProductByCompany(company?.NombreDB);
+          if (ListProduct == null || ListProduct?.length == 0) {
+            Alert.alert('', 'No se encontraron productos');
+            return;
+          }
+          dispatch(SaveProductsByCompany(ListProduct));
+        }
+        navigation.navigate('ListProductHome');
+      } finally {
+        setLoadGetProduct(false);
+      }
     }
   };
-
   const User = useSelector(state => state.login.user);
   useEffect(() => {
+    async function GetOptionsUser() {
+      const restoreOption = await AsyncStorageGetData('@Options');
+      if (restoreOption != null) {
+        setListOptions(JSON.parse(restoreOption));
+      }
+    }
     async function StopVisit() {
       if (
         DrivingVisitDetail.isRouteInCourse &&
         !BackgroundService.isRunning()
       ) {
-        await StartNotification( 
+        await StartNotification(
           User.EntityID,
           '',
           dispatch,
           false,
           null,
-          false
-          )
-        //await StopInitVisit(null, dispatch);
+          false,
+        );
       }
     }
-    StopVisit();
     if (!User) {
       navigation.navigate('Login');
       return;
     }
+    GetOptionsUser();
+    StopVisit();
   }, [User]);
 
   const PastelCard = ({
@@ -234,63 +214,42 @@ const HomeRouteVendors = () => {
                 }></Image>
             </View>
           )}
-
           <View style={styles.container}>
-            <View style={styles.row}>
-              <PastelCard
-                onPress={HandleMarkerSelectCard}
-                nameIcon="bag-personal"
-                title="Crear nueva visita"
-                color={pastelColors[0]}
-              />
-              <PastelCard
-                onPress={HandleGoToVisitCustumer}
-                nameIcon="progress-download"
-                title="Ver visitas en curso"
-                color={pastelColors[1]}
-              />
-            </View>
-            <View style={styles.row}>
-              <PastelCard
-                onPress={HandleInitRouteForHome}
-                nameIcon="map-marker-plus"
-                title="Iniciar Ruta"
-                color={
-                  !DrivingVisitDetail.isRouteInCourse &&
-                  !listVisit.loadGetCurrentVisit
-                    ? pastelColors[2]
-                    : pastelColors[5]
-                }
-              />
-              <PastelCard
-                onPress={HandleGoGasoline}
-                nameIcon="gas-station"
-                title="Gasolina"
-                color={pastelColors[3]}
-              />
-            </View>
-            <View style={styles.row}>
-              <PastelCard
-                onPress={HandleGoBases}
-                nameIcon="warehouse"
-                title="Ir a base"
-                color={pastelColors[4]}
-              />
-              <PastelCard
-                onPress={HandleGetProduct}
-                nameIcon="cart"
-                title="Productos"
-                color={pastelColors[6]}
-              />
-            </View>
-            {/* <View style={styles.row}>
-            <PastelCard
-                onPress={HandleGetProduct}
-                nameIcon="shopping-outline"
-                title="Pedidos"
-                color={pastelColors[7]}
-              />
-            </View> */}
+            {ListOption && ListOption.length > 0 ? (
+              <View style={styles.row}>
+                {/* {console.log("aaa",ListOption)} */}
+                {ListOption.map((optiona, index) => (
+                  <PastelCard
+                    key={index}
+                    onPress={() => {
+                      if (
+                        optiona.Controlador == null ||
+                        optiona.Controlador == ''
+                      ) {
+                        Alert.alert(
+                          '',
+                          'Esta opción no está configurada para realizar una acción',
+                        );
+                        return;
+                      }
+                      if(FunctionsHome[optiona.Controlador]){
+                        FunctionsHome[optiona.Controlador]();
+                      }else{
+                        Alert.alert("","Se está trabajando en esta opción");
+                      }
+                      
+                    }}
+                    nameIcon={optiona.Icono ? optiona.Icono : 'warehouse'}
+                    title={
+                      optiona.NombreOpcion
+                        ? optiona.NombreOpcion
+                        : 'Sin título de opción'
+                    }
+                    color={optiona.HasColor ? optiona.HasColor : '#fff'}
+                  />
+                ))}
+              </View>
+            ) : null}
           </View>
         </ScrollView>
       </View>
@@ -301,7 +260,6 @@ export default HomeRouteVendors;
 const styles = StyleSheet.create({
   wrapperButtons: {
     margin: '1%',
-    //marginBottom: '10%',
   },
   HeaderSection: {
     height: '100%',
@@ -354,9 +312,7 @@ const styles = StyleSheet.create({
   },
   WrapperCustomer: {
     ...StylesWrapper.wraper,
-    //marginBottom:'3%',
     flex: 1,
-    //height:'100%'
   },
   container: {
     flex: 1,
@@ -365,14 +321,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   row: {
+    display:'flex',
+    width:'100%',
     flexDirection: 'row',
     marginBottom: 10,
+    flexWrap:'wrap',
+    justifyContent: 'space-between',
+    alignContent:'space-between',
   },
   card: {
     flex: 1,
     borderRadius: 10,
     margin: 5,
-    justifyContent: 'flex-end',
   },
   icon: {
     position: 'absolute',
@@ -389,7 +349,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    width: '50%',
+    width: '45%',
     aspectRatio: 1,
     borderRadius: 10,
     marginHorizontal: 5,
