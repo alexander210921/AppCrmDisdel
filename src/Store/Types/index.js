@@ -4,4 +4,4 @@ export *from "./TypesRoles/TypesRoles"
 export *from "./TypesMileage/TypesMileage"
 export *from "./TypesCustomer/TypesCustomer"
 export *from './TypesProduct/TypesProduct'
-export *from './TypesTraking/TypesTraking'
+export *from './TypesTraking/TypesTrakingIndex';
