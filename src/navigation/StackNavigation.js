@@ -19,6 +19,7 @@ import ListProductHome from '../Views/Product/ListProduct';
 import DetailProduct from '../Views/Product/DetailProduct';
 import DetailCustomer from '../Views/Customer/DetailCustomer';
 import ListDocumentHome from '../Views/Documents';
+import TrackingDocumentsAsigned from '../Views/Tracking';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -184,6 +185,14 @@ export default function StackNavigation() {
       <Stack.Screen
         name="ListDocumentHome"
         component={ListDocumentHome}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+            <Stack.Screen
+        name="TrackingDocumentsAsigned"
+        component={TrackingDocumentsAsigned}
         options={{
           title: '',
           headerShown: false,

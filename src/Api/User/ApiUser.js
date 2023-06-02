@@ -4,14 +4,21 @@ import {Alert} from 'react-native';
 import { AsyncStorageGetData, AsyncStorageSaveDataJson } from '../../lib/AsyncStorage';
 export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
   const UserData = {
-    NameUser: NameUser,
-    Password: PasswordUser,
+    NombreUsuario: NameUser,
+    Contraseña: PasswordUser,
   };
   try {
-    Axios.post('MyWsMobil/api/Mobil/ValidarLogin/', UserData)
+    Axios.post('MyWsOneControlCenter/Api/autenticacion/authenticate/', UserData)
       .then(async response => {
-        if (response.data.Resultado) {                    
-          GetLoginUser(response.data.DocEntry,navigation,dispatch);   
+        const {
+          EntityID,
+        } = response.data;
+  
+        if (EntityID === 0 || EntityID === undefined) {
+          Alert.alert("Usuario incorrecto")
+          return;
+        }                               
+          GetLoginUser(response.data.EntityID,response.data,dispatch);   
           // let company = await AsyncStorageGetData("@Company");       
           // if(company!=null){
           //   company = JSON.parse(company);
@@ -21,12 +28,9 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
           // }else{
             
           // } 
-          GetUserCompany(response.data.DocEntry,navigation,dispatch);         
+          GetUserCompany(response.data.EntityID,navigation,dispatch);         
           AsyncStorageSaveDataJson("@User",{ NameUser,PasswordUser});  
-        } else {
-          Alert.alert('Usuario incorrecto');
-          dispatch(LoadGetUser(false));
-        }
+      
       })
       .catch((err) => {
         Alert.alert("Ocurrió un error"+err);
@@ -41,12 +45,12 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
 };
 
 
-export const GetLoginUser = (UserId,navigation,dispatch) => {
+export const GetLoginUser = (UserId,dataUser,dispatch) => {
   try {
     Axios.get('MyWsMobil/api/Mobil/GetUsuarioLog/'+UserId+"/")
       .then(response => {
         if(response.data.EntityID>0){
-           dispatch(GetUser(response.data));                  
+           dispatch(GetUser(dataUser));                  
         }else{
           Alert.alert("Ocurrió un error intente nuevamente");
           dispatch(LoadGetUser(false));

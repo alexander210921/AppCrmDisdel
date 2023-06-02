@@ -27,6 +27,7 @@ import {
   SaveProductsByCompany,
 } from '../../Api/Products/ApiProduct';
 import {AsyncStorageGetData} from '../../lib/AsyncStorage';
+import { GetDocumentsAsignedUser,SaveDocumentsAsigned } from '../../Api/Traking/ApiTraking';
 
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
@@ -39,6 +40,8 @@ const HomeRouteVendors = () => {
   const [loadGetVisit, setLoadGetVisit] = useState(false);
   const [loadGetProduct, setLoadGetProduct] = useState(false);
   const ListProducts = useSelector(state => state.Product.ListProductCompany);
+  const User = useSelector(state => state.login.user);
+  const { EmpID } = User;
   const [ListOption, setListOptions] = useState([]);
   const dispatch = useDispatch();
   BackHanlder(navigation, dispatch);
@@ -138,8 +141,30 @@ const HomeRouteVendors = () => {
         setLoadGetProduct(false);
       }
     },
+    GoDocumentsAssigned:async function(){
+      try{        
+        setLoadGetVisit(true);
+        const documents  = await GetDocumentsAsignedUser(EmpID);
+        if(documents == null){
+          Alert.alert("","Ocurrió un error intenta nuevamente");
+          return;
+        }
+        if (documents.length ==0 ){
+          Alert.alert("","No tiene documentos asignados actualmente");
+          return;  
+        }        
+        console.log(documents);
+        dispatch(SaveDocumentsAsigned(documents));
+        navigation.navigate('TrackingDocumentsAsigned');
+      }catch(ex){
+        Alert.alert("","Ocurrió un error "+ex);
+      }finally{
+        setLoadGetVisit(false);        
+      }
+      //Alert.alert("testeando Opción");
+    },
   };
-  const User = useSelector(state => state.login.user);
+  
   useEffect(() => {
     async function GetOptionsUser() {
       if (ListOption?.length == 0) {
