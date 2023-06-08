@@ -16,6 +16,7 @@ export const LoginUser = (NameUser, PasswordUser, dispatch,navigation) => {
   
         if (EntityID === 0 || EntityID === undefined) {
           Alert.alert("Usuario incorrecto")
+          dispatch(LoadGetUser(false));
           return;
         }                               
           GetLoginUser(response.data.EntityID,response.data,dispatch);   
@@ -113,6 +114,7 @@ export const GetUserRol =(UserId,CompanyId,navigation,dispatch)=>{
            dispatch(SetUserDefaultRol(response.data))
            dispatch(SetUserRoles(response.data));
            AsyncStorageSaveDataJson("@Rol",response.data);  
+           await AsyncStorageSaveDataJson('@Options', options);
            navigation.navigate("Home");
         }else if(response.data.length>1){
           //Alert.alert("seleccione el rol");

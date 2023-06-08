@@ -41,7 +41,7 @@ const HomeRouteVendors = () => {
   const [loadGetProduct, setLoadGetProduct] = useState(false);
   const ListProducts = useSelector(state => state.Product.ListProductCompany);
   const User = useSelector(state => state.login.user);
-  const { EmpID } = User;
+  //const { EmpID } = User;
   const [ListOption, setListOptions] = useState([]);
   const dispatch = useDispatch();
   BackHanlder(navigation, dispatch);
@@ -144,16 +144,16 @@ const HomeRouteVendors = () => {
     GoDocumentsAssigned:async function(){
       try{        
         setLoadGetVisit(true);
-        const documents  = await GetDocumentsAsignedUser(EmpID);
+        const documents  = await GetDocumentsAsignedUser(User?.EmpID);
         if(documents == null){
           Alert.alert("","Ocurrió un error intenta nuevamente");
           return;
         }
-        if (documents.length ==0 ){
+        if (documents.length ==0 ) {
           Alert.alert("","No tiene documentos asignados actualmente");
           return;  
         }        
-        console.log(documents);
+        
         dispatch(SaveDocumentsAsigned(documents));
         navigation.navigate('TrackingDocumentsAsigned');
       }catch(ex){
@@ -163,6 +163,9 @@ const HomeRouteVendors = () => {
       }
       //Alert.alert("testeando Opción");
     },
+    GetDocumentsInTracking:function(){
+      Alert.alert("test");
+    }
   };
   
   useEffect(() => {
@@ -170,7 +173,7 @@ const HomeRouteVendors = () => {
       if (ListOption?.length == 0) {
         const restoreOption = await AsyncStorageGetData('@Options');
         if (restoreOption != null) {
-          setListOptions(JSON.parse(restoreOption));
+          setListOptions(JSON.parse(restoreOption));          
         }
       }
     }

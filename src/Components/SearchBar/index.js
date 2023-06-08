@@ -3,7 +3,7 @@ import {StyleSheet, TextInput, ScrollView} from 'react-native';
 import {View} from 'react-native-ui-lib';
 import {ColorBackround} from '../../Assets/Colors/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-const SearchBar = ({onSubmit ,focus=false}) => {
+const SearchBar = ({onSubmit ,focus=false,placeholder="Busca el cliente"}) => {
   const [search, setSearch] = useState('');
   const searchFilterFunction = text => {setSearch(text)};
   const HandleSubmit=()=>{    
@@ -23,7 +23,7 @@ const SearchBar = ({onSubmit ,focus=false}) => {
             style={styles.textInputStyle}
             onChangeText={text => searchFilterFunction(text)}
             underlineColorAndroid="transparent"
-            placeholder="Busca el cliente"
+            placeholder={placeholder}
             onSubmitEditing={HandleSubmit}
             value={search}
             focusable={true}
