@@ -27,7 +27,12 @@ import {
   SaveProductsByCompany,
 } from '../../Api/Products/ApiProduct';
 import {AsyncStorageGetData} from '../../lib/AsyncStorage';
-import { GetDocumentsAsignedUser,SaveDocumentsAsigned } from '../../Api/Traking/ApiTraking';
+import {
+  GetDocumentsAsignedUser,
+  GetDocumentsInRoute,
+  SaveDocumentsAsigned,
+  SaveDocumentsRoute,
+} from '../../Api/Traking/ApiTraking';
 
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
@@ -141,39 +146,53 @@ const HomeRouteVendors = () => {
         setLoadGetProduct(false);
       }
     },
-    GoDocumentsAssigned:async function(){
-      try{        
+    GoDocumentsAssigned: async function () {
+      try {
         setLoadGetVisit(true);
-        const documents  = await GetDocumentsAsignedUser(User?.EmpID);
-        if(documents == null){
-          Alert.alert("","Ocurrió un error intenta nuevamente");
+        const documents = await GetDocumentsAsignedUser(User?.EmpID);
+        if (documents == null) {
+          Alert.alert('', 'Ocurrió un error intenta nuevamente');
           return;
         }
-        if (documents.length ==0 ) {
-          Alert.alert("","No tiene documentos asignados actualmente");
-          return;  
-        }        
-        
+        if (documents.length == 0) {
+          Alert.alert('', 'No tiene documentos asignados actualmente');
+          return;
+        }
+
         dispatch(SaveDocumentsAsigned(documents));
         navigation.navigate('TrackingDocumentsAsigned');
-      }catch(ex){
-        Alert.alert("","Ocurrió un error "+ex);
-      }finally{
-        setLoadGetVisit(false);        
+      } catch (ex) {
+        Alert.alert('', 'Ocurrió un error ' + ex);
+      } finally {
+        setLoadGetVisit(false);
       }
       //Alert.alert("testeando Opción");
     },
-    GetDocumentsInTracking:function(){
-      Alert.alert("test");
-    }
+    GetDocumentsInTracking: async function () {
+      try {
+        setLoadGetVisit(true);
+        const documents = await GetDocumentsInRoute(User?.EmpID);
+        if (documents == null) {
+          Alert.alert('', 'Ocurrió un error intenta nuevamente');
+          return;
+        }
+        if (documents.length == 0) {
+          Alert.alert('', 'No tiene documentos en ruta actualmente');
+          return;
+        }
+        dispatch(SaveDocumentsRoute(documents));
+      } finally {
+        setLoadGetVisit(false);
+      }
+    },
   };
-  
+
   useEffect(() => {
     async function GetOptionsUser() {
       if (ListOption?.length == 0) {
         const restoreOption = await AsyncStorageGetData('@Options');
         if (restoreOption != null) {
-          setListOptions(JSON.parse(restoreOption));          
+          setListOptions(JSON.parse(restoreOption));
         }
       }
     }

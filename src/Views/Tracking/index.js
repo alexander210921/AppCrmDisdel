@@ -1,8 +1,17 @@
-import {StyleSheet, ScrollView, View, Text, Alert, TouchableOpacity,Animated} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
+import {Button, Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  GetDetailDocument,
+  GetDetailRoute,
   IniciarRutaporIdTracking,
   SaveDocumentsAsigned,
 } from '../../Api/Traking/ApiTraking';
@@ -12,10 +21,22 @@ const TrackingDocumentsAsigned = () => {
   const documents = useSelector(state => state.Tracking.DocumentAsigned);
   const [DocumentsList, setDocumentsList] = useState([]);
   const [checkedItems, setCheckedItems] = React.useState([]);
-  const [isMarkerAll,setIsMarkerAll] = useState(true);
+  const [isMarkerAll, setIsMarkerAll] = useState(true);
   const user = useSelector(state => state.login.user);
   const [load, setLoader] = React.useState(false);
+  const company = useSelector(state => state.company.CompanySelected);
+  const [selectedCardIndex, setSelectedCardIndex] = useState(null);
+  const [loadGetDocuments,setLoadGetDocuments] =useState(false);
+  const [detailHeaderDoc,setDetailHeaderDoc] = useState(null);
   const dispatch = useDispatch();
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const toggleAccordion = () => {
+    //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsCollapsed(!isCollapsed);
+  };
+
   const handleCheckChange = itemId => {
     const updatedCheckedItems = [...checkedItems];
     const itemIndex = updatedCheckedItems.indexOf(itemId);
@@ -25,16 +46,16 @@ const TrackingDocumentsAsigned = () => {
       updatedCheckedItems.splice(itemIndex, 1);
     }
     setCheckedItems(updatedCheckedItems);
-    if(updatedCheckedItems.length === documents.length){
-        setIsMarkerAll(false);
+    if (updatedCheckedItems.length === documents.length) {
+      setIsMarkerAll(false);
     }
-    if(updatedCheckedItems.length ===0){
-        setIsMarkerAll(true);
+    if (updatedCheckedItems.length === 0) {
+      setIsMarkerAll(true);
     }
   };
 
   const handleSelectAll = () => {
-    const allItemIds = documents.map(item => item.EntityID);
+    const allItemIds = DocumentsList.map(item => item.EntityID);
     setCheckedItems(allItemIds);
     setIsMarkerAll(!isMarkerAll);
   };
@@ -53,8 +74,12 @@ const TrackingDocumentsAsigned = () => {
       setDocumentsList(documents);
       return;
     }
-    const filtered = documents.filter(item =>
-      item.EntityID.toString().toLowerCase().includes(searchText.toLowerCase()),
+    const filtered = documents.filter(
+      item =>
+        item.EntityID.toString()
+          .toLowerCase()
+          .includes(searchText.toLowerCase()) ||
+        item.DocNum.toString().toLowerCase().includes(searchText.toLowerCase()),
     );
     setDocumentsList(filtered);
   };
@@ -90,22 +115,106 @@ const TrackingDocumentsAsigned = () => {
       setLoader(false);
     }
   };
-
-  const Card = ({id, title, description, isChecked}) => {
+  const DetailDocument=()=>{
     return (
-      <View style={styles.card}>
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            value={checkedItems.includes(id)}
-            onValueChange={() => {
-              handleCheckChange(id);
-            }}
-            style={styles.checkbox}
-            color="green"
-          />
-          <Text style={styles.text}>{title}</Text>
-        </View>
-        <Text style={styles.textSecundary}>{description}</Text>
+      <ScrollView>
+        <View style={styles.containerDetail}>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Monto:</Text>
+        <Text style={styles.value}>Q. {detailHeaderDoc?.TotalDocumento}</Text>
+      </View>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Persona de contacto:</Text>
+        <Text style={styles.value}>{detailHeaderDoc?.AuxPreguntarPor}</Text>
+      </View>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Vendedor:</Text>
+        <Text style={styles.value}>{detailHeaderDoc?.AuxVendedor}</Text>
+      </View>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Número de documento:</Text>
+        <Text style={styles.value}>{detailHeaderDoc?.DocNum}</Text>
+      </View>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Cliente:</Text>
+        <Text style={styles.value}>{detailHeaderDoc?.AuxNombreCliente}</Text>
+      </View>
+      <View style={styles.rowDetail}>
+        <Text style={styles.label}>Dirección: </Text>
+        {/* <Text style={styles.value}>{detailHeaderDoc?.AuxNombreCliente}</Text> */}
+      </View>
+      <Text style={styles.value}>{detailHeaderDoc?.AuxDestino} </Text>
+      <Text style={styles.value}>{detailHeaderDoc?.AuxCalle} </Text>
+      
+    </View>
+      </ScrollView>
+    )
+  }
+  const getDetail = async (NombreDB, DocEntry, TypeDoC, docNum, idTracking) => {
+    try{
+  setLoadGetDocuments(true);
+  setSelectedCardIndex(docNum === selectedCardIndex ? null : docNum);
+    const object = {
+      AuxNombreDB: NombreDB,
+      DocNum: docNum,
+      IdTracking: idTracking,
+      DocEntry: DocEntry,
+      TipoDoc: TypeDoC,
+    };
+    //const detail = await GetDetailDocument(NombreDB, DocEntry, TypeDoC);
+    const detailRoute = await GetDetailRoute(object);
+    //console.log(object,"object to data");
+    //console.log('Detalle del documento', detail);
+     console.log('DETALLE ENCABEZADO', detailRoute);
+    if(detailRoute==null){
+      setSelectedCardIndex(null);
+      Alert.alert("","Ocurrió un problema al mostrar el detalle");
+      return;
+    }
+    setDetailHeaderDoc(detailRoute);
+    toggleAccordion();
+    }finally{
+      setLoadGetDocuments(false);  
+    }
+  };
+  const Card = ({
+    id,
+    title,
+    description,
+    isChecked,
+    EntityiD,
+    typeDoc,
+    docNum = 0,
+  }) => {
+    return (
+      <View>
+        <TouchableOpacity
+        style={{borderWidth:0,shadowColor:'#ffff'}}
+          onPress={() => {
+            getDetail(company?.NombreDB, EntityiD, typeDoc, docNum, id);
+          }}>
+          <View style={styles.card}>
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                value={checkedItems.includes(id)}
+                onValueChange={() => {
+                  handleCheckChange(id);
+                }}
+                style={styles.checkbox}
+                color="green"
+              />
+              <Text style={styles.text}>{title}</Text>
+            </View>
+            <Text style={styles.textSecundary}>{description}</Text>
+          </View>
+        </TouchableOpacity>
+        {selectedCardIndex ==docNum && !loadGetDocuments  ? 
+        <DetailDocument></DetailDocument>
+        :null}
+      
+      {selectedCardIndex ==docNum && loadGetDocuments  ? 
+      <Text style={{color:'gray'}}> Cargando...</Text>
+        :null}
       </View>
     );
   };
@@ -120,35 +229,68 @@ const TrackingDocumentsAsigned = () => {
             containerStyle={{width:'50%'}}
             onPress={AddRouteDocuments}
             label={'Iniciar Ruta ' + checkedItems.length + ' items '}></Chip> */}
-            <View style={styles.headerContainer}> 
-            <View style={{width:'80%'}}>
-            <SearchBar
+          <View style={styles.headerContainer}>
+            <View style={{width: '80%'}}>
+              <SearchBar
                 onSubmit={Search}
                 placeholder="Buscar Documento"></SearchBar>
+              <Text>Id tracking / No. Factura</Text>
             </View>
-            <View style={{width:'20%'}}>
-            <TouchableOpacity style={{display:'flex',justifyContent:'center',backgroundColor:'orange',marginTop:3}} onPress={isMarkerAll?handleSelectAll:UnSelectAll} >
-                <View style={{height:50}}>
-                    <Text style={{height:50,color:'#FFF'}}> {isMarkerAll ? 'Marcar todo':'Desmarcar'}</Text>
-                </View>                    
-            </TouchableOpacity>
-            </View>                                 
-            </View>          
+            <View style={{width: '20%'}}>
+              <TouchableOpacity
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  backgroundColor: 'orange',
+                  marginTop: 3,
+                }}
+                onPress={isMarkerAll ? handleSelectAll : UnSelectAll}>
+                <View style={{height: 50}}>
+                  <Text style={{height: 50, color: '#FFF'}}>
+                    {' '}
+                    {isMarkerAll
+                      ? 'Marcar todo ( ' + DocumentsList.length + ' )'
+                      : 'Desmarcar'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
           {load ? <LoaderScreen></LoaderScreen> : null}
           {DocumentsList.map((item, index) => (
             <Card
               key={index}
-              title={item.EntityID}
+              title={item.EntityID + ' / ' + item.DocNum}
               description={item.Piloto}
               isChecked={item.Check}
               id={item.EntityID}
+              EntityiD={item.DocEntry}
+              typeDoc={item.TipoDoc === 4 ? 'Entrega' : 'Factura'}
+              docNum={item.DocNum}
             />
           ))}
-         
-        {/* <TouchableOpacity style={styles.button}>
+
+          {/* <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Botón</Text>
       </TouchableOpacity> */}
-                 
+          {DocumentsList.length > 0 ? (
+            <TouchableOpacity
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignContent: 'center',
+              }}>
+              <Button
+                onPress={AddRouteDocuments}
+                style={{backgroundColor: '#000', width: '70%'}}>
+                <Text style={{color: '#fff'}}>
+                  {' '}
+                  Aceptar {checkedItems.length} Seleccionados{' '}
+                </Text>
+              </Button>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     </ScrollView>
@@ -160,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 10,
-    shadowColor: '#000000',
+    shadowColor: '#FFFFFF',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -192,21 +334,21 @@ const styles = StyleSheet.create({
   textSecundary: {
     color: 'gray',
   },
-  headerContainer:{
+  headerContainer: {
     // borderWidth:1,
     // borderColor:'red',
-    display:'flex',
-    flexDirection:'row',    
+    display: 'flex',
+    flexDirection: 'row',
   },
   button: {
     position: 'absolute',
-    bottom: 20, 
+    bottom: 20,
     alignSelf: 'center',
-    backgroundColor: 'blue', 
+    backgroundColor: 'blue',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
-    elevation: 2, 
+    elevation: 2,
   },
   buttonText: {
     color: 'white',
@@ -218,5 +360,28 @@ const styles = StyleSheet.create({
     bottom: 20,
     alignSelf: 'center',
   },
+
+  containerDetail: {
+    backgroundColor: '#F5F5F5',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  rowDetail: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  value: {
+    fontSize: 16,
+    color: '#555',
+  },
+
 });
 export default TrackingDocumentsAsigned;
