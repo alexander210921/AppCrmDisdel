@@ -25,14 +25,14 @@ export default function Navigation() {
         }}
       />
 
-<Drawer.Screen
+{/* <Drawer.Screen
         name="Cerrar Sesión"
         component={Login}
         options={{
           headerShown: false,
         }}
       />
-      
+       */}
 
     </Drawer.Navigator>
   );

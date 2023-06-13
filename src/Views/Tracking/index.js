@@ -10,7 +10,6 @@ import React, {useEffect, useState} from 'react';
 import {Button, Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  GetDetailDocument,
   GetDetailRoute,
   IniciarRutaporIdTracking,
   SaveDocumentsAsigned,
@@ -33,7 +32,6 @@ const TrackingDocumentsAsigned = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleAccordion = () => {
-    //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsCollapsed(!isCollapsed);
   };
 
@@ -141,7 +139,6 @@ const TrackingDocumentsAsigned = () => {
       </View>
       <View style={styles.rowDetail}>
         <Text style={styles.label}>Dirección: </Text>
-        {/* <Text style={styles.value}>{detailHeaderDoc?.AuxNombreCliente}</Text> */}
       </View>
       <Text style={styles.value}>{detailHeaderDoc?.AuxDestino} </Text>
       <Text style={styles.value}>{detailHeaderDoc?.AuxCalle} </Text>
@@ -163,9 +160,7 @@ const TrackingDocumentsAsigned = () => {
     };
     //const detail = await GetDetailDocument(NombreDB, DocEntry, TypeDoC);
     const detailRoute = await GetDetailRoute(object);
-    //console.log(object,"object to data");
-    //console.log('Detalle del documento', detail);
-     console.log('DETALLE ENCABEZADO', detailRoute);
+
     if(detailRoute==null){
       setSelectedCardIndex(null);
       Alert.alert("","Ocurrió un problema al mostrar el detalle");
@@ -223,12 +218,6 @@ const TrackingDocumentsAsigned = () => {
     <ScrollView>
       <View>
         <View style={styles.container}>
-          {/* <Chip containerStyle={{width:'50%'}}  onPress={handleSelectAll} label="Marcar todos"></Chip>
-          <Chip containerStyle={{width:'50%'}} onPress={UnSelectAll} label="Desmarcar todos"></Chip>
-          <Chip
-            containerStyle={{width:'50%'}}
-            onPress={AddRouteDocuments}
-            label={'Iniciar Ruta ' + checkedItems.length + ' items '}></Chip> */}
           <View style={styles.headerContainer}>
             <View style={{width: '80%'}}>
               <SearchBar
@@ -269,10 +258,6 @@ const TrackingDocumentsAsigned = () => {
               docNum={item.DocNum}
             />
           ))}
-
-          {/* <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Botón</Text>
-      </TouchableOpacity> */}
           {DocumentsList.length > 0 ? (
             <TouchableOpacity
               style={{

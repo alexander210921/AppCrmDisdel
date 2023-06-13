@@ -26,13 +26,15 @@ import {
   GetListProductByCompany,
   SaveProductsByCompany,
 } from '../../Api/Products/ApiProduct';
-import {AsyncStorageGetData} from '../../lib/AsyncStorage';
+import {AsyncStorageDeleteData, AsyncStorageGetData} from '../../lib/AsyncStorage';
 import {
   GetDocumentsAsignedUser,
   GetDocumentsInRoute,
   SaveDocumentsAsigned,
   SaveDocumentsRoute,
 } from '../../Api/Traking/ApiTraking';
+import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
+import { LogOutUser } from '../../Api/User/ApiUser';
 
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
@@ -181,6 +183,7 @@ const HomeRouteVendors = () => {
           return;
         }
         dispatch(SaveDocumentsRoute(documents));
+        navigation.navigate("TrackingDocumentInRoute");
       } finally {
         setLoadGetVisit(false);
       }
@@ -218,7 +221,16 @@ const HomeRouteVendors = () => {
     GetOptionsUser();
     StopVisit();
   }, [User]);
-
+  const ExitAppSesion=async()=>{
+    dispatch(LogOutUser());
+    await AsyncStorageDeleteData("@User");
+    await AsyncStorageDeleteData("@Options");
+    await AsyncStorageDeleteData("@Rol");
+    navigation.navigate("Login");
+  }
+  const HandleCloseSesion=()=>{
+    AlertConditional(ExitAppSesion,function(){},"","¿Está seguro de cerrar su sesión?");
+  }
   const PastelCard = ({
     color,
     title = '',
@@ -263,7 +275,15 @@ const HomeRouteVendors = () => {
                 }></Image>
             </View>
           )}
-          <View style={styles.container}>
+          <View flex right>
+            <TouchableOpacity onPress={HandleCloseSesion}>
+              <View>
+                {/* <Text>Salir</Text> */}
+                <Icon color="gray" size={30} name="exit-to-app"></Icon>
+              </View>
+            </TouchableOpacity> 
+            </View>
+          <View style={styles.container}>            
             {ListOption && ListOption.length > 0 ? (
               <View style={styles.row}>
                 {/* {console.log("aaa",ListOption)} */}

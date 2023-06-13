@@ -20,6 +20,8 @@ import DetailProduct from '../Views/Product/DetailProduct';
 import DetailCustomer from '../Views/Customer/DetailCustomer';
 import ListDocumentHome from '../Views/Documents';
 import TrackingDocumentsAsigned from '../Views/Tracking';
+import TrackingDocumentInRoute from '../Views/Tracking/DocumentsInRouteTracking';
+import DeliveryComponent from '../Views/Tracking/DeliveryDocuments';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -193,6 +195,22 @@ export default function StackNavigation() {
             <Stack.Screen
         name="TrackingDocumentsAsigned"
         component={TrackingDocumentsAsigned}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="TrackingDocumentInRoute"
+        component={TrackingDocumentInRoute}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DeliveryComponent"
+        component={DeliveryComponent}
         options={{
           title: '',
           headerShown: false,

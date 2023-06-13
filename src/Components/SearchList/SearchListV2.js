@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-const SearchableDropdownV2 = ({ items, onItemSelected,placeHolder="Buscar" }) => {
+const SearchableDropdownV2 = ({ items, onItemSelected,placeHolder="Buscar",viewSearcher = true }) => {
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState(items);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -33,26 +33,28 @@ const SearchableDropdownV2 = ({ items, onItemSelected,placeHolder="Buscar" }) =>
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          ref={inputRef}
-          style={styles.input}
-          placeholder={placeHolder}
-          value={searchText}
-          onChangeText={handleSearch}
-          placeholderTextColor={"#b3b2b7"}
-        />
-        <TouchableOpacity
-          style={styles.clearButton}
-          onPress={() => {
-            inputRef.current.blur();
-            setSearchText('');
-            setFilteredItems(items);
-          }}
-        >
-          <Text style={styles.clearButtonText}>Limpiar</Text>
-        </TouchableOpacity>
-      </View>
+      {viewSearcher ? 
+              <View style={styles.searchContainer}>
+              <TextInput
+                ref={inputRef}
+                style={styles.input}
+                placeholder={placeHolder}
+                value={searchText}
+                onChangeText={handleSearch}
+                placeholderTextColor={"#b3b2b7"}
+              />
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => {
+                  inputRef.current.blur();
+                  setSearchText('');
+                  setFilteredItems(items);
+                }}
+              >
+                <Text style={styles.clearButtonText}>Limpiar</Text>
+              </TouchableOpacity>
+            </View>      
+      :null}
       <FlatList
         style={styles.list}
         data={filteredItems}
