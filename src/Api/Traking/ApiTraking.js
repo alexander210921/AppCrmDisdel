@@ -23,6 +23,16 @@ export async function GetDocumentsAsignedUser (IdUser){
     }      
   };
 
+  export const UpdateStateTracking =async (dataObject) => {
+    //data insert id tracking and name process of tracking
+    try{
+      const {data} = await Axios.post('MyWsOneVenta/api/Tracking/ActualizaElEstadoRutaEnCurso/', dataObject)
+      return data;
+    }catch{
+      return null;
+    }      
+  };
+
   export const GetDocumentsInRoute =async (EmpID) => {
     try{
       const {data} = await Axios.get('MyWsOneVenta/api/Tracking/GetTrackingPorUsuarioEstadoR/'+EmpID)
@@ -69,3 +79,5 @@ export async function GetDocumentsAsignedUser (IdUser){
     type:SAVE_DOCUMENTS_INROUTE,
     payload:document
   })
+
+  

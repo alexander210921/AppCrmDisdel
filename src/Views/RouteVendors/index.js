@@ -188,6 +188,54 @@ const HomeRouteVendors = () => {
         setLoadGetVisit(false);
       }
     },
+    HandleInitRouteForHomePilot: async function () {
+      if (DrivingVisitDetail.isRouteInCourse) {
+        Alert.alert('La ruta ya ha sido iniciada');
+        return;
+      }
+      if (listVisit.loadGetCurrentVisit) {
+        Alert.alert('', 'Se está cargando el proceso, por favor espere');
+        return;
+      }
+      try {
+        dispatch(LoadGetVisitActuality(true));
+        // const visits = await FunctionGetCurrentVisit(
+        //   Rol[0].IdRelacion,
+        //   dispatch,
+        //   true,
+        //   navigator,
+        // );
+        // if (visits != null && visits.length > 0) {
+        //   dispatch(SetVisiActualityt(visits));
+        // } else if (visits.length == 0) {
+        //   dispatch(SetVisiActualityt([]));
+        //   dispatch(LoadGetVisitActuality(false));
+        //   Alert.alert('', 'No tiene visitas creadas');
+        //   return;
+        // }
+        let navigateToRegisterMileague = false;
+        //const dataMileagueInit = await FunctionGetMileageInit(User.EntityID, 0);
+        try {
+          // if (dataMileagueInit && dataMileagueInit.length == 0) {
+          //   dispatch(SaveIsArriveOrNotTheVisit('Y'));
+          //   //navigateToRegisterMileague = true;
+          // }
+        } finally {
+          await StartNotification(
+            User.EntityID,
+            '',
+            dispatch,
+            navigateToRegisterMileague,
+            navigation,
+            true,
+          );
+        }
+      } catch (ex) {
+        Alert.alert('' + ex);
+      } finally {
+      }
+    },
+
   };
 
   useEffect(() => {
