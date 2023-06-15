@@ -14,6 +14,7 @@ import {
   GetDetailRoute,
   IniciarRutaporIdTracking,
   SaveDocumentsAsigned,
+  SaveDocumentsRoute,
   UpdateStateTracking,
 } from '../../Api/Traking/ApiTraking';
 import SearchBar from '../../Components/SearchBar';
@@ -145,7 +146,17 @@ const TrackingDocumentInRoute = () => {
                 Alert.alert("","Ocurrió un problema intenta de nuevo por favor");
                 return;
               }
-              Alert.alert("",""+infoRequeset.Mensaje);                
+              if(infoRequeset.Resultado){
+                 // add number of process
+                 let DocumentsListUpdated = DocumentsList.map((item)=>{
+                    if(item.EntityID ==idTracking){
+                      item.Proceso = 7;
+                    }
+                    return item;
+                 });
+                 dispatch(SaveDocumentsRoute(DocumentsListUpdated));
+              }
+              Alert.alert("",""+infoRequeset?.Mensaje);                
             }finally{
               setLoader(false);
               setSelectedCardIndexForInitRoute(null);
@@ -242,8 +253,7 @@ const TrackingDocumentInRoute = () => {
     typeDoc,
     docNum = 0,
     isArrive,
-  }) => {
-    console.log('el proceso', isArrive);
+  }) => {    
     return (
       <View>
         <TouchableOpacity

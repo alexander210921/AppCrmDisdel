@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Text, TextInput, StyleSheet, ScrollView} from 'react-native';
-import {Switch, Button, View} from 'react-native-ui-lib';
+import {Switch, Button, View,TextField} from 'react-native-ui-lib';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
 const DeliveryComponent = ({route}) => {
   const [deliveryCompleted, setDeliveryCompleted] = useState(true);
@@ -29,9 +29,7 @@ const DeliveryComponent = ({route}) => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setProducts(route.params);
-    console.log(route.params);
   }, []);
-
   const handleCompleteDelivery = () => {
     //setDeliveryCompleted(true);
   };
@@ -40,6 +38,20 @@ const DeliveryComponent = ({route}) => {
     // Aquí puedes realizar alguna acción con la información de los problemas de entrega (deliveryIssues)
     // Por ejemplo, enviarla a un servidor o realizar alguna lógica específica
   };
+
+  const changeQuantityItem =(product,newQuantity)=>{
+    if(newQuantity ==null){
+      return;
+    }
+    let updateQuantity = products.map((item)=>{
+        if(item.Codigo ===product.Codigo && item.Descripcion ===product.Descripcion){
+          item.CambioCantidad = true;
+          item.CantidadNueva = newQuantity;            
+        }
+        return item;
+    })
+    setProducts(updateQuantity);
+  }
 
   const handleProductDelivery = (productId, productName, delivered) => {
     const updatedProducts = products.map(product =>
@@ -53,7 +65,7 @@ const DeliveryComponent = ({route}) => {
   const selectNoDelevery = item => {
     setReasonNoDelevery(item);
   };
-
+  console.log('lista de productos', products);
   return (
     <ScrollView style={{backgroundColor: '#fff'}}>
       <View style={styles.container}>
@@ -107,6 +119,19 @@ const DeliveryComponent = ({route}) => {
                 <Text style={styles.productName}>
                   {product.Codigo + ' / ' + product.Descripcion}
                 </Text>
+                {product.delivered ? (
+                  <View style={styles.productName}>
+                    <Text>{product.CambioCantidad ? "Cantidad Original: "+product.Cantidad :""}</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={product.CambioCantidad ? product.CantidadNueva :product?.Cantidad.toString()}
+                      onChangeText={(value)=>{changeQuantityItem(product,value)}}
+                      >
+                        
+                      </TextInput>
+                  </View>
+                ) : null}
+
                 <Button
                   onPress={() =>
                     handleProductDelivery(
