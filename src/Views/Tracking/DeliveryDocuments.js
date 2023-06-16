@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {Text, TextInput, StyleSheet, ScrollView} from 'react-native';
+import {Text, TextInput, StyleSheet, ScrollView,Alert} from 'react-native';
 import {Switch, Button, View,TextField} from 'react-native-ui-lib';
 import SearchableDropdownV2 from '../../Components/SearchList/SearchListV2';
+import CompleteOrder from './Order/CompleteOrder';
 const DeliveryComponent = ({route}) => {
   const [deliveryCompleted, setDeliveryCompleted] = useState(true);
   const [deliveryIssues, setDeliveryIssues] = useState('');
   const [deliverySucess, setDeliverySucess] = useState(true);
   const [ReasonNoDelevery, setReasonNoDelevery] = useState(null);
+  const [typeNumberDelevery,setTypeNumberDelevery] = useState(null);
   const itemsNoDelivery = [
     {
       name: 'Cancelaron el pedido',
@@ -25,25 +27,46 @@ const DeliveryComponent = ({route}) => {
       id: 3,
     },
   ];
+
+  const optionsForCompleteDelevery=[
+    {
+        name:"Contado",
+        id:1
+    },
+    {
+      name:"Crédito",
+      id:1
+    },
+];
   //console.log("data desde el componente",route.params);
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setProducts(route.params);
   }, []);
   const handleCompleteDelivery = () => {
-    //setDeliveryCompleted(true);
+    
   };
 
   const handleIncompleteDelivery = () => {
-    // Aquí puedes realizar alguna acción con la información de los problemas de entrega (deliveryIssues)
-    // Por ejemplo, enviarla a un servidor o realizar alguna lógica específica
+    
   };
+
+  const PressDeleveryCompletedandSucess=()=>{
+    // this function is active when the delevery is complete and productis in complete
+    Alert.alert("test","");    
+  }
+
+  const selectTypeDelevery=(type)=>{
+    console.log(type);
+    setTypeNumberDelevery(type);
+  }
+
 
   const changeQuantityItem =(product,newQuantity)=>{
     if(newQuantity ==null){
       return;
     }
-    let updateQuantity = products.map((item)=>{
+    let updateQuantity = products.map((item)=>{                    
         if(item.Codigo ===product.Codigo && item.Descripcion ===product.Descripcion){
           item.CambioCantidad = true;
           item.CantidadNueva = newQuantity;            
@@ -172,11 +195,24 @@ const DeliveryComponent = ({route}) => {
           </>
         ) : null}
         {deliveryCompleted && deliverySucess ? (
-          <View flex center>
-            <Button style={styles.buttonFinalize}>
+          <View>
+              <SearchableDropdownV2
+              viewSearcher={false}
+              items={optionsForCompleteDelevery}
+              onItemSelected={selectTypeDelevery}></SearchableDropdownV2>
+               <View flex center>
+            {/* <CompleteOrder></CompleteOrder> */}
+
+          
+
+
+
+            <Button onPress={PressDeleveryCompletedandSucess} style={styles.buttonFinalize}>
               <Text style={styles.textWhite}>Finalizar Entrega</Text>
             </Button>
           </View>
+          </View>
+         
         ) : null}
       </View>
     </ScrollView>
@@ -229,6 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     width: '80%',
     marginTop: 10,
+    marginBottom:20
   },
   textWhite: {
     color: '#fff',
