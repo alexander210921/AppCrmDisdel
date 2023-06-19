@@ -22,6 +22,10 @@ const CompleteOrder = () => {
             value={option.value}
             label={option.label}
             disabled={option.disabled}
+            style={{
+              color: 'black',
+              backgroundColor:'#fff'
+            }}
           />
         ))}
       </Picker>
