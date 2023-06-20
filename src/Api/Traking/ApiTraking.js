@@ -23,6 +23,15 @@ export async function GetDocumentsAsignedUser (IdUser){
     }      
   };
 
+  export const ArriveDelevery =async (dataArrive) => {
+    try{
+      const {data} = await Axios.post('MyWsOneVenta/api/TrackingDetalle/NoEntregadoDocumentoAppMovil', dataArrive)
+      return data;
+    }catch{
+      return null;
+    }      
+  };
+
   export const UpdateStateTracking =async (dataObject) => {
     //data insert id tracking and name process of tracking
     try{
@@ -36,6 +45,16 @@ export async function GetDocumentsAsignedUser (IdUser){
   export const GetDocumentsInRoute =async (EmpID) => {
     try{
       const {data} = await Axios.get('MyWsOneVenta/api/Tracking/GetTrackingPorUsuarioEstadoR/'+EmpID)
+      return data;
+    }catch{
+      return null;
+    }      
+  };
+
+  export const GetDocumentsPilot =async (NombreDB,Process,EmpID) => {
+    // 
+    try{
+      const {data} = await Axios.get('MyWsOneVenta/api/Tracking/GetDocumentsPilot/'+NombreDB+"/"+Process+"/"+EmpID)
       return data;
     }catch{
       return null;

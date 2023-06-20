@@ -77,7 +77,11 @@ const TrackingDocumentsAsigned = () => {
         item.EntityID.toString()
           .toLowerCase()
           .includes(searchText.toLowerCase()) ||
-        item.DocNum.toString().toLowerCase().includes(searchText.toLowerCase()),
+        item.DocNum.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+        item.CardCode.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+        item.CardName.toString().toLowerCase().includes(searchText.toLowerCase())
+        ||
+        item.DocTotal.toString().toLowerCase().includes(searchText.toLowerCase())
     );
     setDocumentsList(filtered);
   };
@@ -92,9 +96,13 @@ const TrackingDocumentsAsigned = () => {
       const filterItems = documents.filter(data => {
         if (checkedItems.includes(data.EntityID)) {
           data.Autor = user.Datos.NombreCompleto;
+          data.Latitud = 0;
+          data.Longitud = 0;
+          data.TipoDoc = data.TipoDocAux;
           return data;
         }
       });
+      
       const result = await IniciarRutaporIdTracking(filterItems);
       if (result == null) {
         Alert.alert('', 'Ocurrió un error intente nuevamente');
@@ -180,6 +188,7 @@ const TrackingDocumentsAsigned = () => {
     EntityiD,
     typeDoc,
     docNum = 0,
+    Quantity = 0
   }) => {
     return (
       <View>
@@ -201,6 +210,7 @@ const TrackingDocumentsAsigned = () => {
               <Text style={styles.text}>{title}</Text>
             </View>
             <Text style={styles.textSecundary}>{description}</Text>
+            <Text style={styles.textSecundary}>{typeDoc} / Q. {Quantity}</Text>
           </View>
         </TouchableOpacity>
         {selectedCardIndex ==docNum && !loadGetDocuments  ? 
@@ -250,12 +260,13 @@ const TrackingDocumentsAsigned = () => {
             <Card
               key={index}
               title={item.EntityID + ' / ' + item.DocNum}
-              description={item.Piloto}
+              description={item.CardCode+" / "+item.CardName}
               isChecked={item.Check}
               id={item.EntityID}
               EntityiD={item.DocEntry}
-              typeDoc={item.TipoDoc === 4 ? 'Entrega' : 'Factura'}
-              docNum={item.DocNum}
+              typeDoc={item?.TipoDocAux}
+              docNum={item?.DocNum}
+              Quantity={item?.DocTotal}
             />
           ))}
           {DocumentsList.length > 0 ? (

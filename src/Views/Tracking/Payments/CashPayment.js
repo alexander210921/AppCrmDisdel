@@ -3,11 +3,63 @@ import {Button, View, Text} from 'react-native-ui-lib';
 import {Picker} from '@react-native-picker/picker';
 import {ScrollView, StyleSheet, TextInput, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
+import { ArriveDelevery } from '../../../Api/Traking/ApiTraking';
 
 const CashPayment = () => {
   const [selectedOption, setSelectedOption] = useState(1);
-  const SendSubmit = (FormData) => {    
-    console.log(FormData);
+  const SendSubmit = async (FormData) => {    
+    console.log("Si ajá",FormData);
+      let Data = null;
+      let liquidar = null;
+      Data.Estado = 4;
+      Data.AuxIdentificador = 2;
+      Data.eventosDocument = 2;
+      switch (selectedOption) {
+        case '1':
+          liquidar.tipopago = 'Cheque';
+          liquidar.contrasenaDoc = '';
+          liquidar.tramiteContrasena = false;
+          break;
+        case '2':
+          liquidar.tipopago = 'Efectivo';
+          liquidar.contrasenaDoc = '';
+          liquidar.tramiteContrasena = false;
+          liquidar.nombrebanco = '';
+          liquidar.numeroDocumento = '';
+          break;
+        case '3':
+          liquidar.tipopago = 'Transferencia';
+          liquidar.contrasenaDoc = '';
+          liquidar.tramiteContrasena = false;
+          break;
+        case '4':
+          liquidar.tipopago = 'Deposito';
+          liquidar.contrasenaDoc = '';
+          liquidar.tramiteContrasena = false;
+          break;
+      }
+
+      const liquidacion = {
+        NameUser: Datos ? Datos.NombreCompleto : '',
+        IdUser: EmpID,
+        TipoPago: liquidar.tipopago,
+        BancoPago: liquidar.nombrebanco,
+        DocumentoPago: liquidar.numeroDocumento,
+        TotalPago: parseFloat(liquidar.totalDocumento),
+        ContrasenaDocumento: liquidar.contrasenaDoc,
+        TramiteContrasena: liquidar.tramiteContrasena,
+        Firma: liquidar.tieneFirma ? true : false,
+        FechaCobro: liquidar.fechaCobro,
+        TotalDocumento: liquidar.totalDoc,
+        CardName: Data.AuxNombreCliente,
+        TipoObjeto:
+          DetalleRuta.tipoPagoDocument === '1' ? 'Contado' : 'Credito',
+        EstadoLiquidacion: 4,
+      };
+
+      Data.ListaLiquidada = liquidacion;
+
+    //const result = await ArriveDelevery();
   };
   const {
     control,

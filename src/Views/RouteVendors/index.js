@@ -30,6 +30,7 @@ import {AsyncStorageDeleteData, AsyncStorageGetData} from '../../lib/AsyncStorag
 import {
   GetDocumentsAsignedUser,
   GetDocumentsInRoute,
+  GetDocumentsPilot,
   SaveDocumentsAsigned,
   SaveDocumentsRoute,
 } from '../../Api/Traking/ApiTraking';
@@ -151,7 +152,8 @@ const HomeRouteVendors = () => {
     GoDocumentsAssigned: async function () {
       try {
         setLoadGetVisit(true);
-        const documents = await GetDocumentsAsignedUser(User?.EmpID);
+        //const documents = await GetDocumentsAsignedUser(User?.EmpID);        
+        const documents = await GetDocumentsPilot(company?.NombreDB,"Creado",User?.EmpID);
         if (documents == null) {
           Alert.alert('', 'Ocurrió un error intenta nuevamente');
           return;
