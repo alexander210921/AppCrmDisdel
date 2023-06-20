@@ -175,15 +175,25 @@ const HomeRouteVendors = () => {
     GetDocumentsInTracking: async function () {
       try {
         setLoadGetVisit(true);
-        const documents = await GetDocumentsInRoute(User?.EmpID);
-        if (documents == null) {
+        //const documents = await GetDocumentsInRoute(User?.EmpID);
+        //documents acepted
+        const documentsAcepted = await GetDocumentsPilot(company?.NombreDB,"RutaIniciada",User?.EmpID);
+        const documentsInCourse = await GetDocumentsPilot(company?.NombreDB,"RutaEnCurso",User?.EmpID);
+        if (documentsAcepted == null && documentsInCourse) {
           Alert.alert('', 'Ocurrió un error intenta nuevamente');
           return;
         }
-        if (documents.length == 0) {
+        if (documentsAcepted.length == 0 && documentsInCourse.length ==0 ) {
           Alert.alert('', 'No tiene documentos en ruta actualmente');
           return;
         }
+        let documents =null;
+        if(documentsAcepted!=null){          
+          documents =  documentsAcepted?.concat(documentsInCourse);
+        }else if(documentsInCourse!=null){          
+          documents =  documentsInCourse?.concat(documentsAcepted);
+        }
+        //console.log(documents);
         dispatch(SaveDocumentsRoute(documents));
         navigation.navigate("TrackingDocumentInRoute");
       } finally {

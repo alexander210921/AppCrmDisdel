@@ -85,7 +85,10 @@ const TrackingDocumentInRoute = () => {
         item.EntityID.toString()
           .toLowerCase()
           .includes(searchText.toLowerCase()) ||
-        item.DocNum.toString().toLowerCase().includes(searchText.toLowerCase()),
+        item.DocNum.toString().toLowerCase().includes(searchText.toLowerCase())||
+        item.CardCode.toString().toLowerCase().includes(searchText.toLowerCase())||
+        item.CardName.toString().toLowerCase().includes(searchText.toLowerCase())||
+        item.DocTotal.toString().toLowerCase().includes(searchText.toLowerCase())
     );
     setDocumentsList(filtered);
   };
@@ -253,6 +256,7 @@ const TrackingDocumentInRoute = () => {
     typeDoc,
     docNum = 0,
     isArrive,
+    DocTotal=0
   }) => {    
     return (
       <View>
@@ -274,6 +278,7 @@ const TrackingDocumentInRoute = () => {
               <Text style={styles.text}>{title}</Text>
             </View>
             <Text style={styles.textSecundary}>{description}</Text>
+            <Text style={styles.textSecundary}>{typeDoc} Q. {DocTotal}</Text>
             {isArrive === 7 ? (
               <Button
                 onPress={() => {
@@ -346,13 +351,14 @@ const TrackingDocumentInRoute = () => {
             <Card
               key={index}
               title={item.EntityID + ' / ' + item.DocNum}
-              description={item.Piloto}
+              description={item.CardCode +" / "+item.CardName}
               isChecked={item.Check}
               id={item.EntityID}
               EntityiD={item.DocEntry}
               typeDoc={item.TipoDoc === 4 ? 'Entrega' : 'Factura'}
               docNum={item.DocNum}
               isArrive={item.Proceso}
+              DocTotal={item.DocTotal}
             />
           ))}
           {/* {DocumentsList.length > 0 ? (
