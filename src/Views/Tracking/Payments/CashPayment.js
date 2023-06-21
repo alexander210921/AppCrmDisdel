@@ -1,19 +1,29 @@
 import React, {useState} from 'react';
-import {Button, View, Text} from 'react-native-ui-lib';
+import {Button, View, Text,LoaderScreen} from 'react-native-ui-lib';
 import {Picker} from '@react-native-picker/picker';
 import {ScrollView, StyleSheet, TextInput, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import { ArriveDelevery } from '../../../Api/Traking/ApiTraking';
-
-const CashPayment = () => {
+import {ArriveDelevery} from '../../../Api/Traking/ApiTraking';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+const CashPayment = ({dataTracking = null}) => {
+  //console.log("Recibiendo el tracking",dataTracking);
   const [selectedOption, setSelectedOption] = useState(1);
-  const SendSubmit = async (FormData) => {    
-    console.log("Si ajá",FormData);
-      let Data = null;
-      let liquidar = null;
+  const [loadEndProcessTracking, setLoadEndProcessTracking] = useState(false);
+  const User = useSelector(state => state.login.user);
+  const navigation = useNavigation();
+  const SendSubmit = async FormData => {
+    try {
+      setLoadEndProcessTracking(true);
+      //console.log("Si ajá",FormData);
+      let Data = {};
+      let liquidar = {};
+      let Datos = null;
       Data.Estado = 4;
       Data.AuxIdentificador = 2;
       Data.eventosDocument = 2;
+      Data.Latitud = 0;
+      Data.Longitud = 0;
       switch (selectedOption) {
         case '1':
           liquidar.tipopago = 'Cheque';
@@ -40,26 +50,38 @@ const CashPayment = () => {
       }
 
       const liquidacion = {
-        NameUser: Datos ? Datos.NombreCompleto : '',
-        IdUser: EmpID,
+        NameUser: Datos ? Datos?.NombreCompleto : '',
+        IdUser: User?.EmpID, //EmpID,
         TipoPago: liquidar.tipopago,
-        BancoPago: liquidar.nombrebanco,
-        DocumentoPago: liquidar.numeroDocumento,
-        TotalPago: parseFloat(liquidar.totalDocumento),
+        BancoPago: FormData.NameBank,
+        DocumentoPago: FormData.DocumentNumber,
+        TotalPago: parseFloat(FormData.Total),
         ContrasenaDocumento: liquidar.contrasenaDoc,
         TramiteContrasena: liquidar.tramiteContrasena,
         Firma: liquidar.tieneFirma ? true : false,
-        FechaCobro: liquidar.fechaCobro,
+        FechaCobro: new Date().toLocaleDateString(),
         TotalDocumento: liquidar.totalDoc,
         CardName: Data.AuxNombreCliente,
-        TipoObjeto:
-          DetalleRuta.tipoPagoDocument === '1' ? 'Contado' : 'Credito',
+        TipoObjeto: 'Contado',
         EstadoLiquidacion: 4,
       };
 
       Data.ListaLiquidada = liquidacion;
-
-    //const result = await ArriveDelevery();
+      Data.IdTracking = dataTracking.EntityID;
+      //console.log("data finalizar al contado",Data)
+      const result = await ArriveDelevery(Data);
+      if (result == null) {
+        Alert.alert('', 'Ocurrió un error, intenta nuevamente');
+        return;
+      }
+      Alert.alert('', '' + result?.Mensaje);
+      if(result.Resultado){
+        navigation.goBack();
+      }
+      
+    } finally {
+      setLoadEndProcessTracking(false);
+    }
   };
   const {
     control,
@@ -77,18 +99,15 @@ const CashPayment = () => {
       <View style={styles.container}>
         <Picker
           selectedValue={selectedOption}
-       
-          onValueChange={
-            itemValue => {              
-              setSelectedOption(itemValue);
-            }
-          }>
+          onValueChange={itemValue => {
+            setSelectedOption(itemValue);
+          }}>
           <Picker.Item
             label="Cheque"
             value="1"
             style={{
               color: 'black',
-              backgroundColor:'#fff'
+              backgroundColor: '#fff',
             }}
           />
           <Picker.Item
@@ -96,7 +115,7 @@ const CashPayment = () => {
             value="2"
             style={{
               color: 'black',
-              backgroundColor:'#fff'
+              backgroundColor: '#fff',
             }}
           />
           <Picker.Item
@@ -104,7 +123,7 @@ const CashPayment = () => {
             value="3"
             style={{
               color: 'black',
-              backgroundColor:'#fff'
+              backgroundColor: '#fff',
             }}
           />
           <Picker.Item
@@ -112,7 +131,7 @@ const CashPayment = () => {
             value="4"
             style={{
               color: 'black',
-              backgroundColor:'#fff'
+              backgroundColor: '#fff',
             }}
           />
         </Picker>
@@ -183,14 +202,14 @@ const CashPayment = () => {
         {errors.Total && (
           <Text style={styles.TextAlert}>Este campo es requerido</Text>
         )}
-        <Button
-          style={
-            styles.Button
-          }
-          onPress={handleSubmit(SendSubmit)}>
-          {/* finalizar al contado entrega completa */}
-          <Text style={{color: '#fff'}}>Finalizar</Text>
-        </Button>
+        {loadEndProcessTracking ? (
+          <LoaderScreen color="black"></LoaderScreen>
+        ) : (
+          <Button style={styles.Button} onPress={handleSubmit(SendSubmit)}>
+            {/* finalizar al contado entrega completa */}
+            <Text style={{color: '#fff'}}>Finalizar Contado</Text>
+          </Button>
+        )}
       </View>
     </ScrollView>
   );
@@ -206,15 +225,15 @@ const styles = StyleSheet.create({
   },
   inputC: {
     // borderColor:'gray'
-    color:'#000',
+    color: '#000',
     marginTop: '2%',
   },
   inputC1: {
-    color:'#000',
+    color: '#000',
   },
-  Button:{
+  Button: {
     backgroundColor: '#000',
-    marginTop:'4%'
-  }
+    marginTop: '4%',
+  },
 });
 export default CashPayment;

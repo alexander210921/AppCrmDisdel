@@ -44,7 +44,7 @@ const DeliveryComponent = ({route}) => {
   //console.log("data desde el componente",route.params);
   const [products, setProducts] = useState([]);
   useEffect(() => {
-    setProducts(route.params);
+    setProducts(route.params?.detail);
   }, []);
   const handleCompleteDelivery = () => {};
 
@@ -233,7 +233,7 @@ const DeliveryComponent = ({route}) => {
               </View>
             
 
-            {typeNumberDelevery?.id == 1 || typeNumberDelevery ===1 ? <CashPayment></CashPayment> : <CreditPayment></CreditPayment>}
+            {typeNumberDelevery?.id == 1 || typeNumberDelevery ===1 ? <CashPayment dataTracking={route.params?.dataTracking} ></CashPayment> : <CreditPayment></CreditPayment>}
             {/* <View flex center>
               <Button
                 onPress={PressDeleveryCompletedandSucess}

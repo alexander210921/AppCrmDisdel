@@ -16,7 +16,7 @@ export async function GetDocumentsAsignedUser (IdUser){
 
   export const IniciarRutaporIdTracking =async (list) => {
     try{
-      const {data} = await Axios.post('MyWsOneVenta/api/Tracking/ActualizaElEstadoRutaIniciada', list)
+      const {data} = await Axios.post('MyWsOneVenta/api/Tracking/ActualizaElEstadoListaRutaEnCurso', list)
       return data;
     }catch{
       return null;

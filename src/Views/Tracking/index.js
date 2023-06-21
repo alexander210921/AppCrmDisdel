@@ -99,6 +99,7 @@ const TrackingDocumentsAsigned = () => {
           data.Latitud = 0;
           data.Longitud = 0;
           data.TipoDoc = data.TipoDocAux;
+          data.Proceso = "RutaIniciada";
           return data;
         }
       });
@@ -116,6 +117,7 @@ const TrackingDocumentsAsigned = () => {
         data => !checkedItems.includes(data.EntityID),
       );
       dispatch(SaveDocumentsAsigned(deleteData));
+      setCheckedItems([]);
       Alert.alert('', 'Proceso exitoso');
     } finally {
       setLoader(false);

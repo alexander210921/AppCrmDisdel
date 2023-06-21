@@ -106,7 +106,7 @@ const CreditPayment = () => {
 
         <Button style={styles.Button} onPress={handleSubmit(SendSubmit)}>
           {/* finalizar al contado entrega completa */}
-          <Text style={{color: '#fff'}}>Finalizar</Text>
+          <Text style={{color: '#fff'}}>Finalizar Crédito</Text>
         </Button>
       </View>
     </ScrollView>

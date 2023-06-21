@@ -213,13 +213,17 @@ const TrackingDocumentInRoute = () => {
       </ScrollView>
     );
   };
-  const GoMarkerArriveDocument = async (NombreDB, DocEntry, TypeDoC) => {
+  const GoMarkerArriveDocument = async (NombreDB, DocEntry, TypeDoC,id,dataTracking) => {
     const detail = await GetDetailDocument(NombreDB, DocEntry, TypeDoC);
     if (detail == null) {
       Alert.alert('', 'Ocurrió un problema al obtener el detalle');
       return;
     }
-    navigation.navigate('DeliveryComponent', detail);
+    const infoTracking= {
+      dataTracking:dataTracking,
+      detail
+    }
+    navigation.navigate('DeliveryComponent', infoTracking);
   };
   //necesito un componente que contenga la opcion de registrar le entrega de un producto, si marca que todo ha sido correcto se muestra un boton de finalizacion, si marca que no, se pregunta porque motivo no se completo,  tambien puede darse el caso de que si se haya entregado pero no con la totalidad del producto, de ser el caso renderizar el listado de productos y que me permita marcar los items no entregados en react native, el componente debe ser dinamico y facil de usar para el usuario
   const getDetail = async (NombreDB, DocEntry, TypeDoC, docNum, idTracking) => {
@@ -256,7 +260,8 @@ const TrackingDocumentInRoute = () => {
     typeDoc,
     docNum = 0,
     isArrive,
-    DocTotal=0
+    DocTotal=0,
+    AlldataTracking,
   }) => {    
     return (
       <View>
@@ -282,7 +287,7 @@ const TrackingDocumentInRoute = () => {
             {isArrive === 7 ? (
               <Button
                 onPress={() => {
-                  GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc);
+                  GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking);
                 }}
                 style={{backgroundColor: '#000', width: '40%'}}>
                 <Text style={{color: '#fff'}}> Marcar Llegada </Text>
@@ -359,6 +364,7 @@ const TrackingDocumentInRoute = () => {
               docNum={item.DocNum}
               isArrive={item.Proceso}
               DocTotal={item.DocTotal}
+              AlldataTracking={item}
             />
           ))}
           {/* {DocumentsList.length > 0 ? (
