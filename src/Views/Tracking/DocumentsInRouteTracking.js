@@ -66,7 +66,7 @@ const TrackingDocumentInRoute = () => {
     setIsMarkerAll(!isMarkerAll);
   };
 
-  useEffect(() => {
+  useEffect(() => {  
     setDocumentsList(documents);
   }, [documents]);
 
@@ -360,7 +360,7 @@ const TrackingDocumentInRoute = () => {
               isChecked={item.Check}
               id={item.EntityID}
               EntityiD={item.DocEntry}
-              typeDoc={item.TipoDoc === 4 ? 'Entrega' : 'Factura'}
+              typeDoc={item.TipoDocAux}
               docNum={item.DocNum}
               isArrive={item.Proceso}
               DocTotal={item.DocTotal}
