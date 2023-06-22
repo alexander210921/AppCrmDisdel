@@ -3,15 +3,17 @@ import {Button, View, Text,LoaderScreen} from 'react-native-ui-lib';
 import {Picker} from '@react-native-picker/picker';
 import {ScrollView, StyleSheet, TextInput, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import {ArriveDelevery} from '../../../Api/Traking/ApiTraking';
+import {ArriveDelevery, SaveDocumentsRoute} from '../../../Api/Traking/ApiTraking';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 const CashPayment = ({dataTracking = null}) => {
   //console.log("Recibiendo el tracking",dataTracking);
-  const [selectedOption, setSelectedOption] = useState(1);
+  const documents = useSelector(state => state.Tracking.DocumentAcepted);
+  const [selectedOption, setSelectedOption] = useState('1');
   const [loadEndProcessTracking, setLoadEndProcessTracking] = useState(false);
   const User = useSelector(state => state.login.user);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const SendSubmit = async FormData => {
     try {
       setLoadEndProcessTracking(true);
@@ -50,7 +52,7 @@ const CashPayment = ({dataTracking = null}) => {
       }
 
       const liquidacion = {
-        NameUser: Datos ? Datos?.NombreCompleto : '',
+        NameUser: User?.Datos?.NombreCompleto,
         IdUser: User?.EmpID, //EmpID,
         TipoPago: liquidar.tipopago,
         BancoPago: FormData.NameBank,
@@ -61,13 +63,14 @@ const CashPayment = ({dataTracking = null}) => {
         Firma: liquidar.tieneFirma ? true : false,
         FechaCobro: new Date().toLocaleDateString(),
         TotalDocumento: liquidar.totalDoc,
-        CardName: Data.AuxNombreCliente,
+        CardName: dataTracking.CardName,
         TipoObjeto: 'Contado',
         EstadoLiquidacion: 4,
       };
 
       Data.ListaLiquidada = liquidacion;
       Data.IdTracking = dataTracking.EntityID;
+      //console.log("Data Tracking",dataTracking);
       //console.log("data finalizar al contado",Data)
       const result = await ArriveDelevery(Data);
       if (result == null) {
@@ -75,7 +78,9 @@ const CashPayment = ({dataTracking = null}) => {
         return;
       }
       Alert.alert('', '' + result?.Mensaje);
-      if(result.Resultado){
+      if(result.Resultado){        
+        let filterDoc = documents?.filter(item=>item.EntityID!=Data.IdTracking);
+        dispatch(SaveDocumentsRoute(filterDoc));
         navigation.goBack();
       }
       
