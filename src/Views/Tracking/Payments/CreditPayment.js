@@ -1,16 +1,85 @@
 import React, {useState} from 'react';
-import {Button, View, Text} from 'react-native-ui-lib';
+import {Button, View, Text, LoaderScreen} from 'react-native-ui-lib';
 import {Picker} from '@react-native-picker/picker';
 import {ScrollView, StyleSheet, TextInput, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import { useSelector,useDispatch } from 'react-redux';
+import { ArriveDelevery, SaveDocumentsRoute } from '../../../Api/Traking/ApiTraking';
 
-const CreditPayment = () => {
-  const [selectedOption, setSelectedOption] = useState(1);
+const CreditPayment = ({dataTracking = null}) => {
+  const [selectedOption, setSelectedOption] = useState("1");
   const [isDatePicketVisible, setIsDatePicketVisible] = useState(false);
   const [dateSelected,setDateSelected] = useState(null);
-  const SendSubmit = FormData => {
-    console.log(FormData);
+  const User = useSelector(state => state.login.user);
+  const documents = useSelector(state => state.Tracking.DocumentAcepted);
+  const [loadEndProcessTracking, setLoadEndProcessTracking] = useState(false);
+  const dispatch = useDispatch();
+
+  const SendSubmit = async FormData => {
+    try{
+      setLoadEndProcessTracking(true);
+      let Data = {};
+      let liquidar = {};      
+       Data.Latitud = 0;
+      Data.Longitud = 0;
+      Data.Estado = 4;
+      Data.AuxIdentificador = 2;
+      Data.eventosDocument = 2;
+      switch (selectedOption) {
+        case '1':
+          liquidar.tipopago = 'Contraseña';
+          liquidar.nombrebanco = '';
+          liquidar.numeroDocumento = '';
+          liquidar.totalDocumento = 0;
+          liquidar.tramiteContrasena = false;
+          break;
+        case '2':
+          liquidar.tipopago = 'TramitaContraseña';
+          liquidar.nombrebanco = '';
+          liquidar.numeroDocumento = '';
+          liquidar.totalDocumento = 0;
+          liquidar.tramiteContrasena = true;
+          break;
+      }
+
+      const liquidacion = {
+        NameUser: User?.Datos?.NombreCompleto,
+        IdUser: User?.EmpID,
+        TipoPago: liquidar.tipopago,
+        BancoPago: liquidar.nombrebanco,
+        DocumentoPago: liquidar.numeroDocumento,
+        TotalPago: parseFloat(liquidar.totalDocumento),
+        ContrasenaDocumento: FormData.Contraseña,
+        TramitarContrasena: liquidar.tramiteContrasena,
+        Firma: liquidar.tieneFirma ? true : false,
+        FechaCobro:dateSelected ?new Date(dateSelected).toLocaleDateString() : new Date().toLocaleDateString(),
+        TotalDocumento: liquidar.totalDoc,
+        CardName: dataTracking.CardName,
+        TipoObjeto: 'Credito',
+        EstadoLiquidacion: 4,
+      };
+
+      Data.ListaLiquidada = liquidacion;
+      Data.IdTracking = dataTracking.EntityID;
+      // console.log("fecha hoy ",Data.ListaLiquidada.FechaCobro);
+      // console.log("fecha seleccionada ",new Date(dateSelected).toLocaleDateString() )
+      const result = await ArriveDelevery(Data);  
+        
+      if (result == null) {
+        Alert.alert('', 'Ocurrió un error, intenta nuevamente');
+        return;
+      }
+      Alert.alert('', '' + result?.Mensaje);
+      if(result.Resultado){        
+        let filterDoc = documents?.filter(item=>item.EntityID!=Data.IdTracking);
+        dispatch(SaveDocumentsRoute(filterDoc));
+        navigation.goBack();
+      }
+    }finally{
+      setLoadEndProcessTracking(false);
+    }
+
   };
   const handlerConfirm = date => {
     const dateBirth = date;
@@ -93,7 +162,7 @@ const CreditPayment = () => {
             <Button onPress={showDatePicker} style={styles.ButtonDate}>
               <Text style={{color: '#fff'}}>Fecha de cobro</Text>
             </Button>
-            <Text style={{color: '#000'}}>{dateSelected?.toString()}</Text>
+            <Text style={{color: '#000'}}>{dateSelected ?new Date(dateSelected).toLocaleDateString() : new Date().toLocaleDateString()}</Text>
 
             <DateTimePicker
               isVisible={isDatePicketVisible}
@@ -103,11 +172,14 @@ const CreditPayment = () => {
             />
           </View>
         ) : null}
-
-        <Button style={styles.Button} onPress={handleSubmit(SendSubmit)}>
-          {/* finalizar al contado entrega completa */}
-          <Text style={{color: '#fff'}}>Finalizar Crédito</Text>
-        </Button>
+        {loadEndProcessTracking ? 
+        <LoaderScreen color="black"></LoaderScreen>
+        :
+             <Button style={styles.Button} onPress={handleSubmit(SendSubmit)}>
+             {/* finalizar al contado entrega completa */}
+             <Text style={{color: '#fff'}}>Finalizar Crédito</Text>
+           </Button>
+        }   
       </View>
     </ScrollView>
   );

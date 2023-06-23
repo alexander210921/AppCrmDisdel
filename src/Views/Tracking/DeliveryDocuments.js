@@ -233,7 +233,7 @@ const DeliveryComponent = ({route}) => {
               </View>
             
 
-            {typeNumberDelevery?.id == 1 || typeNumberDelevery ===1 ? <CashPayment dataTracking={route.params?.dataTracking} ></CashPayment> : <CreditPayment></CreditPayment>}
+            {typeNumberDelevery?.id == 1 || typeNumberDelevery ===1 ? <CashPayment dataTracking={route.params?.dataTracking} ></CashPayment> : <CreditPayment dataTracking={route.params?.dataTracking}></CreditPayment>}
             {/* <View flex center>
               <Button
                 onPress={PressDeleveryCompletedandSucess}

@@ -103,7 +103,7 @@ const TrackingDocumentsAsigned = () => {
           return data;
         }
       });
-      
+      //console.log("filtrando",filterItems);
       const result = await IniciarRutaporIdTracking(filterItems);
       if (result == null) {
         Alert.alert('', 'Ocurrió un error intente nuevamente');
