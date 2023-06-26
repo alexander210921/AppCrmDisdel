@@ -172,6 +172,7 @@ const CashPayment = ({dataTracking = null}) => {
               }}
               render={({field: {onChange, onBlur, value}}) => (
                 <TextInput
+                  keyboardType="numeric"
                   style={styles.inputC}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -194,6 +195,7 @@ const CashPayment = ({dataTracking = null}) => {
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <TextInput
+              keyboardType="numeric"
               style={styles.inputC}
               onBlur={onBlur}
               onChangeText={onChange}
