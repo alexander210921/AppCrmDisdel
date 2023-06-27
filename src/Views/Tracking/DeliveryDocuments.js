@@ -96,6 +96,9 @@ const DeliveryComponent = ({route}) => {
           item.CantidadEntregada = item?.CantidadNueva
             ? item?.CantidadNueva
             : 0;
+          if(!item.delivered){
+            item.CantidadEntregada = 0;
+          }  
           return item;
         }
       });

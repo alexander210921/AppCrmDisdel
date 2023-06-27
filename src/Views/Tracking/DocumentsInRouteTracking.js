@@ -158,8 +158,9 @@ const TrackingDocumentInRoute = () => {
                     return item;
                  });
                  dispatch(SaveDocumentsRoute(DocumentsListUpdated));
-              }
-              Alert.alert("",""+infoRequeset?.Mensaje);                
+              }else{
+                Alert.alert("",""+infoRequeset?.Mensaje);                
+              }              
             }finally{
               setLoader(false);
               setSelectedCardIndexForInitRoute(null);
