@@ -257,7 +257,7 @@ const TrackingDocumentsAsigned = () => {
               </TouchableOpacity>
             </View>
           </View>
-          {load ? <LoaderScreen></LoaderScreen> : null}
+        
           {DocumentsList.map((item, index) => (
             <Card
               key={index}
@@ -279,14 +279,16 @@ const TrackingDocumentsAsigned = () => {
                 justifyContent: 'center',
                 alignContent: 'center',
               }}>
-              <Button
-                onPress={AddRouteDocuments}
-                style={{backgroundColor: '#000', width: '70%'}}>
-                <Text style={{color: '#fff'}}>
-                  {' '}
-                  Aceptar {checkedItems.length} Seleccionados{' '}
-                </Text>
-              </Button>
+                  {load ? <LoaderScreen color="black"></LoaderScreen> : 
+                    <Button
+                    onPress={AddRouteDocuments}
+                    style={{backgroundColor: '#000', width: '70%'}}>
+                    <Text style={{color: '#fff'}}>
+                      {' '}
+                      Aceptar {checkedItems.length} Seleccionados{' '}
+                    </Text>
+                  </Button>
+                  }            
             </TouchableOpacity>
           ) : null}
         </View>

@@ -62,7 +62,7 @@ const CashPayment = ({dataTracking = null}) => {
         TramiteContrasena: liquidar.tramiteContrasena,
         Firma: liquidar.tieneFirma ? true : false,
         FechaCobro: new Date().toLocaleDateString(),
-        TotalDocumento: liquidar.totalDoc,
+        TotalDocumento: liquidar.totalDoc ?liquidar.totalDoc:0 ,
         CardName: dataTracking.CardName,
         TipoObjeto: 'Contado',
         EstadoLiquidacion: 4,
@@ -70,9 +70,8 @@ const CashPayment = ({dataTracking = null}) => {
 
       Data.ListaLiquidada = liquidacion;
       Data.IdTracking = dataTracking.EntityID;
-      //console.log("Data Tracking",dataTracking);
-      //console.log("data finalizar al contado",Data)
-      const result = await ArriveDelevery(Data);
+      //console.log("Data Tracking",dataTracking);      
+      const result =await ArriveDelevery(Data);
       if (result == null) {
         Alert.alert('', 'Ocurrió un error, intenta nuevamente');
         return;

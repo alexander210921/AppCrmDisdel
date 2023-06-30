@@ -111,8 +111,7 @@ const DeliveryComponent = ({route}) => {
       Data.AuxIdentificador = 1;
       Data.eventosDocument = 1;
       Data.ProductoTracking = items ? items : [];
-      Data.IdTracking = route?.params?.dataTracking?.EntityID;
-      console.log(Data);
+      Data.IdTracking = route?.params?.dataTracking?.EntityID;      
       const result = await ArriveDelevery(Data);
       if (result == null) {
         Alert.alert('', 'Ocurrió un error, intenta nuevamente');
