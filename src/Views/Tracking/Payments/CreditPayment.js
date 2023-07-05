@@ -6,6 +6,7 @@ import {useForm, Controller} from 'react-hook-form';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { useSelector,useDispatch } from 'react-redux';
 import { ArriveDelevery, SaveDocumentsRoute } from '../../../Api/Traking/ApiTraking';
+import { useNavigation } from '@react-navigation/native';
 
 const CreditPayment = ({dataTracking = null}) => {
   const [selectedOption, setSelectedOption] = useState("1");
@@ -15,7 +16,7 @@ const CreditPayment = ({dataTracking = null}) => {
   const documents = useSelector(state => state.Tracking.DocumentAcepted);
   const [loadEndProcessTracking, setLoadEndProcessTracking] = useState(false);
   const dispatch = useDispatch();
-
+  const navigation = useNavigation();
   const SendSubmit = async FormData => {
     try{
       setLoadEndProcessTracking(true);
@@ -71,6 +72,7 @@ const CreditPayment = ({dataTracking = null}) => {
         return;
       }
       Alert.alert('', '' + result?.Mensaje);
+      console.log(result,"RESULT IF IS CREDIT")
       if(result.Resultado){        
         let filterDoc = documents?.filter(item=>item.EntityID!=Data.IdTracking);
         dispatch(SaveDocumentsRoute(filterDoc));
