@@ -246,7 +246,10 @@ const HomeRouteVendors = () => {
       } finally {
       }
     },
-
+    HandleGoCheckProduct: function () {
+     // navigation.navigate('FormGasoline');
+     Alert.alert("testeando");
+    },
   };
 
   useEffect(() => {
