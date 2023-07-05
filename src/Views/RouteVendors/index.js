@@ -35,6 +35,7 @@ import {
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { LogOutUser } from '../../Api/User/ApiUser';
 import geolocation from '@react-native-community/geolocation';
+import { StopInitVisit } from '../../lib/Visits';
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
@@ -285,7 +286,7 @@ const HomeRouteVendors = () => {
     await AsyncStorageDeleteData("@Options");
     await AsyncStorageDeleteData("@Rol");
     await AsyncStorageDeleteData("@Company");
-    await AsyncStorageDeleteData("@dataRoute");    
+    await StopInitVisit(null,dispatch);       
     if(BackgroundService.isRunning()){
       try{
        await BackgroundService.stop();
