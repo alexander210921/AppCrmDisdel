@@ -9,7 +9,9 @@ import { useSelector,useDispatch } from 'react-redux';
 const CashPayment = ({dataTracking = null}) => {
   //console.log("Recibiendo el tracking",dataTracking);
   const documents = useSelector(state => state.Tracking.DocumentAcepted);
+  const ListBanks =useSelector(state => state.Tracking.ListBank); 
   const [selectedOption, setSelectedOption] = useState('1');
+  const [SelectBank, setSelectBank] = useState(ListBanks[0].Banco);
   const [loadEndProcessTracking, setLoadEndProcessTracking] = useState(false);
   const User = useSelector(state => state.login.user);
   const navigation = useNavigation();
@@ -18,6 +20,10 @@ const CashPayment = ({dataTracking = null}) => {
     try {
       setLoadEndProcessTracking(true);
       //console.log("Si ajá",FormData);
+      if(SelectBank =="" ||SelectBank==null ){
+        Alert.alert("","Seleccione el banco");
+          return;
+      }
       let Data = {};
       let liquidar = {};
       let Datos = null;
@@ -55,7 +61,7 @@ const CashPayment = ({dataTracking = null}) => {
         NameUser: User?.Datos?.NombreCompleto,
         IdUser: User?.EmpID, //EmpID,
         TipoPago: liquidar.tipopago,
-        BancoPago: FormData.NameBank,
+        BancoPago: SelectBank,
         DocumentoPago: FormData.DocumentNumber,
         TotalPago: parseFloat(FormData.Total),
         ContrasenaDocumento: liquidar.contrasenaDoc,
@@ -93,7 +99,7 @@ const CashPayment = ({dataTracking = null}) => {
     formState: {errors},
   } = useForm({
     defaultValues: {
-      NameBank: '',
+   
       DocumentNumber: '',
       Total: '',
     },
@@ -144,7 +150,27 @@ const CashPayment = ({dataTracking = null}) => {
       <View style={{padding: '0%'}}>
         {selectedOption != 2 ? (
           <View>
-            <Controller
+             <View style={styles.container}>
+             <Picker
+          selectedValue={SelectBank}
+          onValueChange={itemValue => {
+            setSelectBank(itemValue);
+          }}>
+            {ListBanks.map((item,index)=>(
+               <Picker.Item
+               key={index}
+               label={item.Banco}
+               value={item.Banco}
+               style={{
+                 color: 'black',
+                 backgroundColor: '#fff',
+               }}
+             />
+            ))}
+       
+        </Picker>
+             </View>
+            {/* <Controller
               control={control}
               rules={{
                 required: true,
@@ -163,7 +189,7 @@ const CashPayment = ({dataTracking = null}) => {
             />
             {errors.NameBank && (
               <Text style={styles.TextAlert}>Este campo es requerido</Text>
-            )}
+            )} */}
             <Controller
               control={control}
               rules={{

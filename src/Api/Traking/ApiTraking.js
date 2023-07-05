@@ -1,6 +1,6 @@
 
 import Axios from '../../lib/Axios/AxiosConfig';
-import { SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_INROUTE } from '../../Store/Types';
+import { SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY } from '../../Store/Types';
 export async function GetDocumentsAsignedUser (IdUser){
     if(!IdUser){
         return null;
@@ -61,6 +61,16 @@ export async function GetDocumentsAsignedUser (IdUser){
     }      
   };
 
+  export const GetBanksCompany =async (NombreDB) => {
+    try{
+      const {data} = await Axios.get('MyWsBancos/api/Buscador/GetBancoGeneral/'+NombreDB+"/")
+      return data;
+    }catch{
+      return null;
+    }      
+  };
+
+
   export const GetDetailDocument =async (NombreDB,DocEntry,TypeDoc) => {
     try{
       switch(TypeDoc){
@@ -99,4 +109,8 @@ export async function GetDocumentsAsignedUser (IdUser){
     payload:document
   })
 
+  export const SaveBanks=(ListBanks)=>({
+    type:SAVE_BANK_COMPANY,
+    payload:ListBanks
+  })
   

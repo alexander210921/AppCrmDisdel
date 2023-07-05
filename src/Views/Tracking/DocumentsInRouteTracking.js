@@ -10,9 +10,11 @@ import React, {useEffect, useState} from 'react';
 import {Button, Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  GetBanksCompany,
   GetDetailDocument,
   GetDetailRoute,
   IniciarRutaporIdTracking,
+  SaveBanks,
   SaveDocumentsAsigned,
   SaveDocumentsRoute,
   UpdateStateTracking,
@@ -24,6 +26,7 @@ import {Console} from 'console';
 
 const TrackingDocumentInRoute = () => {
   const documents = useSelector(state => state.Tracking.DocumentAcepted);
+  const ListBankSelector =useSelector(state => state.Tracking.ListBank); 
   const [DocumentsList, setDocumentsList] = useState([]);
   const [checkedItems, setCheckedItems] = React.useState([]);
   const [isMarkerAll, setIsMarkerAll] = useState(true);
@@ -216,7 +219,15 @@ const TrackingDocumentInRoute = () => {
   };
   const GoMarkerArriveDocument = async (NombreDB, DocEntry, TypeDoC,id,dataTracking) => {
     const detail = await GetDetailDocument(NombreDB, DocEntry, TypeDoC);
-    if (detail == null) {
+    let Banks = ListBankSelector;
+    if(ListBankSelector==null ||ListBankSelector.length==0 ){
+       Banks  =await GetBanksCompany(NombreDB);
+      if(Banks!=null){
+        dispatch(SaveBanks(Banks)); 
+      }
+    }
+    console.log("los bancos ",Banks)
+    if (detail == null||Banks==null ||Banks.length==0 ) {
       Alert.alert('', 'Ocurrió un problema al obtener el detalle');
       return;
     }
