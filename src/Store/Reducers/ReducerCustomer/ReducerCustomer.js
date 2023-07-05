@@ -56,7 +56,9 @@ const initialState = {
           loadUpdateVisit:false,
           VisitArriveOrEnd:null,
           ListContactPerson:[],
-          LoadRefreshLocation:false  
+          LoadRefreshLocation:false,
+          DetailCustomer:null,
+          DocumentsOpen:[]  
         }     
       case SET_VISIT_ACTUALITY:
         return{

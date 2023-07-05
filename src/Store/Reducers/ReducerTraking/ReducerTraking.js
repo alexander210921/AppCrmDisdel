@@ -15,7 +15,8 @@ export default  function  (state = initialState, action) {
         return {
           ...state,
           DocumentAsigned:[],
-          DocumentAcepted:[]
+          DocumentAcepted:[],
+          ListBank:[]
         }
       case SAVE_DOCUMENTS_INROUTE:
         return{

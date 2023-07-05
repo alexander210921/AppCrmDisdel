@@ -27,16 +27,14 @@ import {
   SaveProductsByCompany,
 } from '../../Api/Products/ApiProduct';
 import {AsyncStorageDeleteData, AsyncStorageGetData} from '../../lib/AsyncStorage';
-import {
-  GetDocumentsAsignedUser,
-  GetDocumentsInRoute,
+import {  
   GetDocumentsPilot,
   SaveDocumentsAsigned,
   SaveDocumentsRoute,
 } from '../../Api/Traking/ApiTraking';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { LogOutUser } from '../../Api/User/ApiUser';
-
+import geolocation from '@react-native-community/geolocation';
 const HomeRouteVendors = () => {
   const [selectCard, setSelectCard] = useState(false);
   const navigation = useNavigation();
@@ -286,6 +284,16 @@ const HomeRouteVendors = () => {
     await AsyncStorageDeleteData("@User");
     await AsyncStorageDeleteData("@Options");
     await AsyncStorageDeleteData("@Rol");
+    await AsyncStorageDeleteData("@Company");
+    await AsyncStorageDeleteData("@dataRoute");    
+    if(BackgroundService.isRunning()){
+      try{
+       await BackgroundService.stop();
+        geolocation .clearWatch(0);
+      }catch{
+
+      }
+    }
     navigation.navigate("Login");
   }
   const HandleCloseSesion=()=>{
