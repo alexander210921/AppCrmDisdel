@@ -22,6 +22,7 @@ import ListDocumentHome from '../Views/Documents';
 import TrackingDocumentsAsigned from '../Views/Tracking';
 import TrackingDocumentInRoute from '../Views/Tracking/DocumentsInRouteTracking';
 import DeliveryComponent from '../Views/Tracking/DeliveryDocuments';
+import CameraLectorCode from '../Views/Count/ReadCodeCamera';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -192,7 +193,7 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
-            <Stack.Screen
+      <Stack.Screen
         name="TrackingDocumentsAsigned"
         component={TrackingDocumentsAsigned}
         options={{
@@ -211,6 +212,14 @@ export default function StackNavigation() {
       <Stack.Screen
         name="DeliveryComponent"
         component={DeliveryComponent}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CameraLectorCode"
+        component={CameraLectorCode}
         options={{
           title: '',
           headerShown: false,

@@ -246,9 +246,22 @@ const HomeRouteVendors = () => {
       } finally {
       }
     },
-    HandleGoCheckProduct: function () {
+    HandleGoCheckProduct: async function () {
      // navigation.navigate('FormGasoline');
-     Alert.alert("testeando");
+    //  Alert.alert("testeando");
+    if (ListProducts && ListProducts.length == 0) {
+      setLoadGetProduct(true);
+      const ListProduct = await GetListProductByCompany(company?.NombreDB);      
+      if (ListProduct == null || ListProduct?.length == 0) {
+        Alert.alert('No se encontró registros', 'Intente nuevamente por favor');
+        setLoadGetProduct(false);
+        return;
+      }
+      dispatch(SaveProductsByCompany(ListProduct));
+    }
+    setLoadGetProduct(false);
+     navigation.navigate("CameraLectorCode");
+
     },
   };
 
