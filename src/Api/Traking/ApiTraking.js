@@ -1,6 +1,6 @@
 
 import Axios from '../../lib/Axios/AxiosConfig';
-import { SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY,SAVE_CHECKERS_BY_COMPANY } from '../../Store/Types';
+import { SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_TRACKING_ASIGNED_CHECKER,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY,SAVE_CHECKERS_BY_COMPANY } from '../../Store/Types';
 export async function GetDocumentsAsignedUser (IdUser){
     if(!IdUser){
         return null;
@@ -70,6 +70,16 @@ export async function GetDocumentsAsignedUser (IdUser){
     }      
   };
 
+  export const GetDocumentsChecker =async (NombreDB,Process,EmpID) => {
+    // 
+    try{
+      const {data} = await Axios.get('MyWsOneVenta/api/Tracking/GetDocumentsCheckerAsigned/'+NombreDB+"/"+Process+"/"+EmpID)
+      return data;
+    }catch{
+      return null;
+    }      
+  };
+
   export const GetBanksCompany =async (NombreDB) => {
     try{
       const {data} = await Axios.get('MyWsBancos/api/Buscador/GetBancoGeneral/'+NombreDB+"/")
@@ -118,6 +128,10 @@ export async function GetDocumentsAsignedUser (IdUser){
 
   export const SaveDocumentsAsigned=(document)=>({
     type:SAVE_DOCUMENTS_TRACKING_ASIGNED,
+    payload:document
+  })
+  export const SaveDocumentsAsignedChecker=(document)=>({
+    type:SAVE_DOCUMENTS_TRACKING_ASIGNED_CHECKER,
     payload:document
   })
 

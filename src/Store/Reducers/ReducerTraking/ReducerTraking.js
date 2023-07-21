@@ -1,9 +1,10 @@
-import {SAVE_DOCUMENTS_TRACKING_ASIGNED,LOGOUT_USER,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY,SAVE_CHECKERS_BY_COMPANY} from "../../Types/index";
+import {SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_TRACKING_ASIGNED_CHECKER,LOGOUT_USER,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY,SAVE_CHECKERS_BY_COMPANY} from "../../Types/index";
 const initialState = { 
     DocumentAsigned:[],     
     DocumentAcepted:[],
     ListBank:[],
-    ListChecker:[]
+    ListChecker:[],
+    DocumentsAssignedChecker:[]
 };
 export default  function  (state = initialState, action) {
     switch (action.type) {                    
@@ -11,14 +12,20 @@ export default  function  (state = initialState, action) {
         return {
             ...state,
             DocumentAsigned: action.payload,                                                                                              
-        };      
+        };  
+       case SAVE_DOCUMENTS_TRACKING_ASIGNED_CHECKER:
+        return{
+          ...state,
+          DocumentsAssignedChecker:action.payload
+        }     
       case LOGOUT_USER:
         return {
           ...state,
           DocumentAsigned:[],
           DocumentAcepted:[],
           ListBank:[],
-          ListChecker:[]
+          ListChecker:[],
+          DocumentsAssignedChecker:[]
         }
       case SAVE_DOCUMENTS_INROUTE:
         return{
