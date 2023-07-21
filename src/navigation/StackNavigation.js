@@ -23,6 +23,7 @@ import TrackingDocumentsAsigned from '../Views/Tracking';
 import TrackingDocumentInRoute from '../Views/Tracking/DocumentsInRouteTracking';
 import DeliveryComponent from '../Views/Tracking/DeliveryDocuments';
 import CameraLectorCode from '../Views/Count/ReadCodeCamera';
+import DeliveryDocumentsChecker from '../Views/Tracking/DeliveryDocumentsChecker';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -225,6 +226,14 @@ export default function StackNavigation() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="DeliveryDocumentsChecker"
+        component={DeliveryDocumentsChecker}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />      
     </Stack.Navigator>
   );
 }
