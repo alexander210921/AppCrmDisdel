@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {StyleSheet, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,7 +14,7 @@ import {PageControl, Colors, View} from 'react-native-ui-lib';
 import { SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-const ListProduct = ({ListData, scrollToTop,viewButtonControls=false}) => {
+const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddProduct = function(){}}) => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
@@ -51,8 +52,12 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false}) => {
   const handleQuantityChange = newQuantity => {
     setQuantity(newQuantity);
   };
-  const handleAddToCart = () => {
+  const handleAddToCart = (item) => {
     // Lógica para agregar el producto al carrito
+    // Alert.prompt('Title', 'Subtitle', text =>
+    //        console.log('You entered ' + text)
+    //  );
+    ClickAddProduct(item);
   };
   const renderFooter = () => {
     if (!loading) return null;
@@ -112,8 +117,10 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false}) => {
         </View>
         :null}
         {viewButtonControls ? 
-          <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
-          <Text style={styles.addButtonText}>Agregar al carrito</Text>
+          <TouchableOpacity style={styles.addButton} onPress={()=>{
+            handleAddToCart(item);
+          }}>
+          <Text style={styles.addButtonText}>Agregar</Text>
         </TouchableOpacity>
         :null}        
       {/* </View> */}
