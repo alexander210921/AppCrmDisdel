@@ -28,9 +28,11 @@ import {
 } from '../../Api/Products/ApiProduct';
 import {AsyncStorageDeleteData, AsyncStorageGetData} from '../../lib/AsyncStorage';
 import {  
+  GetDocumentsChecker,
   GetDocumentsPilot,
   SaveDocumentsAsigned,
   SaveDocumentsRoute,
+  SaveDocumentsAsignedChecker
 } from '../../Api/Traking/ApiTraking';
 import { AlertConditional } from '../../Components/TextAlert/AlertConditional';
 import { LogOutUser } from '../../Api/User/ApiUser';
@@ -132,7 +134,7 @@ const HomeRouteVendors = () => {
     HandleGoBases: function () {
       navigation.navigate('MenuEndVisit');
     },
-    HandleGetProduct: async function () {
+    HandleGetProduct: async  function () {
       try {
         if (ListProducts && ListProducts.length == 0) {
           setLoadGetProduct(true);
@@ -263,6 +265,31 @@ const HomeRouteVendors = () => {
      navigation.navigate("CameraLectorCode");
 
     },
+    GoDocumentsAssignedChecker: async function (){
+        //console.log("Dentro de la opcion");
+        try {
+          setLoadGetVisit(true);
+          const documents = await GetDocumentsChecker(company?.NombreDB,"EnProceso",User?.EmpID);
+          //console.log(documents,"Lista de documentos");
+          if (documents == null) {
+            Alert.alert('', 'Ocurrió un error intenta nuevamente');
+            return;
+          }
+          if (documents.length == 0) {
+            Alert.alert('', 'No tiene documentos asignados actualmente');
+            return;
+          }  
+          dispatch(SaveDocumentsAsignedChecker(documents));
+          //console.log(documents)
+          navigation.navigate('DeliveryDocumentsChecker');
+        } catch (ex) {
+          Alert.alert('', 'Ocurrió un error ' + ex);
+        } finally {
+          setLoadGetVisit(false);
+        }
+
+    }
+
   };
 
   useEffect(() => {

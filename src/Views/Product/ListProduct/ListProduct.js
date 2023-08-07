@@ -14,7 +14,7 @@ import {PageControl, Colors, View} from 'react-native-ui-lib';
 import { SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddProduct = function(){}}) => {
+const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddProduct = function(){},isChangeItem = false}) => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
@@ -59,6 +59,10 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddPro
     //  );
     ClickAddProduct(item);
   };
+
+  const HandleChangeItem=(item)=>{
+    console.log(item);
+  }
   const renderFooter = () => {
     if (!loading) return null;
     return (
@@ -122,6 +126,14 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddPro
           }}>
           <Text style={styles.addButtonText}>Agregar</Text>
         </TouchableOpacity>
+        :null}
+        {isChangeItem ?
+             <TouchableOpacity style={styles.addButton} onPress={()=>{
+              //handleAddToCart(item);
+              HandleChangeItem(item);
+            }}>
+            <Text style={styles.addButtonText}>Realizar Cambio</Text>
+          </TouchableOpacity>
         :null}        
       {/* </View> */}
       </TouchableOpacity>

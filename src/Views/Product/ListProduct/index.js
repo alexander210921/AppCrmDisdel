@@ -3,7 +3,7 @@ import {View} from 'react-native-ui-lib';
 import {StyleSheet, ScrollView, TouchableOpacity, Text} from 'react-native';
 import ListProduct from './ListProduct';
 import {useSelector} from 'react-redux';
-const ListProductHome = () => {
+const ListProductHome = ({route}) => {
   const ListProducts = useSelector(state => state.Product.ListProductCompany);
   const scrollViewRef = useRef();
   const handleScroll = event => {
@@ -27,6 +27,7 @@ const ListProductHome = () => {
       <View flex>
         {ListProducts ? (
           <ListProduct
+            isChangeItem = {route?.params?.operation=="ChangeItem"?true:false}
             scrollToTop={scrollToTop}
             ListData={ListProducts}></ListProduct>
         ) : null}
