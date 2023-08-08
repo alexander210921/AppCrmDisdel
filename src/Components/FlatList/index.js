@@ -25,7 +25,7 @@ import ModalComponent from '../Modal/ModalComponent';
 import { AlertConditional } from '../TextAlert/AlertConditional';
 import { ChangePackingLineOrder } from '../../Api/Documents/ApiDocuments';
 import { useNavigation } from '@react-navigation/native';
-import { GetListProductByCompany, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
+import { GetListProductByCompany, SaveProductChange, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
 import { useDispatch, useSelector } from 'react-redux';
 const CardCarousel = ({content}) => {
   const [ListProducts, setListProducts] = useState([]);
@@ -136,7 +136,8 @@ const CardCarousel = ({content}) => {
           }
           const objet={
             operation:"ChangeItem"
-          }
+          }          
+          dispatch(SaveProductChange(itemSelectForActions));
           navigation.navigate('ListProductHome',objet);
         } finally {
           setLoadGetProduct(false);

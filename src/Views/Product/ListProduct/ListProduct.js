@@ -11,7 +11,7 @@ import {
 import {StyleSheet, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {PageControl, Colors, View} from 'react-native-ui-lib';
-import { SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
+import { SaveProductReplace, SaveProductSelectForView } from '../../../Api/Products/ApiProduct';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddProduct = function(){},isChangeItem = false}) => {
@@ -60,8 +60,10 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddPro
     ClickAddProduct(item);
   };
 
-  const HandleChangeItem=(item)=>{
-    console.log(item);
+  const HandleChangeItem=(item)=>{    
+    dispatch(SaveProductReplace(item));
+    //reload to view step to replace product
+    //navigation.navigate("");
   }
   const renderFooter = () => {
     if (!loading) return null;
