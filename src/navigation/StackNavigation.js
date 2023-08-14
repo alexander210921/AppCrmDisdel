@@ -25,6 +25,7 @@ import DeliveryComponent from '../Views/Tracking/DeliveryDocuments';
 import CameraLectorCode from '../Views/Count/ReadCodeCamera';
 import DeliveryDocumentsChecker from '../Views/Tracking/DeliveryDocumentsChecker';
 import HomePicking from '../Views/Picking/index';
+import ReplaceItem from '../Views/Product/ReplaceProduct';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -238,6 +239,14 @@ export default function StackNavigation() {
       <Stack.Screen
         name="HomePicking"
         component={HomePicking}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      /> 
+      <Stack.Screen
+        name="ReplaceItem"
+        component={ReplaceItem}
         options={{
           title: '',
           headerShown: false,

@@ -63,7 +63,7 @@ const ListProduct = ({ListData, scrollToTop,viewButtonControls=false,ClickAddPro
   const HandleChangeItem=(item)=>{    
     dispatch(SaveProductReplace(item));
     //reload to view step to replace product
-    //navigation.navigate("");
+    navigation.navigate("ReplaceItem");
   }
   const renderFooter = () => {
     if (!loading) return null;

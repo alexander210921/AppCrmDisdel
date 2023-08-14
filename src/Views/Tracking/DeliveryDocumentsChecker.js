@@ -15,6 +15,7 @@ import {
   } from '../../Api/Traking/ApiTraking';
   import SearchBar from '../../Components/SearchBar';
   import {useNavigation} from '@react-navigation/native';
+import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
  
   
   const DeliveryDocumentsChecker = () => {
@@ -266,7 +267,8 @@ import {
       DocTotal=0,
       AlldataTracking,
       Piloto = "",
-      EditableBase  ="NO"
+      EditableBase  ="NO",
+      data
     }) => {    
       return (
         <View>
@@ -274,6 +276,7 @@ import {
             style={{borderWidth: 0, shadowColor: '#ffff'}}
             onPress={() => {
               GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking);
+              dispatch(SaveDocumentChecker(data));
              // GoMarkerArriveDocument();
               //getDetail(company?.NombreDB, EntityiD, typeDoc, docNum, id);
             }}>
@@ -365,6 +368,7 @@ import {
                 DocTotal={item.DocTotal}
                 Piloto={item.Piloto}
                 AlldataTracking={item}
+                data={item}
               />
             ))}
    

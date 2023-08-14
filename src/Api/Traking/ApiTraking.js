@@ -110,7 +110,7 @@ export async function GetDocumentsAsignedUser (IdUser){
           return data;          
         }
         case "Pedido":{
-          const {data} = await Axios.get('MyWsOneVenta/api/DetalleReporteriaInterna/GetPedidoDocEntry/'+NombreDB+"/"+DocEntry)
+          const {data} = await Axios.get('MyWsOneVenta/api/DetalleReporteriaInterna/GetPeDocEntry/'+NombreDB+"/"+DocEntry)
           return data;
         }
         default:
