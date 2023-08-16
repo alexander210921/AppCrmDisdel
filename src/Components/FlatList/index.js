@@ -22,6 +22,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Iconv2 from 'react-native-vector-icons/MaterialIcons';
 import ReadCodeCamera from '../../Views/Count/ReadCodeCamera';
 import ModalComponent from '../Modal/ModalComponent';
+import CheckInIndex from '../../Views/Documents/Check_In';
 import { AlertConditional } from '../TextAlert/AlertConditional';
 import { ChangePackingLineOrder } from '../../Api/Documents/ApiDocuments';
 import { useNavigation } from '@react-navigation/native';
@@ -34,12 +35,14 @@ const CardCarousel = ({content}) => {
   const [modalVisibleItems, setModalVisibleItems] = useState(false);
   const [ProductDetailEdit,setProductEdit] = useState(null);
   const [itemSelectForActions,setItemSelectForAction] = useState(null);
+  const DataProductChange = useSelector(state => state.Product);
   //control to edit order
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [packaging, setPackaging] = useState('individual');
   const [quantity, setquantity] = useState('');
   const [loadGetProduct, setLoadGetProduct] = useState(false);
+  const [viewForm,setViewForm] = useState(false);
   const navigation = useNavigation();
   const GetListProducts = useSelector(state => state.Product.ListProductCompany);
   const company = useSelector(state => state.company.CompanySelected);
@@ -74,6 +77,13 @@ const CardCarousel = ({content}) => {
   const closeModal = () => {
     setModalVisible(false);
   };
+
+  const HandleCreateDocument = ()=>{
+    //ini firm document
+   const document =  DataProductChange?.DataDocumentSelect;
+   setViewForm(!viewForm);
+
+  }
 
   const ChangePackingItem=()=>{
     const data = {
@@ -264,7 +274,7 @@ const CardCarousel = ({content}) => {
               style={{backgroundColor: 'gray'}}
               label="Editar"></Button>
           </TouchableOpacity>
-          {item.EditableBase=="SI"?
+          {true?
            <TouchableOpacity onPress={()=>{
             setItemSelectForAction(item);
             if(item?.Codigo!=itemSelectForActions?.Codigo){
@@ -345,10 +355,14 @@ const CardCarousel = ({content}) => {
         numColumns={2}
       />
       <Button
+        onPress={HandleCreateDocument}
         disabled={!ListProducts.every(item => item.isChecked == true)}
-        style={styles.ButtonFinaliceProcces}>
+        style={!ListProducts.every(item => item.isChecked == true) ?styles.DisableButton :styles.ButtonFinaliceProcces}>
         <Text style={{color: 'white'}}>Dar por finalizado</Text>
       </Button>
+      {viewForm ?
+        <CheckInIndex></CheckInIndex>
+       :null}
 
       <ModalComponent
         visible={modalVisible}
@@ -479,5 +493,12 @@ const styles = StyleSheet.create({
     marginLeft: '3%',
     marginTop: '3%',
   },
+  DisableButton:{
+    backgroundColor: '#ccc',
+    width: '40%',
+    borderRadius: 0,
+    marginLeft: '3%',
+    marginTop: '3%',
+  }
 });
 export default CardCarousel;
