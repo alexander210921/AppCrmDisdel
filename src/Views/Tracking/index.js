@@ -313,7 +313,8 @@ const TrackingDocumentsAsigned = () => {
     Quantity = 0,
     EstadoChequeo,
     Chequeador,
-    fecha
+    fecha,
+    DocNumBill
   }) => {
     let color = "yellow";
     let estadoDescription ="Sin Accion";
@@ -350,6 +351,9 @@ const TrackingDocumentsAsigned = () => {
             </Text>
             <Text style={{...styles.textSecundary}}>
                 Estado Chequeo: <Text style={{backgroundColor:color}} >{estadoDescription}  { Chequeador ? ' / Por: '+Chequeador:''}</Text> 
+            </Text>
+            <Text style={{...styles.textSecundary}}>
+                Facturación: <Text  >{DocNumBill!=null && DocNumBill!=0? "Facturado con éxito : "+DocNumBill:"Pendiente"  }  </Text> 
             </Text>
             
           </View>
@@ -411,6 +415,7 @@ const TrackingDocumentsAsigned = () => {
               EstadoChequeo = {item?.EstadoChequeo}
               Chequeador = {item?.NombreChequeador}
               fecha={item?.FechaCreacion}
+              DocNumBill={item?.DocNumBill}
             />
           ))}
 

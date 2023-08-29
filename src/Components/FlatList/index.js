@@ -24,10 +24,11 @@ import ReadCodeCamera from '../../Views/Count/ReadCodeCamera';
 import ModalComponent from '../Modal/ModalComponent';
 import CheckInIndex from '../../Views/Documents/Check_In';
 import { AlertConditional } from '../TextAlert/AlertConditional';
-import { ChangePackingLineOrder } from '../../Api/Documents/ApiDocuments';
+import { ChangePackingLineOrder, getPedidoByDocEntry } from '../../Api/Documents/ApiDocuments';
 import { useNavigation } from '@react-navigation/native';
 import { GetListProductByCompany, SaveProductChange, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
 import { useDispatch, useSelector } from 'react-redux';
+import { ActualizarChequeoDocumentos } from '../../Api/Traking/ApiTraking';
 const CardCarousel = ({content}) => {
   const [ListProducts, setListProducts] = useState([]);
   const [ListMap, setListMap] = useState({});
@@ -36,6 +37,7 @@ const CardCarousel = ({content}) => {
   const [ProductDetailEdit,setProductEdit] = useState(null);
   const [itemSelectForActions,setItemSelectForAction] = useState(null);
   const DataProductChange = useSelector(state => state.Product);
+  const [loadData,setLoadData] = useState(false);
   //control to edit order
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -47,6 +49,7 @@ const CardCarousel = ({content}) => {
   const GetListProducts = useSelector(state => state.Product.ListProductCompany);
   const company = useSelector(state => state.company.CompanySelected);
   const dispatch = useDispatch();
+  const DocumentCheckerSelected = useSelector(state => state.Product);
   const [optionsItem, setOptionsItem] = useState([
     { id: 1, label: 'Reemplazar Producto' },
     { id: 2, label: 'Cambiar base' },
@@ -78,11 +81,28 @@ const CardCarousel = ({content}) => {
     setModalVisible(false);
   };
 
-  const HandleCreateDocument = ()=>{
+  const HandleCreateDocument = async()=>{
     //ini firm document
-   const document =  DataProductChange?.DataDocumentSelect;
-   setViewForm(!viewForm);
-
+    try{
+    setLoadData(true);
+    const document =  DataProductChange?.DataDocumentSelect;
+    const documentDocEntry = await getPedidoByDocEntry(company?.NombreDB,document.DocEntry);
+    let ListTrackingForUpdate = [];
+    ListTrackingForUpdate.push(DocumentCheckerSelected.DataDocumentSelect);
+    ListTrackingForUpdate = ListTrackingForUpdate.map(x=>{
+      x.EstadoChequeo = "Finalizado";
+      return x;
+    });    
+    //console.log("aaa",ListTrackingForUpdate);
+    const resultUpdateStatusCheck = await ActualizarChequeoDocumentos(ListTrackingForUpdate);
+    if(documentDocEntry==null || resultUpdateStatusCheck==null || !resultUpdateStatusCheck?.Resultado    ){
+      Alert.alert("",""+resultUpdateStatusCheck?.Mensaje);
+      return;
+    }
+    navigation.navigate("FormularioFacturacion",documentDocEntry);
+    }finally{
+      setLoadData(false);  
+    }     
   }
 
   const ChangePackingItem=()=>{
@@ -354,12 +374,17 @@ const CardCarousel = ({content}) => {
         onEndReachedThreshold={0.7}
         numColumns={2}
       />
+      {loadData?
+      <LoaderScreen color="black"></LoaderScreen>
+      :
       <Button
         onPress={HandleCreateDocument}
-        disabled={!ListProducts.every(item => item.isChecked == true)}
-        style={!ListProducts.every(item => item.isChecked == true) ?styles.DisableButton :styles.ButtonFinaliceProcces}>
+        disabled={DocumentCheckerSelected?.DataDocumentSelect?.EstadoChequeo==2? false: !ListProducts.every(item => item.isChecked == true) }
+        style={DocumentCheckerSelected?.DataDocumentSelect?.EstadoChequeo==2? styles.ButtonFinaliceProcces: !ListProducts.every(item => item.isChecked == true) ?styles.DisableButton :styles.ButtonFinaliceProcces}>
         <Text style={{color: 'white'}}>Dar por finalizado</Text>
       </Button>
+      }
+      
       {viewForm ?
         <CheckInIndex></CheckInIndex>
        :null}

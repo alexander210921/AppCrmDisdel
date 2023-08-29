@@ -1,4 +1,5 @@
 
+import { Alert } from 'react-native';
 import Axios from '../../lib/Axios/AxiosConfig';
 import { SAVE_DOCUMENTS_TRACKING_ASIGNED,SAVE_DOCUMENTS_TRACKING_ASIGNED_CHECKER,SAVE_DOCUMENTS_INROUTE,SAVE_BANK_COMPANY,SAVE_CHECKERS_BY_COMPANY } from '../../Store/Types';
 export async function GetDocumentsAsignedUser (IdUser){
@@ -28,6 +29,15 @@ export async function GetDocumentsAsignedUser (IdUser){
       const {data} = await Axios.post('MyWsOneVenta/api/Tracking/ActualizaChequeoTracking', ListDocuments)
       return data;
     }catch{
+      return null;
+     }      
+  };
+  export const ActualizarTrackingFactura =async (ListDocuments) => {
+    try{
+      const {data} = await Axios.post('MyWsOneVenta/api/Tracking/ActualizarTrackingFactura', ListDocuments)
+      return data;
+    }catch(e){
+      Alert.alert("","Ocurrió un Error: "+e);
       return null;
      }      
   };

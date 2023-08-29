@@ -296,6 +296,7 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
               <Text style={styles.textSecundary}>{typeDoc} Q. {DocTotal}</Text>
 
               <Text style={styles.textSecundary}>Piloto:  {Piloto} </Text>
+              <Text style={{backgroundColor: data.EstadoChequeo==2 ?'#ACDF87':'#FCC861'}} > {data.EstadoChequeo==2 ? "Chequeado pero pendiente de facturar":"Sin chequear"} </Text>
               <Button
                   onPress={() => {
                     //GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking);
