@@ -64,7 +64,7 @@ const TrackingDocumentsAsigned = () => {
       }
     });
     //console.log("filtrando",filterItems);
-    console.log(filterItems);
+    //console.log(filterItems);
     const result = await ActualizarChequeoDocumentos(filterItems);
     if (result == null) {
       Alert.alert('', 'Ocurrió un error intente nuevamente');
@@ -322,7 +322,7 @@ const TrackingDocumentsAsigned = () => {
       estadoDescription = "En Proceso";
     }
     else if(EstadoChequeo ==2){
-      color = "green"
+      color = "#ACDF87"
       estadoDescription = "Finalizado";
     }
     return (

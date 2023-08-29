@@ -26,6 +26,7 @@ import CameraLectorCode from '../Views/Count/ReadCodeCamera';
 import DeliveryDocumentsChecker from '../Views/Tracking/DeliveryDocumentsChecker';
 import HomePicking from '../Views/Picking/index';
 import ReplaceItem from '../Views/Product/ReplaceProduct';
+import FormularioFacturacion from '../Views/Documents/Check_In/HeaderData';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 export default function StackNavigation() {
@@ -251,7 +252,15 @@ export default function StackNavigation() {
           title: '',
           headerShown: false,
         }}
-      />      
+      />  
+      <Stack.Screen
+        name="FormularioFacturacion"
+        component={FormularioFacturacion}
+        options={{
+          title: '',
+          headerShown: false,
+        }}
+      />       
     </Stack.Navigator>
     
   );

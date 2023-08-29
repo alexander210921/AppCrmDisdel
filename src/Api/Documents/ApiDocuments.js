@@ -29,3 +29,23 @@ export async function ChangePackingLineOrder (data){
       return null;
     }
   }
+
+  export async function getPedidoByDocEntry (NombreDB,DocEntry){
+    try{
+      const {data} = await Axios.get("MyWsOneVenta/Api/Facturador/GetPedidoDocEntry/"+NombreDB+"/"+DocEntry);
+      return data;
+    }catch(ex){
+      Alert.alert(""+ex);
+      return null;
+    }
+  }
+
+  export async function FacturarDocumento (Documento){
+    try{
+      const {data} = await Axios.post("MyWsOneVenta/api/FacturaSap/CrearFactura/",Documento);
+      return data;
+    }catch(ex){
+      Alert.alert(""+ex);
+      return null;
+    }
+  }
