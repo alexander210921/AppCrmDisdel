@@ -372,8 +372,7 @@ const CardCarousel = ({content,scrollToTop}) => {
       <TextInput
             style={styles.input}
             placeholder={'Buscar Producto'}
-            autoFocus={true}
-            //value={searchText}
+            autoFocus={false}            
             onChangeText={handleSearch}
             onBlur={onSearch}
             placeholderTextColor={'#b3b2b7'}
