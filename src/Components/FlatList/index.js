@@ -24,7 +24,7 @@ import ModalComponent from '../Modal/ModalComponent';
 import { AlertConditional } from '../TextAlert/AlertConditional';
 import { ChangePackingLineOrder, getPedidoByDocEntry } from '../../Api/Documents/ApiDocuments';
 import { useNavigation } from '@react-navigation/native';
-import { GetListProductByCompany, SaveProductChange, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
+import { FuncionGetCodeSpecialByCompany, FuncionGetDiscountItemOrder, GetListProductByCompany, SaveProductChange, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActualizarChequeoDocumentos } from '../../Api/Traking/ApiTraking';
 const CardCarousel = ({content,scrollToTop}) => {
@@ -45,8 +45,10 @@ const CardCarousel = ({content,scrollToTop}) => {
   const navigation = useNavigation();
   const GetListProducts = useSelector(state => state.Product.ListProductCompany);
   const company = useSelector(state => state.company.CompanySelected);
+  const User = useSelector(state => state.login.user);
   const dispatch = useDispatch();
   const DocumentCheckerSelected = useSelector(state => state.Product);
+  const [loadUpdateLineOrder,setLoadUpdateLineOrder] = useState(false);
   const [optionsItem, setOptionsItem] = useState([
     { id: 1, label: 'Reemplazar Producto' },
     { id: 2, label: 'Cambiar base' },
@@ -248,15 +250,64 @@ const CardCarousel = ({content,scrollToTop}) => {
         value={description}
         marginB-20
       />
+      {loadUpdateLineOrder ? 
+        <LoaderScreen color="black"></LoaderScreen>
+      : 
       <Button
       backgroundColor="black"
       label="Guardar"
-        onPress={() => {
-          console.log('Precio:', price);
-          console.log('Descripción:', description);
-          console.log('Empaque:', packaging);
+        onPress={async() => {
+          try{
+            setLoadUpdateLineOrder(true);
+            // console.log('Precio:', price);
+            // console.log('Descripción:', description);
+            // console.log('Empaque:', packaging);
+            // console.log("Producto completo",ProductDetailEdit)
+            //console.log()
+            const specialCode = await FuncionGetCodeSpecialByCompany(company?.NombreDB);
+            if(specialCode){
+              let base = ProductDetailEdit.Base =="SI" ? "Y":"N";
+              const LineData={
+                NumLinea:ProductDetailEdit.LineNum,
+                Precio:price,
+                Cantidad:quantity,
+                CodProducto:ProductDetailEdit.Codigo,
+                Descripcion:description,
+                Descuento:"0.0000"
+              }
+              if(ProductDetailEdit.Codigo!=specialCode?.toString()){
+                const DiscountItem = FuncionGetDiscountItemOrder(company?.NombreDB,LineData?.CodProducto,base,DocumentCheckerSelected?.DataDocumentSelect?.CardCode);
+                if(!DiscountItem){
+                  return;
+                }
+                LineData.Descuento = (Math.round((((DiscountItem.PrecioBase - DiscountItem.Precio) / DiscountItem.PrecioBase) * 100), 6)).tooString();
+              }
+              let detailDoc = [];
+              detailDoc.push(LineData);
+              const Document = {
+                Detalle: detailDoc,
+                Encabezado:{
+                  DocEntry:DocumentCheckerSelected?.DataDocumentSelect?.DocEntry,
+                  IdUsuario:User?.EntityID,
+                  BaseDatos:company?.NombreDB,
+                  TipoUpdate:"ModificarLinea"
+                }
+              }
+             const resultUpdate =  await ChangePackingLineOrder(Document);
+             if(resultUpdate && resultUpdate?.Resultado){
+                  Alert.alert("",""+resultUpdate?.Mensaje);
+             }else if(resultUpdate && !resultUpdate?.Resultado){
+                 Alert.alert("Error",""+resultUpdate?.Mensaje);
+             }
+             // console.log(specialCode);
+            }
+          }finally{
+            setLoadUpdateLineOrder(false);
+          }
         }}
       />
+      }
+   
     </View>
   );
 

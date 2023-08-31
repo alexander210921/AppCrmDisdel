@@ -29,6 +29,27 @@ export async function GetListProductByCompany (NombreDB=""){
       return null;
     }
   }
+
+  export async function FuncionGetCodeSpecialByCompany (NonbreDB){
+    try{
+      const {data} = await Axios.get("MyWsOneVenta/api/Doc/GetCodigoProductoEspecial/"+NonbreDB+"/");
+      return data;
+    }catch(ex){
+      Alert.alert(""+ex);      
+      return null;
+    }
+  }
+
+  export async function FuncionGetDiscountItemOrder (NonbreDB,itemCode,Base,CardCode){
+    try{
+      const {data} = await Axios.get("MyWsOneVenta/api/Producto/GetItemCodeACarritoInterno/"+NonbreDB+"/"+itemCode,"/"+Base+"/"+CardCode);
+      return data;
+    }catch(ex){
+      Alert.alert(""+ex);      
+      return null;
+    }
+  }
+  
   
 
   export const SaveProductsByCompany = data => ({

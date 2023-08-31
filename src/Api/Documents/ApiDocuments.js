@@ -1,11 +1,11 @@
 import Axios from '../../lib/Axios/AxiosConfig';
 import {Alert} from 'react-native'
-export async function ChangePackingLineOrder (data){
+export async function ChangePackingLineOrder (Document){
     try{
-      const {data} = await Axios.post("MyWsOneVenta/api/OrdenVentaAux/Modificar/",data);
+      const {data} = await Axios.post("MyWsOneVenta/api/OrdenVentaAux/Modificar/",Document);
       return data;
     }catch(ex){
-      //Alert.alert(""+ex);
+      Alert.alert(""+ex);
       return null;
     }
   }

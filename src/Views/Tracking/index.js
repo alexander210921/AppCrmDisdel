@@ -41,6 +41,7 @@ const TrackingDocumentsAsigned = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loadSetChecker,setLoadChecker] = useState(false);
   //add control pagination
   const [filteredItems, setFilteredItems] = useState(documents);
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,27 +71,30 @@ const TrackingDocumentsAsigned = () => {
   //console.log("Documentos de lista pendiente tracking = > ",DocumentsList);
   const HandleSendCheckDocuments=async()=>{
     //console.log(checkerSelected);
-    let nombreChequeador = listCheck.filter(x=>x.code ==checkerSelected)[0].name;
-    const filterItems = documents.filter(data => {
-      if (checkedItems.includes(data.EntityID)) {
-        data.IdOhemChequeador = checkerSelected;      
-        data.NombreChequeador = nombreChequeador;
-        data.EstadoChequeo = "EnProceso";
-        return data;
+    try{
+      setLoadChecker(true);
+      let nombreChequeador = listCheck.filter(x=>x.code ==checkerSelected)[0].name;
+      const filterItems = documents.filter(data => {
+        if (checkedItems.includes(data.EntityID)) {
+          data.IdOhemChequeador = checkerSelected;      
+          data.NombreChequeador = nombreChequeador;
+          data.EstadoChequeo = "EnProceso";
+          return data;
+        }
+      });
+      const result = await ActualizarChequeoDocumentos(filterItems);
+      if (result == null) {
+        Alert.alert('', 'Ocurrió un error intente nuevamente');
+        return;
       }
-    });
-    //console.log("filtrando",filterItems);
-    //console.log(filterItems);
-    const result = await ActualizarChequeoDocumentos(filterItems);
-    if (result == null) {
-      Alert.alert('', 'Ocurrió un error intente nuevamente');
-      return;
-    }
-    Alert.alert('', result.Mensaje);  
-    if (!result.Resultado) {      
-      return;
-    }
-    closeModal();
+      Alert.alert('', result.Mensaje);  
+      if (!result.Resultado) {      
+        return;
+      }
+      closeModal();
+    }finally{
+      setLoadChecker(false);
+    }   
   }
   useEffect(() => {
       if(checkerSelected ==null &&listCheck.length>0 ){
@@ -317,9 +321,14 @@ const TrackingDocumentsAsigned = () => {
                ))}
            </Picker>        
  :null}
-<Button onPress={HandleSendCheckDocuments} style={{backgroundColor:'#000'}}  >    
+ {loadSetChecker ? 
+  <LoaderScreen color="black"></LoaderScreen>
+ :
+ <Button onPress={HandleSendCheckDocuments} style={{backgroundColor:'#000'}}  >    
   <Text style={{color: '#fff'}}>Aceptar</Text>
 </Button>
+ }
+
 </View>
   );
   const Card = ({
@@ -513,7 +522,7 @@ const TrackingDocumentsAsigned = () => {
 
 <Button
                     onPress={HandleCheckDocuments}
-                    style={{backgroundColor: '#77dd', width: '40%'}}>
+                    style={{backgroundColor: '#807A79', width: '40%'}}>
                     <Text style={{color: '#fff'}}>
                       {' '}
                       Chequear ({checkedItems.length} )
