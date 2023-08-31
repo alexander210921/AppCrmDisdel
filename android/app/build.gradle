@@ -98,8 +98,9 @@ android {
         applicationId "com.disdel_app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "1.5"
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
 
     splits {
@@ -117,12 +118,22 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+         if (true) {
+                storeFile file('my-upload-key.keystore')
+                storePassword 'disdelapp'
+                keyAlias 'my-key-alias'
+                keyPassword 'disdelapp'
+            }
+        }
     }
     buildTypes {
         debug {
+            //signingConfig signingConfigs.
             signingConfig signingConfigs.debug
         }
         release {
+            //signingConfig signingConfigs.release
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
@@ -153,7 +164,13 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+    implementation('com.squareup.okhttp3:okhttp:3.4.1')
+    // implementation('com.google.zxing:core:3.2.1') 
+    // implementation project(':react-native-barcodescanner')
 
+   // implementation 'com.RNFetchBlob:rn-fetch-blob:0.10.8'
+    //implementation(':react-native-background-task')
+    //implementation(':react-native-background-geolocation')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -169,4 +186,5 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle";
+//Project background_geolocation = project(':react-native-background-geolocation');
 
