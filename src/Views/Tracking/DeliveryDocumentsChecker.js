@@ -29,44 +29,14 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
     const [detailHeaderDoc, setDetailHeaderDoc] = useState(null);
     const dispatch = useDispatch();
     const navigation = useNavigation();
-  
     const [isCollapsed, setIsCollapsed] = useState(true);
   
     const toggleAccordion = () => {
       setIsCollapsed(!isCollapsed);
     };
-  
-    // const handleCheckChange = itemId => {
-    //   const updatedCheckedItems = [...checkedItems];
-    //   const itemIndex = updatedCheckedItems.indexOf(itemId);
-    //   if (itemIndex === -1) {
-    //     updatedCheckedItems.push(itemId);
-    //   } else {
-    //     updatedCheckedItems.splice(itemIndex, 1);
-    //   }
-    //   setCheckedItems(updatedCheckedItems);
-    //   if (updatedCheckedItems.length === documents.length) {
-    //     setIsMarkerAll(false);
-    //   }
-    //   if (updatedCheckedItems.length === 0) {
-    //     setIsMarkerAll(true);
-    //   }
-    // };
-  
-    // const handleSelectAll = () => {
-    //   const allItemIds = DocumentsList.map(item => item.EntityID);
-    //   setCheckedItems(allItemIds);
-    //   setIsMarkerAll(!isMarkerAll);
-    // };
-  
     useEffect(() => {  
       setDocumentsList(documents);
     }, [documents]);
-  
-    // const UnSelectAll = () => {
-    //   setCheckedItems([]);
-    //   setIsMarkerAll(!isMarkerAll);
-    // };
   
     const Search = searchText => {
       if (searchText == null || searchText === '') {
@@ -86,90 +56,6 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
       setDocumentsList(filtered);
     };
   
-    // const AddRouteDocuments = async () => {
-    //   try {
-    //     setLoader(true);
-    //     if (checkedItems.length == 0) {
-    //       Alert.alert('', 'Seleccione al menos un item');
-    //       return;
-    //     }
-    //     const filterItems = documents.filter(data => {
-    //       if (checkedItems.includes(data.EntityID)) {
-    //         data.Autor = user.Datos.NombreCompleto;
-    //         return data;
-    //       }
-    //     });
-    //     const result = await IniciarRutaporIdTracking(filterItems);
-    //     if (result == null) {
-    //       Alert.alert('', 'Ocurrió un error intente nuevamente');
-    //       return;
-    //     }
-    //     if (!result.Resultado) {
-    //       Alert.alert('', result.Mensaje);
-    //       return;
-    //     }
-    //     const deleteData = documents.filter(
-    //       data => !checkedItems.includes(data.EntityID),
-    //     );
-    //     dispatch(SaveDocumentsAsigned(deleteData));
-    //     Alert.alert('', 'Proceso exitoso');
-    //   } finally {
-    //     setLoader(false);
-    //   }
-    // };
-    // const InitRouteForDocument = (idTracking,docNum) => {
-    //   Alert.alert(
-    //     '',
-    //     '¿Está seguro de marcar el inicio de ruta?',
-    //     [
-    //       {
-    //         text: 'Aceptar',
-    //         onPress: async () => {
-    //           setSelectedCardIndexForInitRoute(docNum === selectedCardIndex ? null : docNum);
-    //           try{
-    //             if (!idTracking) {
-    //               Alert.alert('', 'El id de tracking no es válido');
-    //               return;
-    //             }
-    //             const dataTracking = {
-    //               EntityID: idTracking,
-    //               Proceso: 'RutaEnCurso',
-    //             };
-    
-    //             setLoader(true);
-    //             const infoRequeset = await UpdateStateTracking(dataTracking);
-    //             if(!infoRequeset){
-    //               Alert.alert("","Ocurrió un problema intenta de nuevo por favor");
-    //               return;
-    //             }
-    //             if(infoRequeset.Resultado){
-    //                // add number of process
-    //                let DocumentsListUpdated = DocumentsList.map((item)=>{
-    //                   if(item.EntityID ==idTracking){
-    //                     item.Proceso = 7;
-    //                   }
-    //                   return item;
-    //                });
-    //                dispatch(SaveDocumentsRoute(DocumentsListUpdated));
-    //             }else{
-    //               Alert.alert("",""+infoRequeset?.Mensaje);                
-    //             }              
-    //           }finally{
-    //             setLoader(false);
-    //             setSelectedCardIndexForInitRoute(null);
-    //           }
-            
-    //         },
-    //       },
-    //       {
-    //         text: 'No',
-    //         onPress: () => {
-    //           // CancelPress();
-    //         },
-    //       },
-    //     ],
-    //   );
-    // };
     const DetailDocument = () => {
       return (
         <ScrollView>
@@ -207,11 +93,14 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
         </ScrollView>
       );
     };
-    const GoMarkerArriveDocument = async (NombreDB, DocEntry, TypeDoC,id,dataTracking) => {
+    const GoMarkerArriveDocument = async (NombreDB, DocEntry, TypeDoC,id,dataTracking,docNum) => {
       try{
         if(load){
           return;
         }
+        //setLoadGetDocuments(true);
+        setSelectedCardIndex(docNum === selectedCardIndex ? null : docNum);
+
         setLoader(true);
         const detail = await GetDetailDocument(NombreDB, DocEntry, TypeDoC);
         if (detail == null) {
@@ -222,10 +111,11 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
           dataTracking:dataTracking,
           detail
         }
-        //console.log(detail,"Detail order")  
         navigation.navigate('HomePicking',infoTracking);
       }finally{
         setLoader(false);  
+        setSelectedCardIndex(null);
+        //setLoadGetDocuments(false);
       }     
       
     };
@@ -275,21 +165,12 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
           <TouchableOpacity
             style={{borderWidth: 0, shadowColor: '#ffff'}}
             onPress={() => {
-              GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking);
+              GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking,docNum);
               dispatch(SaveDocumentChecker(data));
-             // GoMarkerArriveDocument();
-              //getDetail(company?.NombreDB, EntityiD, typeDoc, docNum, id);
+
             }}>
             <View style={styles.card}>
               <View style={styles.checkboxContainer}>
-                {/* <Checkbox
-                    value={checkedItems.includes(id)}
-                    onValueChange={() => {
-                      handleCheckChange(id);
-                    }}
-                    style={styles.checkbox}
-                    color="green"
-                  /> */}
                 <Text style={styles.text}>{title}</Text>
               </View>
               <Text style={styles.textSecundary}>{description}</Text>
@@ -305,37 +186,23 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
                   style={{backgroundColor: '#000', width: '40%'}}>
                   <Text style={{color: '#fff'}}>Ver info. </Text>
                 </Button>
-              {/* {isArrive === 7 ? (
-                <Button
-                  onPress={() => {
-                    GoMarkerArriveDocument(company?.NombreDB, EntityiD, typeDoc,id,AlldataTracking);
-                  }}
-                  style={{backgroundColor: '#000', width: '40%'}}>
-                  <Text style={{color: '#fff'}}> Marcar Llegada </Text>
-                </Button>
-              ) : (
-                <View>
-                  {selectedCardIndexForInitRoute ===docNum  && load ? <LoaderScreen></LoaderScreen>:
-                      <Button 
-                      onPress={() => {
-                        InitRouteForDocument(id,docNum);
-                      }}
-                      style={{backgroundColor: '#3E5F8A', width: '40%'}}>
-                      <Text style={{color: '#fff'}}>Iniciar Entrega</Text>
-                    </Button>
-                  }
-  
-                </View>
-            
-              )} */}
             </View>
           </TouchableOpacity>
-          {selectedCardIndex == docNum && !loadGetDocuments ? (
+          {selectedCardIndex == docNum && !loadGetDocuments && !load? (
             <DetailDocument></DetailDocument>
           ) : null}
   
-          {selectedCardIndex == docNum && loadGetDocuments ? (
-            <Text style={{color: 'gray'}}> Cargando...</Text>
+          {selectedCardIndex == docNum && loadGetDocuments  && !load? (
+            <View>
+                <Text style={{color: 'gray'}}> Cargando...</Text>
+            </View>            
+          ) : null}
+
+        {selectedCardIndex == docNum   && load? (
+            <View>
+                <LoaderScreen color="black"></LoaderScreen>
+                <Text style={{color: 'gray'}}> Cargando...</Text>
+            </View>            
           ) : null}
         </View>
       );
@@ -350,10 +217,7 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
                 <SearchBar
                   onSubmit={Search}
                   placeholder="Buscar Documento"></SearchBar>
-                {/* <Text>Id tracking / No. Factura</Text> */}
               </View>
-           
-           
             </View>
             {DocumentsList.map((item, index) => (
               <Card
@@ -372,7 +236,6 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
                 data={item}
               />
             ))}
-   
           </View>
         </View>
       </ScrollView>
@@ -417,8 +280,6 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
       color: 'gray',
     },
     headerContainer: {
-      // borderWidth:1,
-      // borderColor:'red',
       display: 'flex',
       flexDirection: 'row',
     },
