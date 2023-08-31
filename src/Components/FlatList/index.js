@@ -176,13 +176,10 @@ const CardCarousel = ({content,scrollToTop}) => {
     handlePriceChange(ListMap[indexProduct].PrecioIVA.toString());
     handleDescriptionChange(ListMap[indexProduct].Descripcion);
     handleQuantityChange(ListMap[indexProduct].Cantidad.toString());
-    //console.log(ListMap[indexProduct].PrecioIVA);
     openModal();
   };
 
   const handleOptionSelect = async (option) => {
-    // Aquí puedes realizar la acción correspondiente según la opción seleccionada
-  
     switch(option.id){
       case 1:{
         try {
@@ -251,18 +248,6 @@ const CardCarousel = ({content,scrollToTop}) => {
         value={description}
         marginB-20
       />
-      {/* {ProductDetailEdit?.EditableBase=="SI"?
-  <RadioGroup
-  initialValue={packaging}
-  onValueChange={handlePackagingChange}
-  marginB-20>
-  <RadioButton color="gray" value="individual" label="Individual" />
-  <RadioButton color="gray" value="empaquetado" label="Empaquetado" />
-</RadioGroup>
-      :null} */}
-  
-    
-
       <Button
       backgroundColor="black"
       label="Guardar"
@@ -396,9 +381,7 @@ const CardCarousel = ({content,scrollToTop}) => {
         <Text style={{color: 'white'}}>Dar por finalizado</Text>
       </Button>
       }      
-      {/* {viewForm ?
-        <CheckInIndex></CheckInIndex>
-       :null} */}
+
       <ModalComponent
         visible={modalVisible}
         closeModal={closeModal}

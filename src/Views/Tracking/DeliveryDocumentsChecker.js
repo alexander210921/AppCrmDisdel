@@ -1,13 +1,13 @@
 import {
     StyleSheet,
-    ScrollView,
-    View,
+    ScrollView,  
     Text,
     Alert,
     TouchableOpacity,
   } from 'react-native';
-  import React, {useEffect, useState} from 'react';
-  import {Button,LoaderScreen} from 'react-native-ui-lib';
+  import React, {useEffect, useState,useMemo,useRef} from 'react';
+  import {Button,LoaderScreen,  PageControl,
+    Colors,View} from 'react-native-ui-lib';
   import {useDispatch, useSelector} from 'react-redux';
   import {
     GetDetailDocument,
@@ -16,7 +16,8 @@ import {
   import SearchBar from '../../Components/SearchBar';
   import {useNavigation} from '@react-navigation/native';
 import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
- 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
   
   const DeliveryDocumentsChecker = () => {
     const documents = useSelector(state => state.Tracking.DocumentsAssignedChecker);
@@ -30,7 +31,24 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const [isCollapsed, setIsCollapsed] = useState(true);
-  
+    //implement partition data to customize User Xperience 
+    const [filteredItems, setFilteredItems] = useState(documents);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [todosPerPage, settodosPerPage] = useState(6);
+    const indexOfLastTodo = currentPage * todosPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+    const scrollViewRef = useRef();
+    const [QuantityItems, setQuantityItems] = useState(documents?.length);
+    const currentTodos = useMemo(() => {
+      return filteredItems.length > 0
+        ? filteredItems.slice(indexOfFirstTodo, indexOfLastTodo)
+        : [];
+    }, [currentPage, filteredItems]);
+   
+    const scrollToTop = () => {
+       scrollViewRef?.current?.scrollTo({y: 0, animated: true});
+     };
+    //const [searchText, setSearchText] = useState('');
     const toggleAccordion = () => {
       setIsCollapsed(!isCollapsed);
     };
@@ -219,7 +237,7 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
                   placeholder="Buscar Documento"></SearchBar>
               </View>
             </View>
-            {DocumentsList.map((item, index) => (
+            {currentTodos?.map((item, index) => (
               <Card
                 key={index}
                 title={item.EntityID + ' / ' + item.DocNum}
@@ -236,6 +254,63 @@ import { SaveDocumentChecker } from '../../Api/Products/ApiProduct';
                 data={item}
               />
             ))}
+
+            {/* control to page */}
+            <View>
+          <PageControl
+            size={12}
+            spacing={8}
+            inactiveColor={Colors.grey1}
+            color={Colors.grey1}
+            onPagePress={numberPage => {
+              setCurrentPage(numberPage + 1);
+            }}
+            containerStyle={{marginBottom: 40}}
+            numOfPages={Math.ceil(QuantityItems / todosPerPage)}
+            currentPage={currentPage - 1}
+            enlargeActive={true}
+          />
+          {currentTodos && currentTodos.length > 0 ? (
+            <View style={{margin: 5}} row flex centerH>
+              {/* <Button style={{backgroundColor:'gray'}} label={'anterior'} onPress={() => {}} disabled={false} /> */}
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage - 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={currentPage === 1}>
+                <Icon
+                  name={'arrow-left-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+
+              <Text style={{color: 'gray'}}>{currentPage}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage + 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={
+                  currentPage === Math.ceil(QuantityItems / todosPerPage)
+                }>
+                <Icon
+                  name={'arrow-right-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+
           </View>
         </View>
       </ScrollView>
