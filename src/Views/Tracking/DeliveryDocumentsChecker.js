@@ -58,7 +58,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
   
     const Search = searchText => {
       if (searchText == null || searchText === '') {
-        setDocumentsList(documents);
+        //setDocumentsList(documents);
+        setFilteredItems(documents);
+        setQuantityItems(documents?.length);
         return;
       }
       const filtered = documents.filter(
@@ -71,7 +73,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
           item.CardName.toString().toLowerCase().includes(searchText.toLowerCase())||
           item.DocTotal.toString().toLowerCase().includes(searchText.toLowerCase())
       );
-      setDocumentsList(filtered);
+      //setDocumentsList(filtered);
+      setFilteredItems(filtered);
+      setQuantityItems(filtered?.length);
     };
   
     const DetailDocument = () => {

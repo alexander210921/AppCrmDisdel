@@ -1,14 +1,13 @@
 import {
   StyleSheet,
   ScrollView,
-  View,
   Text,
   Alert,
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Button, Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
+import React, {useEffect, useState,useRef,useMemo} from 'react';
+import {Button, Checkbox, Chip, LoaderScreen,PageControl,Colors,View} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   ActualizarChequeoDocumentos,
@@ -21,6 +20,8 @@ import {
 import SearchBar from '../../Components/SearchBar';
 import {Picker} from '@react-native-picker/picker';
 import ModalComponent from '../../Components/Modal/ModalComponent';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const TrackingDocumentsAsigned = () => {
   const documents = useSelector(state => state.Tracking.DocumentAsigned);
   const [DocumentsList, setDocumentsList] = useState([]);
@@ -40,7 +41,22 @@ const TrackingDocumentsAsigned = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-
+  //add control pagination
+  const [filteredItems, setFilteredItems] = useState(documents);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosPerPage, settodosPerPage] = useState(6);
+  const indexOfLastTodo = currentPage * todosPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+  const scrollViewRef = useRef();
+  const [QuantityItems, setQuantityItems] = useState(documents?.length);
+  const currentTodos = useMemo(() => {
+    return filteredItems.length > 0
+      ? filteredItems.slice(indexOfFirstTodo, indexOfLastTodo)
+      : [];
+  }, [currentPage, filteredItems]);
+  const scrollToTop = () => {
+    scrollViewRef?.current?.scrollTo({y: 0, animated: true});
+  };
   const openModal = () => {
     setModalVisible(true);
   };
@@ -145,7 +161,9 @@ const TrackingDocumentsAsigned = () => {
   }
   const Search = searchText => {
     if (searchText == null || searchText === '') {
-      setDocumentsList(documents);
+      //setDocumentsList(documents);
+      setFilteredItems(documents);
+      setQuantityItems(documents?.length);
       return;
     }
     const filtered = documents.filter(
@@ -166,7 +184,9 @@ const TrackingDocumentsAsigned = () => {
           .toLowerCase()
           .includes(searchText.toLowerCase()),
     );
-    setDocumentsList(filtered);
+    //setDocumentsList(filtered);
+    setFilteredItems(filtered);
+    setQuantityItems(filtered?.length)
   };
 
   const AddRouteDocuments = async () => {
@@ -401,7 +421,7 @@ const TrackingDocumentsAsigned = () => {
             </View>
           </View>
 
-          {DocumentsList.map((item, index) => (
+          {currentTodos?.map((item, index) => (
             <Card
               key={index}
               title={item.EntityID + ' / ' + item.DocNum}
@@ -418,6 +438,64 @@ const TrackingDocumentsAsigned = () => {
               DocNumBill={item?.DocNumBill}
             />
           ))}
+    {/* control page */}
+
+
+    <View>
+          <PageControl
+            size={12}
+            spacing={8}
+            inactiveColor={Colors.grey1}
+            color={Colors.grey1}
+            onPagePress={numberPage => {
+              setCurrentPage(numberPage + 1);
+            }}
+            containerStyle={{marginBottom: 40}}
+            numOfPages={Math.ceil(QuantityItems / todosPerPage)}
+            currentPage={currentPage - 1}
+            enlargeActive={true}
+          />
+          {currentTodos && currentTodos.length > 0 ? (
+            <View style={{margin: 5}} row flex centerH>
+              {/* <Button style={{backgroundColor:'gray'}} label={'anterior'} onPress={() => {}} disabled={false} /> */}
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage - 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={currentPage === 1}>
+                <Icon
+                  name={'arrow-left-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+
+              <Text style={{color: 'gray'}}>{currentPage}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage + 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={
+                  currentPage === Math.ceil(QuantityItems / todosPerPage)
+                }>
+                <Icon
+                  name={'arrow-right-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+
 
      
           {DocumentsList.length > 0 ? (
