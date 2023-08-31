@@ -1,13 +1,12 @@
 import {
   StyleSheet,
-  ScrollView,
-  View,
+  ScrollView,  
   Text,
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Button, Checkbox, Chip, LoaderScreen} from 'react-native-ui-lib';
+import React, {useEffect, useState,useRef,useMemo} from 'react';
+import {Button, Checkbox, Chip, LoaderScreen,PageControl,Colors,View} from 'react-native-ui-lib';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   GetBanksCompany,
@@ -22,7 +21,7 @@ import {
 import SearchBar from '../../Components/SearchBar';
 import {useNavigation} from '@react-navigation/native';
 import {AlertConditional} from '../../Components/TextAlert/AlertConditional';
-import {Console} from 'console';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const TrackingDocumentInRoute = () => {
   const documents = useSelector(state => state.Tracking.DocumentAcepted);
@@ -41,6 +40,23 @@ const TrackingDocumentInRoute = () => {
   const navigation = useNavigation();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
+  // control to pagination
+  const [filteredItems, setFilteredItems] = useState(documents);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosPerPage, settodosPerPage] = useState(6);
+  const indexOfLastTodo = currentPage * todosPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+  const scrollViewRef = useRef();
+  const [QuantityItems, setQuantityItems] = useState(documents?.length);
+  const currentTodos = useMemo(() => {
+    return filteredItems.length > 0
+      ? filteredItems.slice(indexOfFirstTodo, indexOfLastTodo)
+      : [];
+  }, [currentPage, filteredItems]);
+ 
+  const scrollToTop = () => {
+     scrollViewRef?.current?.scrollTo({y: 0, animated: true});
+   };
 
   const toggleAccordion = () => {
     setIsCollapsed(!isCollapsed);
@@ -80,7 +96,9 @@ const TrackingDocumentInRoute = () => {
 
   const Search = searchText => {
     if (searchText == null || searchText === '') {
-      setDocumentsList(documents);
+    //  setDocumentsList(documents);
+    setFilteredItems(documents);
+    setQuantityItems(documents?.length);
       return;
     }
     const filtered = documents.filter(
@@ -93,7 +111,9 @@ const TrackingDocumentInRoute = () => {
         item.CardName.toString().toLowerCase().includes(searchText.toLowerCase())||
         item.DocTotal.toString().toLowerCase().includes(searchText.toLowerCase())
     );
-    setDocumentsList(filtered);
+    //setDocumentsList(filtered);
+    setFilteredItems(filtered);
+    setQuantityItems(filtered?.length);
   };
 
   const AddRouteDocuments = async () => {
@@ -343,28 +363,10 @@ const TrackingDocumentInRoute = () => {
                 placeholder="Buscar Documento"></SearchBar>
               <Text>Id tracking / No. Factura</Text>
             </View>
-            {/* <View style={{width: '20%'}}>
-                <TouchableOpacity
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    backgroundColor: 'orange',
-                    marginTop: 3,
-                  }}
-                  onPress={isMarkerAll ? handleSelectAll : UnSelectAll}>
-                  <View style={{height: 50}}>
-                    <Text style={{height: 50, color: '#FFF'}}>
-                      {' '}
-                      {isMarkerAll
-                        ? 'Marcar todo ( ' + DocumentsList.length + ' )'
-                        : 'Desmarcar'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View> */}
+      
           </View>
           {/* {load ? <LoaderScreen></LoaderScreen> : null} */}
-          {DocumentsList.map((item, index) => (
+          {currentTodos.map((item, index) => (
             <Card
               key={index}
               title={item.EntityID + ' / ' + item.DocNum}
@@ -379,24 +381,62 @@ const TrackingDocumentInRoute = () => {
               AlldataTracking={item}
             />
           ))}
-          {/* {DocumentsList.length > 0 ? (
+               {/* control to page */}
+               <View>
+          <PageControl
+            size={12}
+            spacing={8}
+            inactiveColor={Colors.grey1}
+            color={Colors.grey1}
+            onPagePress={numberPage => {
+              setCurrentPage(numberPage + 1);
+            }}
+            containerStyle={{marginBottom: 40}}
+            numOfPages={Math.ceil(QuantityItems / todosPerPage)}
+            currentPage={currentPage - 1}
+            enlargeActive={true}
+          />
+          {currentTodos && currentTodos.length > 0 ? (
+            <View style={{margin: 5}} row flex centerH>
+              {/* <Button style={{backgroundColor:'gray'}} label={'anterior'} onPress={() => {}} disabled={false} /> */}
               <TouchableOpacity
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignContent: 'center',
-                }}>
-                <Button
-                  onPress={AddRouteDocuments}
-                  style={{backgroundColor: '#000', width: '70%'}}>
-                  <Text style={{color: '#fff'}}>
-                    {' '}
-                    Aceptar {checkedItems.length} Seleccionados{' '}
-                  </Text>
-                </Button>
+                onPress={() => {
+                  setCurrentPage(currentPage - 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={currentPage === 1}>
+                <Icon
+                  name={'arrow-left-bold-box'}
+                  size={30}
+                  color="gray"
+                  style={styles.icon}
+                />
               </TouchableOpacity>
-            ) : null} */}
+
+              <Text style={{color: 'gray'}}>{currentPage}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage + 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={
+                  currentPage === Math.ceil(QuantityItems / todosPerPage)
+                }>
+                <Icon
+                  name={'arrow-right-bold-box'}
+                  size={30}
+                  color="gray"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+   
         </View>
       </View>
     </ScrollView>
