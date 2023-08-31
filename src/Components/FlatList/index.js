@@ -1,35 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useMemo} from 'react';
 import {
-  FlatList,
-  Dimensions,
+  FlatList,  
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  Modal
+  Alert,  
+  TextInput
 } from 'react-native';
 import {
   View,
-  Text,
-  RadioGroup,
-  RadioButton,
+  Text,  
   Button,
   TextField,
   LoaderScreen,
+  PageControl,
+  Colors
 } from 'react-native-ui-lib';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Iconv2 from 'react-native-vector-icons/MaterialIcons';
 import ReadCodeCamera from '../../Views/Count/ReadCodeCamera';
 import ModalComponent from '../Modal/ModalComponent';
-import CheckInIndex from '../../Views/Documents/Check_In';
 import { AlertConditional } from '../TextAlert/AlertConditional';
 import { ChangePackingLineOrder, getPedidoByDocEntry } from '../../Api/Documents/ApiDocuments';
 import { useNavigation } from '@react-navigation/native';
 import { GetListProductByCompany, SaveProductChange, SaveProductsByCompany } from '../../Api/Products/ApiProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActualizarChequeoDocumentos } from '../../Api/Traking/ApiTraking';
-const CardCarousel = ({content}) => {
+const CardCarousel = ({content,scrollToTop}) => {
   const [ListProducts, setListProducts] = useState([]);
   const [ListMap, setListMap] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,7 +42,6 @@ const CardCarousel = ({content}) => {
   const [packaging, setPackaging] = useState('individual');
   const [quantity, setquantity] = useState('');
   const [loadGetProduct, setLoadGetProduct] = useState(false);
-  const [viewForm,setViewForm] = useState(false);
   const navigation = useNavigation();
   const GetListProducts = useSelector(state => state.Product.ListProductCompany);
   const company = useSelector(state => state.company.CompanySelected);
@@ -54,7 +51,44 @@ const CardCarousel = ({content}) => {
     { id: 1, label: 'Reemplazar Producto' },
     { id: 2, label: 'Cambiar base' },
   ]);
+  //paginationControl 
+  const [filteredItems, setFilteredItems] = useState(content);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosPerPage, settodosPerPage] = useState(6);
+  const indexOfLastTodo = currentPage * todosPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+  const [QuantityItems, setQuantityItems] = useState(0);
+  const [searchText, setSearchText] = useState('');
 
+  useEffect(()=>{
+    setQuantityItems(content?.length);
+   // setFilteredItems(content);
+  },[])
+  const currentTodos = useMemo(() => {
+    return filteredItems.length > 0
+      ? filteredItems.slice(indexOfFirstTodo, indexOfLastTodo)
+      : [];
+  }, [currentPage, filteredItems]);
+
+  const handleSearch = text => {
+    setSearchText(text);
+  };
+  const onSearch = () => {
+    if (searchText == null || searchText === '') {
+      setFilteredItems(content);
+      setQuantityItems(content?.length);
+      setCurrentPage(1);
+      return;
+    }
+    const filtered = content.filter(
+      item =>
+        item?.Descripcion.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.Codigo.toLowerCase().includes(searchText.toLowerCase()),
+    );
+    setFilteredItems(filtered);
+    setQuantityItems(filtered.length);
+    setCurrentPage(1);
+  };
   const handlePriceChange = value => {
     setPrice(value);
   };
@@ -172,8 +206,6 @@ const CardCarousel = ({content}) => {
         } finally {
           setLoadGetProduct(false);
         }
-
-
        // navigation.navigate("ListProductHome");
         //reemplazo de item
         break;
@@ -235,8 +267,6 @@ const CardCarousel = ({content}) => {
       backgroundColor="black"
       label="Guardar"
         onPress={() => {
-          // Aquí puedes realizar la acción de guardar los datos ingresados
-          // Por ejemplo, podrías enviar los datos a una API o guardarlos en el estado global de la aplicación.
           console.log('Precio:', price);
           console.log('Descripción:', description);
           console.log('Empaque:', packaging);
@@ -302,7 +332,6 @@ const CardCarousel = ({content}) => {
             }else{
               setModalVisibleItems(!modalVisibleItems);
             }
-            
 
             }} style={{margin:'6%'}}>
            <Iconv2
@@ -313,9 +342,6 @@ const CardCarousel = ({content}) => {
            />
            </TouchableOpacity>
           :null}
-
-
-
 
 {modalVisibleItems && item?.Codigo ==itemSelectForActions?.Codigo ? 
 <View style={{elevation: 20,backgroundColor:'#f5f5f5',zIndex: 20, shadowOpacity: 0.2,
@@ -332,32 +358,8 @@ const CardCarousel = ({content}) => {
         </TouchableOpacity>
       )}
     />}
-
             </View>
 :null}
-
-{/* <Modal
-        visible={modalVisibleItems}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisibleItems(false)}
-      >
-        <TouchableOpacity
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-          onPress={() => setModalVisibleItems(false)}
-        >
-          <View style={{ backgroundColor: 'white', borderRadius: 8, padding: 16 }}>
-        
-          </View>
-        </TouchableOpacity>
-      </Modal> */}
-
-
-
-
-
-
-         
         </View>
       </View>
     );
@@ -366,8 +368,19 @@ const CardCarousel = ({content}) => {
   return (
     <ScrollView>
       <ReadCodeCamera onReadCodeCamera={onReadCodeCamera}></ReadCodeCamera>
+      <View style={{padding:'4%'}}>
+      <TextInput
+            style={styles.input}
+            placeholder={'Buscar Producto'}
+            autoFocus={true}
+            //value={searchText}
+            onChangeText={handleSearch}
+            onBlur={onSearch}
+            placeholderTextColor={'#b3b2b7'}
+          />
+      </View>
       <FlatList
-        data={ListProducts}
+        data={currentTodos}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItems}
         //onEndReached={fetchData}
@@ -383,16 +396,77 @@ const CardCarousel = ({content}) => {
         style={DocumentCheckerSelected?.DataDocumentSelect?.EstadoChequeo==2? styles.ButtonFinaliceProcces: !ListProducts.every(item => item.isChecked == true) ?styles.DisableButton :styles.ButtonFinaliceProcces}>
         <Text style={{color: 'white'}}>Dar por finalizado</Text>
       </Button>
-      }
-      
-      {viewForm ?
+      }      
+      {/* {viewForm ?
         <CheckInIndex></CheckInIndex>
-       :null}
-
+       :null} */}
       <ModalComponent
         visible={modalVisible}
         closeModal={closeModal}
         content={modalContent}></ModalComponent>
+
+        {/* control button to navigate  */}
+
+        <View>
+          <PageControl
+            size={12}
+            spacing={8}
+            inactiveColor={Colors.grey1}
+            color={Colors.grey1}
+            onPagePress={numberPage => {
+              setCurrentPage(numberPage + 1);
+            }}
+            containerStyle={{marginBottom: 40}}
+            numOfPages={Math.ceil(QuantityItems / todosPerPage)}
+            currentPage={currentPage - 1}
+            enlargeActive={true}
+          />
+          {currentTodos && currentTodos.length > 0 ? (
+            <View style={{margin: 5}} row flex centerH>
+              {/* <Button style={{backgroundColor:'gray'}} label={'anterior'} onPress={() => {}} disabled={false} /> */}
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage - 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={currentPage === 1}>
+                <Icon
+                  name={'arrow-left-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+
+              <Text style={{color: 'gray'}}>{currentPage}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentPage(currentPage + 1);
+                  if (scrollToTop) {
+                    scrollToTop();
+                  }
+                }}
+                disabled={
+                  currentPage === Math.ceil(QuantityItems / todosPerPage)
+                }>
+                <Icon
+                  name={'arrow-right-bold-box'}
+                  size={30}
+                  color="#c06500"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+
+
+
+
+
+
     </ScrollView>
   );
 };
